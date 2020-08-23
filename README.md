@@ -1,6 +1,10 @@
 # To-do API
 
-Run:
+### Usage
 ```
 npm start
+```
+Run linter:
+```
+npm run eslint
 ```
