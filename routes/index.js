@@ -3,7 +3,7 @@ var router = express.Router();
 
 /* GET root */
 router.get('/', function(req, res) {
-  res.status(200).send('OK');
+  res.sendStatus(200);
 });
 
 module.exports = router;

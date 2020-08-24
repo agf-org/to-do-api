@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "set DEBUG=to-do-api:* & node ./bin/www",
-    "eslint": "npx eslint ."
+    "eslint": "npx eslint .",
+    "test": "jest"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -14,6 +15,14 @@
     "morgan": "~1.9.1"
   },
   "devDependencies": {
-    "eslint": "^7.7.0"
+    "eslint": "^7.7.0",
+    "jest": "^26.4.2",
+    "supertest": "^4.0.2"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ]
   }
 }
