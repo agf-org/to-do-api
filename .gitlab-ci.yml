@@ -1,15 +1,45 @@
 image: docker:19.03.12
 
-before_script:
-  - docker info
-  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+stages:
+  - build
+  - test
+  - deploy
 
 build:
   stage: build
   script:
     - > 
         docker build
-        --tag registry.gitlab.com/alvarogarciafer/to-do-api
+        --tag $CI_REGISTRY/alvarogarciafer/to-do-api:latest
         .
-    - > 
-        docker push $CI_REGISTRY/alvarogarciafer/to-do-api
+
+test:
+  stage: test
+  script:
+    - >
+      docker container run
+      --rm
+      $CI_REGISTRY/alvarogarciafer/to-do-api:latest
+      run eslint
+    - >
+      docker container run
+      --rm
+      $CI_REGISTRY/alvarogarciafer/to-do-api:latest
+      test
+
+deploy:
+  stage: deploy
+  only:
+    - master
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker push $CI_REGISTRY/alvarogarciafer/to-do-api:latest
+    - docker container stop to-do-api || true
+    - docker container rm to-do-api || true
+    - >
+      docker container run
+      --publish 3000:3000
+      --name to-do-api
+      --detach
+      $CI_REGISTRY/alvarogarciafer/to-do-api:latest
+      start
