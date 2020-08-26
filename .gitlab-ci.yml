@@ -5,7 +5,7 @@ stages:
   - test
   - deploy
 
-build:
+build-image:
   stage: build
   script:
     - > 
@@ -13,7 +13,7 @@ build:
         --tag $CI_REGISTRY/alvarogarciafer/to-do-api:latest
         .
 
-test:
+linter:
   stage: test
   script:
     - >
@@ -21,13 +21,17 @@ test:
       --rm
       $CI_REGISTRY/alvarogarciafer/to-do-api:latest
       run eslint
+      
+unit-tests:
+  stage: test
+  script:
     - >
       docker container run
       --rm
       $CI_REGISTRY/alvarogarciafer/to-do-api:latest
       test
 
-deploy:
+push-image-and-deploy:
   stage: deploy
   only:
     - master
@@ -43,3 +47,4 @@ deploy:
       --detach
       $CI_REGISTRY/alvarogarciafer/to-do-api:latest
       start
+      
