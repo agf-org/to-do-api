@@ -5,7 +5,7 @@ stages:
   - test
   - deploy
 
-build-image:
+build:
   stage: build
   script:
     - > 
@@ -31,7 +31,7 @@ unit-tests:
       $CI_REGISTRY/alvarogarciafer/to-do-api:latest
       test
 
-push-image-and-deploy:
+push-and-deploy:
   stage: deploy
   only:
     - master
@@ -47,4 +47,3 @@ push-image-and-deploy:
       --detach
       $CI_REGISTRY/alvarogarciafer/to-do-api:latest
       start
-      
