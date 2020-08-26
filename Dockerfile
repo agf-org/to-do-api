@@ -1,8 +1,11 @@
 FROM node:14
 
-COPY . to-do-api
 WORKDIR /to-do-api
+
+COPY package*.json ./
 RUN npm install
+
+COPY . .
 
 EXPOSE 3000
 
