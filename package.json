@@ -3,9 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "set DEBUG=to-do-api:* & node ./bin/www",
     "eslint": "npx eslint .",
-    "test": "jest"
+    "test": "jest",
+    "start": "set DEBUG=to-do-api:* & node ./bin/www"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
