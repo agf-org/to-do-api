@@ -1,43 +1,75 @@
 image: docker:19.03.12
 
+before_script:
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+
 stages:
   - build
   - test
+  - push
   - deploy
 
-build:
+Build:
   stage: build
   script:
+    - docker pull $CI_REGISTRY_IMAGE:latest || true
     - > 
         docker build
-        --tag $CI_REGISTRY/alvarogarciafer/to-do-api:latest
+        --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
         .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
 
-linter:
+Linter:
   stage: test
+  variables:
+    GIT_STRATEGY: none
   script:
     - >
       docker container run
       --rm
-      $CI_REGISTRY/alvarogarciafer/to-do-api:latest
+      $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
       run eslint
       
-unit-tests:
+Unit tests:
   stage: test
+  variables:
+    GIT_STRATEGY: none
   script:
     - >
       docker container run
       --rm
-      $CI_REGISTRY/alvarogarciafer/to-do-api:latest
+      $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
       test
 
-push-and-deploy:
+Push tag:
+  stage: push
+  only:
+    - tags
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+
+Push latest:
+  stage: push
+  only:
+    - master
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE:latest
+    - docker push $CI_REGISTRY_IMAGE:latest
+
+Deploy:
   stage: deploy
   only:
     - master
+  variables:
+    GIT_STRATEGY: none
   script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker push $CI_REGISTRY/alvarogarciafer/to-do-api:latest
     - docker container stop to-do-api || true
     - docker container rm to-do-api || true
     - >
