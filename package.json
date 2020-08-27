@@ -1,11 +1,11 @@
 {
   "name": "to-do-api",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "set DEBUG=to-do-api:* & node ./bin/www",
     "eslint": "npx eslint .",
-    "test": "jest"
+    "test": "jest",
+    "start": "set DEBUG=to-do-api:* & node ./bin/www"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
