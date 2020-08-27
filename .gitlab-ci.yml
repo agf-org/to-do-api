@@ -15,9 +15,10 @@ Build:
     - docker pull $CI_REGISTRY_IMAGE:latest || true
     - > 
         docker build
-        --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+        --cache-from $CI_REGISTRY_IMAGE:latest
+        --tag $CI_REGISTRY_IMAGE:temp
         .
-    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker push $CI_REGISTRY_IMAGE:temp
 
 Linter:
   stage: test
@@ -27,7 +28,7 @@ Linter:
     - >
       docker container run
       --rm
-      $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+      $CI_REGISTRY_IMAGE:temp
       run eslint
       
 Unit tests:
@@ -38,7 +39,7 @@ Unit tests:
     - >
       docker container run
       --rm
-      $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+      $CI_REGISTRY_IMAGE:temp
       test
 
 Push tag:
@@ -48,8 +49,8 @@ Push tag:
   variables:
     GIT_STRATEGY: none
   script:
-    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
-    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+    - docker pull $CI_REGISTRY_IMAGE:temp
+    - docker tag $CI_REGISTRY_IMAGE:temp $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
 
 Push latest:
@@ -59,8 +60,8 @@ Push latest:
   variables:
     GIT_STRATEGY: none
   script:
-    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
-    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE:latest
+    - docker pull $CI_REGISTRY_IMAGE:temp
+    - docker tag $CI_REGISTRY_IMAGE:temp $CI_REGISTRY_IMAGE:latest
     - docker push $CI_REGISTRY_IMAGE:latest
 
 Deploy:
