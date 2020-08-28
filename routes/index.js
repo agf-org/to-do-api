@@ -1,9 +1,12 @@
 var express = require('express');
 var router = express.Router();
 
-/* GET root */
-router.get('/', function(req, res) {
-  res.sendStatus(200);
-});
+const getRoot = (request, response) => response.sendStatus(200);
+
+const methodNotAllowed = (request, response) => response.sendStatus(405);
+
+router.route('/')
+    .get(getRoot)
+    .all(methodNotAllowed);
 
 module.exports = router;

@@ -6,7 +6,7 @@ $ npm start
 ```
 Run linter:
 ```
-$ npm run eslint
+$ npm run linter
 ```
 Run unit tests:
 ```

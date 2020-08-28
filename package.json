@@ -1,9 +1,9 @@
 {
   "name": "to-do-api",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "private": true,
   "scripts": {
-    "eslint": "npx eslint .",
+    "linter": "npx eslint .",
     "test": "jest",
     "start": "set DEBUG=to-do-api:* & node ./bin/www"
   },
