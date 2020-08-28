@@ -29,7 +29,7 @@ Linter:
       docker container run
       --rm
       $CI_REGISTRY_IMAGE:temp
-      run eslint
+      run linter
       
 Unit tests:
   stage: test
