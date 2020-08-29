@@ -11,6 +11,9 @@ stages:
 
 Build:
   stage: build
+  rules:
+    - changes:
+      - /*
   script:
     - docker pull $CI_REGISTRY_IMAGE || true
     - > 
@@ -22,6 +25,9 @@ Build:
 
 Linter:
   stage: test
+  rules:
+    - changes:
+      - /*
   variables:
     GIT_STRATEGY: none
   script:
@@ -33,6 +39,9 @@ Linter:
       
 Unit tests:
   stage: test
+  rules:
+    - changes:
+      - /*
   variables:
     GIT_STRATEGY: none
   script:
@@ -44,8 +53,10 @@ Unit tests:
 
 Push develop:
   stage: push
-  only:
-    - develop
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+      changes:
+        - /*
   variables:
     GIT_STRATEGY: none
   script:
@@ -55,8 +66,10 @@ Push develop:
 
 Push:
   stage: push
-  only:
-    - master
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      changes:
+        - /*
   variables:
     GIT_STRATEGY: none
   script:
@@ -66,8 +79,8 @@ Push:
 
 Push tag:
   stage: push
-  only:
-    - tags
+  rules:
+    - if: $CI_COMMIT_TAG
   variables:
     GIT_STRATEGY: none
   script:
@@ -77,8 +90,10 @@ Push tag:
 
 Deploy develop:
   stage: deploy
-  only:
-    - develop
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+      changes:
+        - /*
   variables:
     GIT_STRATEGY: none
   script:
@@ -95,8 +110,10 @@ Deploy develop:
 
 Deploy:
   stage: deploy
-  only:
-    - master
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      changes:
+        - /*
   variables:
     GIT_STRATEGY: none
   script:
