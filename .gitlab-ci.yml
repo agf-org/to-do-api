@@ -24,10 +24,10 @@ Build:
 
 Run linter:
   stage: test
-  rules:
-    - if: ($CI_MERGE_REQUEST_IID || $CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "master")
   variables:
     GIT_STRATEGY: none
+  rules:
+    - if: ($CI_MERGE_REQUEST_IID || $CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "master")
   script:
     - >
       docker container run
@@ -37,10 +37,10 @@ Run linter:
       
 Run unit tests:
   stage: test
-  rules:
-    - if: ($CI_MERGE_REQUEST_IID || $CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "master")
   variables:
     GIT_STRATEGY: none
+  rules:
+    - if: ($CI_MERGE_REQUEST_IID || $CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "master")
   script:
     - >
       docker container run
@@ -50,10 +50,10 @@ Run unit tests:
 
 Push tag image:
   stage: push
-  rules:
-    - if: $CI_COMMIT_TAG
   variables:
     GIT_STRATEGY: none
+  rules:
+    - if: $CI_COMMIT_TAG
   script:
     - docker pull $CI_REGISTRY_IMAGE:temp
     - docker tag $CI_REGISTRY_IMAGE:temp $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
@@ -61,37 +61,41 @@ Push tag image:
 
 Push develop image:
   stage: push
-  rules:
-    - if: $CI_COMMIT_BRANCH == "develop"
   variables:
     GIT_STRATEGY: none
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
   script:
     - docker pull $CI_REGISTRY_IMAGE:temp
     - docker tag $CI_REGISTRY_IMAGE:temp $CI_REGISTRY_IMAGE:develop
     - docker push $CI_REGISTRY_IMAGE:develop
 
-Deploy to develop:
-  stage: deploy
-  rules:
-    - if: $CI_COMMIT_BRANCH == "develop"
-  variables:
-    GIT_STRATEGY: none
-  script:
-    - docker container stop develop_to-do-api || true
-    - docker container rm develop_to-do-api || true
-    - >
-      docker container run
-      --publish 3001:3000
-      --name develop_to-do-api
-      --detach
-      --restart unless-stopped
-      $CI_REGISTRY/alvarogarciafer/to-do-api:develop
-      run start-develop
+# Deploy to development:
+#   stage: deploy
+#   variables:
+#     GIT_STRATEGY: none
+#   rules:
+#     - if: $CI_COMMIT_BRANCH == "develop"
+#   script:
+#     - docker container stop develop_to-do-api || true
+#     - docker container rm develop_to-do-api || true
+#     - >
+#       docker container run
+#       --publish 3001:3000
+#       --name develop_to-do-api
+#       --detach
+#       --restart unless-stopped
+#       $CI_REGISTRY/alvarogarciafer/to-do-api:develop
+#       run start-development
 
-Manual deploy to develop:
+Manual deploy to development:
   stage: deploy
   variables:
     GIT_STRATEGY: none
+  environment:
+    name: Development
+  only:
+    - develop
   when: manual
   script:
     - docker container stop develop_to-do-api || true
@@ -103,41 +107,45 @@ Manual deploy to develop:
       --detach
       --restart unless-stopped
       $CI_REGISTRY/alvarogarciafer/to-do-api:develop
-      run start-develop
+      run start-development
       
 Push production image:
   stage: push
-  rules:
-    - if: $CI_COMMIT_BRANCH == "master"
   variables:
     GIT_STRATEGY: none
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
   script:
     - docker pull $CI_REGISTRY_IMAGE:temp
     - docker tag $CI_REGISTRY_IMAGE:temp $CI_REGISTRY_IMAGE
     - docker push $CI_REGISTRY_IMAGE
 
-Deploy to production:
-  stage: deploy
-  rules:
-    - if: $CI_COMMIT_BRANCH == "master"
-  variables:
-    GIT_STRATEGY: none
-  script:
-    - docker container stop to-do-api || true
-    - docker container rm to-do-api || true
-    - >
-      docker container run
-      --publish 3000:3000
-      --name to-do-api
-      --detach
-      --restart unless-stopped
-      $CI_REGISTRY/alvarogarciafer/to-do-api
-      run start
+# Deploy to production:
+#   stage: deploy
+#   variables:
+#     GIT_STRATEGY: none
+#   rules:
+#     - if: $CI_COMMIT_BRANCH == "master"
+#   script:
+#     - docker container stop to-do-api || true
+#     - docker container rm to-do-api || true
+#     - >
+#       docker container run
+#       --publish 3000:3000
+#       --name to-do-api
+#       --detach
+#       --restart unless-stopped
+#       $CI_REGISTRY/alvarogarciafer/to-do-api
+#       run start
 
 Manual deploy to production:
   stage: deploy
   variables:
     GIT_STRATEGY: none
+  environment:
+    name: Production
+  only:
+    - master
   when: manual
   script:
     - docker container stop to-do-api || true
