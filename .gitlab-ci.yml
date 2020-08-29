@@ -12,8 +12,7 @@ stages:
 Build:
   stage: build
   rules:
-    - changes:
-      - /*
+    - if: $CI_MERGE_REQUEST_IID
   script:
     - docker pull $CI_REGISTRY_IMAGE || true
     - > 
@@ -26,8 +25,7 @@ Build:
 Linter:
   stage: test
   rules:
-    - changes:
-      - /*
+    - if: $CI_MERGE_REQUEST_IID
   variables:
     GIT_STRATEGY: none
   script:
@@ -40,8 +38,7 @@ Linter:
 Unit tests:
   stage: test
   rules:
-    - changes:
-      - /*
+    - if: $CI_MERGE_REQUEST_IID
   variables:
     GIT_STRATEGY: none
   script:
@@ -50,32 +47,6 @@ Unit tests:
       --rm
       $CI_REGISTRY_IMAGE:temp
       test
-
-Push develop:
-  stage: push
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "develop"'
-      changes:
-        - /*
-  variables:
-    GIT_STRATEGY: none
-  script:
-    - docker pull $CI_REGISTRY_IMAGE:temp
-    - docker tag $CI_REGISTRY_IMAGE:temp $CI_REGISTRY_IMAGE:develop
-    - docker push $CI_REGISTRY_IMAGE:develop
-
-Push:
-  stage: push
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "master"'
-      changes:
-        - /*
-  variables:
-    GIT_STRATEGY: none
-  script:
-    - docker pull $CI_REGISTRY_IMAGE:temp
-    - docker tag $CI_REGISTRY_IMAGE:temp $CI_REGISTRY_IMAGE
-    - docker push $CI_REGISTRY_IMAGE
 
 Push tag:
   stage: push
@@ -88,12 +59,32 @@ Push tag:
     - docker tag $CI_REGISTRY_IMAGE:temp $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
 
+Push develop:
+  stage: push
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:temp
+    - docker tag $CI_REGISTRY_IMAGE:temp $CI_REGISTRY_IMAGE:develop
+    - docker push $CI_REGISTRY_IMAGE:develop
+
+Push:
+  stage: push
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:temp
+    - docker tag $CI_REGISTRY_IMAGE:temp $CI_REGISTRY_IMAGE
+    - docker push $CI_REGISTRY_IMAGE
+
 Deploy develop:
   stage: deploy
   rules:
-    - if: '$CI_COMMIT_BRANCH == "develop"'
-      changes:
-        - /*
+    - if: $CI_COMMIT_BRANCH == "develop"
   variables:
     GIT_STRATEGY: none
   script:
@@ -111,9 +102,7 @@ Deploy develop:
 Deploy:
   stage: deploy
   rules:
-    - if: '$CI_COMMIT_BRANCH == "master"'
-      changes:
-        - /*
+    - if: $CI_COMMIT_BRANCH == "master"
   variables:
     GIT_STRATEGY: none
   script:
