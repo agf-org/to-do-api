@@ -11,6 +11,8 @@ stages:
 
 Build:
   stage: build
+  rules:
+    - if: ($CI_MERGE_REQUEST_IID || $CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "master")
   script:
     - docker pull $CI_REGISTRY_IMAGE || true
     - > 
@@ -22,6 +24,8 @@ Build:
 
 Linter:
   stage: test
+  rules:
+    - if: ($CI_MERGE_REQUEST_IID || $CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "master")
   variables:
     GIT_STRATEGY: none
   script:
@@ -33,6 +37,8 @@ Linter:
       
 Unit tests:
   stage: test
+  rules:
+    - if: ($CI_MERGE_REQUEST_IID || $CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "master")
   variables:
     GIT_STRATEGY: none
   script:
@@ -42,10 +48,21 @@ Unit tests:
       $CI_REGISTRY_IMAGE:temp
       test
 
+Push tag:
+  stage: push
+  rules:
+    - if: $CI_COMMIT_TAG
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:temp
+    - docker tag $CI_REGISTRY_IMAGE:temp $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+
 Push develop:
   stage: push
-  only:
-    - develop
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
   variables:
     GIT_STRATEGY: none
   script:
@@ -55,8 +72,8 @@ Push develop:
 
 Push:
   stage: push
-  only:
-    - master
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
   variables:
     GIT_STRATEGY: none
   script:
@@ -64,21 +81,10 @@ Push:
     - docker tag $CI_REGISTRY_IMAGE:temp $CI_REGISTRY_IMAGE
     - docker push $CI_REGISTRY_IMAGE
 
-Push tag:
-  stage: push
-  only:
-    - tags
-  variables:
-    GIT_STRATEGY: none
-  script:
-    - docker pull $CI_REGISTRY_IMAGE:temp
-    - docker tag $CI_REGISTRY_IMAGE:temp $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
-    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
-
 Deploy develop:
   stage: deploy
-  only:
-    - develop
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
   variables:
     GIT_STRATEGY: none
   script:
@@ -95,8 +101,8 @@ Deploy develop:
 
 Deploy:
   stage: deploy
-  only:
-    - master
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
   variables:
     GIT_STRATEGY: none
   script:
