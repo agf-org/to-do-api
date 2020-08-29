@@ -12,10 +12,10 @@ stages:
 Build:
   stage: build
   script:
-    - docker pull $CI_REGISTRY_IMAGE:latest || true
+    - docker pull $CI_REGISTRY_IMAGE || true
     - > 
         docker build
-        --cache-from $CI_REGISTRY_IMAGE:latest
+        --cache-from $CI_REGISTRY_IMAGE
         --tag $CI_REGISTRY_IMAGE:temp
         .
     - docker push $CI_REGISTRY_IMAGE:temp
@@ -53,7 +53,7 @@ Push develop:
     - docker tag $CI_REGISTRY_IMAGE:temp $CI_REGISTRY_IMAGE:develop
     - docker push $CI_REGISTRY_IMAGE:develop
 
-Push latest:
+Push:
   stage: push
   only:
     - master
@@ -61,8 +61,8 @@ Push latest:
     GIT_STRATEGY: none
   script:
     - docker pull $CI_REGISTRY_IMAGE:temp
-    - docker tag $CI_REGISTRY_IMAGE:temp $CI_REGISTRY_IMAGE:latest
-    - docker push $CI_REGISTRY_IMAGE:latest
+    - docker tag $CI_REGISTRY_IMAGE:temp $CI_REGISTRY_IMAGE
+    - docker push $CI_REGISTRY_IMAGE
 
 Push tag:
   stage: push
@@ -108,5 +108,5 @@ Deploy:
       --name to-do-api
       --detach
       --restart unless-stopped
-      $CI_REGISTRY/alvarogarciafer/to-do-api:latest
+      $CI_REGISTRY/alvarogarciafer/to-do-api
       run start
