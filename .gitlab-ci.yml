@@ -42,16 +42,16 @@ Unit tests:
       $CI_REGISTRY_IMAGE:temp
       test
 
-Push tag:
+Push dev:
   stage: push
   only:
-    - tags
+    - dev
   variables:
     GIT_STRATEGY: none
   script:
     - docker pull $CI_REGISTRY_IMAGE:temp
-    - docker tag $CI_REGISTRY_IMAGE:temp $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
-    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+    - docker tag $CI_REGISTRY_IMAGE:temp $CI_REGISTRY_IMAGE:dev
+    - docker push $CI_REGISTRY_IMAGE:dev
 
 Push latest:
   stage: push
@@ -64,19 +64,47 @@ Push latest:
     - docker tag $CI_REGISTRY_IMAGE:temp $CI_REGISTRY_IMAGE:latest
     - docker push $CI_REGISTRY_IMAGE:latest
 
-Deploy:
+Push tag:
+  stage: push
+  only:
+    - tags
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:temp
+    - docker tag $CI_REGISTRY_IMAGE:temp $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+
+Deploy dev:
+  stage: deploy
+  only:
+    - dev
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - docker container stop dev_to-do-api || true
+    - docker container rm dev_to-do-api || true
+    - >
+      docker container run
+      --publish 3001:3000
+      --name dev_to-do-api
+      --detach
+      $CI_REGISTRY/alvarogarciafer/to-do-api:dev
+      run start-dev
+
+Deploy prod:
   stage: deploy
   only:
     - master
   variables:
     GIT_STRATEGY: none
   script:
-    - docker container stop to-do-api || true
-    - docker container rm to-do-api || true
+    - docker container stop prod_to-do-api || true
+    - docker container rm prod_to-do-api || true
     - >
       docker container run
       --publish 3000:3000
-      --name to-do-api
+      --name prod_to-do-api
       --detach
       $CI_REGISTRY/alvarogarciafer/to-do-api:latest
-      start
+      run start-prod
