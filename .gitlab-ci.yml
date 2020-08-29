@@ -22,7 +22,7 @@ Build:
         .
     - docker push $CI_REGISTRY_IMAGE:temp
 
-Linter:
+Run linter:
   stage: test
   rules:
     - if: ($CI_MERGE_REQUEST_IID || $CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "master")
@@ -35,7 +35,7 @@ Linter:
       $CI_REGISTRY_IMAGE:temp
       run linter
       
-Unit tests:
+Run unit tests:
   stage: test
   rules:
     - if: ($CI_MERGE_REQUEST_IID || $CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "master")
@@ -48,7 +48,7 @@ Unit tests:
       $CI_REGISTRY_IMAGE:temp
       test
 
-Push tag:
+Push tag image:
   stage: push
   rules:
     - if: $CI_COMMIT_TAG
@@ -59,7 +59,7 @@ Push tag:
     - docker tag $CI_REGISTRY_IMAGE:temp $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
 
-Push develop:
+Push develop image:
   stage: push
   rules:
     - if: $CI_COMMIT_BRANCH == "develop"
@@ -70,18 +70,7 @@ Push develop:
     - docker tag $CI_REGISTRY_IMAGE:temp $CI_REGISTRY_IMAGE:develop
     - docker push $CI_REGISTRY_IMAGE:develop
 
-Push:
-  stage: push
-  rules:
-    - if: $CI_COMMIT_BRANCH == "master"
-  variables:
-    GIT_STRATEGY: none
-  script:
-    - docker pull $CI_REGISTRY_IMAGE:temp
-    - docker tag $CI_REGISTRY_IMAGE:temp $CI_REGISTRY_IMAGE
-    - docker push $CI_REGISTRY_IMAGE
-
-Deploy develop:
+Deploy to develop:
   stage: deploy
   rules:
     - if: $CI_COMMIT_BRANCH == "develop"
@@ -99,12 +88,57 @@ Deploy develop:
       $CI_REGISTRY/alvarogarciafer/to-do-api:develop
       run start-develop
 
-Deploy:
+Manual deploy to develop:
+  stage: deploy
+  variables:
+    GIT_STRATEGY: none
+  when: manual
+  script:
+    - docker container stop develop_to-do-api || true
+    - docker container rm develop_to-do-api || true
+    - >
+      docker container run
+      --publish 3001:3000
+      --name develop_to-do-api
+      --detach
+      --restart unless-stopped
+      $CI_REGISTRY/alvarogarciafer/to-do-api:develop
+      run start-develop
+      
+Push production image:
+  stage: push
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:temp
+    - docker tag $CI_REGISTRY_IMAGE:temp $CI_REGISTRY_IMAGE
+    - docker push $CI_REGISTRY_IMAGE
+
+Deploy to production:
   stage: deploy
   rules:
     - if: $CI_COMMIT_BRANCH == "master"
   variables:
     GIT_STRATEGY: none
+  script:
+    - docker container stop to-do-api || true
+    - docker container rm to-do-api || true
+    - >
+      docker container run
+      --publish 3000:3000
+      --name to-do-api
+      --detach
+      --restart unless-stopped
+      $CI_REGISTRY/alvarogarciafer/to-do-api
+      run start
+
+Manual deploy to production:
+  stage: deploy
+  variables:
+    GIT_STRATEGY: none
+  when: manual
   script:
     - docker container stop to-do-api || true
     - docker container rm to-do-api || true
