@@ -1,8 +1,53 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 
 const {items} = require('../data/data');
 
+/**
+ * @swagger
+ *
+ * definitions:
+ *   Item:
+ *     type: object
+ *     required:
+ *       - id
+ *       - text
+ *       - done
+ *     properties:
+ *       id:
+ *         type: integer
+ *       text:
+ *         type: string
+ *       done:
+ *         type: boolean
+ *   Items:
+ *     type: array
+ *     items:
+ *       $ref: '#/definitions/Item'
+ */
+
+/**
+ * @swagger
+ * 
+ * /items:
+ *  get:
+ *    tags:
+ *      - items
+ *    description: Gets all the items
+ *    produces:
+ *      - application/json
+ *    responses:
+ *      200:
+ *        description: OK
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/definitions/Items'
+ *      404:
+ *        description: Not Found
+ *      405:
+ *        description: Method Not Allowed
+ */
 const getItems = (request, response) => response.status(200).send(items);
 
 const methodNotAllowed = (request, response) => response.sendStatus(405);
