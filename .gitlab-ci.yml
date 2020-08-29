@@ -12,7 +12,7 @@ stages:
 Build:
   stage: build
   rules:
-    - if: $CI_MERGE_REQUEST_IID
+    - if: ($CI_MERGE_REQUEST_IID || $CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "master")
   script:
     - docker pull $CI_REGISTRY_IMAGE || true
     - > 
@@ -25,7 +25,7 @@ Build:
 Linter:
   stage: test
   rules:
-    - if: $CI_MERGE_REQUEST_IID
+    - if: ($CI_MERGE_REQUEST_IID || $CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "master")
   variables:
     GIT_STRATEGY: none
   script:
@@ -38,7 +38,7 @@ Linter:
 Unit tests:
   stage: test
   rules:
-    - if: $CI_MERGE_REQUEST_IID
+    - if: ($CI_MERGE_REQUEST_IID || $CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "master")
   variables:
     GIT_STRATEGY: none
   script:
