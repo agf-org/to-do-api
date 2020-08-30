@@ -85,12 +85,15 @@ deploy_development:
     - docker container rm develop_to-do-api || true
     - >
       docker container run
-      --publish 3001:3000
+      --publish $PORT:3000
       --name develop_to-do-api
       --detach
       --restart unless-stopped
       $CI_REGISTRY/alvarogarciafer/to-do-api:develop
-      run start-development
+      run
+      --env NODE_ENV=$NODE_ENV
+      --env PORT=$PORT
+      start
 
 manual_stop_development:
   stage: deploy
@@ -132,12 +135,15 @@ deploy_production:
     - docker container rm to-do-api || true
     - >
       docker container run
-      --publish 3000:3000
+      --publish $PORT:3000
       --name to-do-api
       --detach
       --restart unless-stopped
       $CI_REGISTRY/alvarogarciafer/to-do-api
-      run start
+      run
+      --env NODE_ENV=$NODE_ENV
+      --env PORT=$PORT
+      start
 
 manual_stop_production:
   stage: deploy
