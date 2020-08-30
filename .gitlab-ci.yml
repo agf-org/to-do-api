@@ -81,6 +81,8 @@ deploy_development:
   only:
     - develop
   script:
+    - echo $PORT
+    - echo "$PORT"
     - docker container stop develop_to-do-api || true
     - docker container rm develop_to-do-api || true
     - >
