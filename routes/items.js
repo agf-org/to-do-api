@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const asyncHandler = require('express-async-handler');
 
 const {items} = require('../data/data');
 
@@ -48,9 +49,13 @@ const {items} = require('../data/data');
  *      405:
  *        description: Method Not Allowed
  */
-const getItems = (request, response) => response.status(200).send(items);
+const getItems = asyncHandler(async (request, response) => {
+  response.status(200).send(items);
+});
 
-const methodNotAllowed = (request, response) => response.sendStatus(405);
+const methodNotAllowed = asyncHandler(async (request, response) => {
+  response.sendStatus(405);
+});
 
 router.route('/')
   .get(getItems)
