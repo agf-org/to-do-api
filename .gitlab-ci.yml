@@ -70,29 +70,7 @@ push_develop_image:
     - docker tag $CI_REGISTRY_IMAGE:temp $CI_REGISTRY_IMAGE:develop
     - docker push $CI_REGISTRY_IMAGE:develop
 
-# deploy_development:
-#   stage: deploy
-#   variables:
-#     GIT_STRATEGY: none
-#   environment:
-#     name: development
-#     action: start
-#     on_stop: manual_stop_development
-#   only:
-#     - develop
-#   script:
-#     - docker container stop develop_to-do-api || true
-#     - docker container rm develop_to-do-api || true
-#     - >
-#       docker container run
-#       --publish 3001:3000
-#       --name develop_to-do-api
-#       --detach
-#       --restart unless-stopped
-#       $CI_REGISTRY/alvarogarciafer/to-do-api:develop
-#       run start-development
-
-manual_deploy_development:
+deploy_development:
   stage: deploy
   variables:
     GIT_STRATEGY: none
@@ -102,7 +80,6 @@ manual_deploy_development:
     on_stop: manual_stop_development
   only:
     - develop
-  when: manual
   script:
     - docker container stop develop_to-do-api || true
     - docker container rm develop_to-do-api || true
@@ -140,29 +117,7 @@ push_production_image:
     - docker tag $CI_REGISTRY_IMAGE:temp $CI_REGISTRY_IMAGE
     - docker push $CI_REGISTRY_IMAGE
 
-# deploy_production:
-#   stage: deploy
-#   variables:
-#     GIT_STRATEGY: none
-#   environment:
-#     name: production
-#     action: start
-#     on_stop: manual_stop_production
-#   only:
-#     - master
-#   script:
-#     - docker container stop to-do-api || true
-#     - docker container rm to-do-api || true
-#     - >
-#       docker container run
-#       --publish 3000:3000
-#       --name to-do-api
-#       --detach
-#       --restart unless-stopped
-#       $CI_REGISTRY/alvarogarciafer/to-do-api
-#       run start
-
-manual_deploy_production:
+deploy_production:
   stage: deploy
   variables:
     GIT_STRATEGY: none
@@ -172,7 +127,6 @@ manual_deploy_production:
     on_stop: manual_stop_production
   only:
     - master
-  when: manual
   script:
     - docker container stop to-do-api || true
     - docker container rm to-do-api || true
