@@ -5,13 +5,14 @@
   "scripts": {
     "linter": "npx eslint .",
     "test": "jest",
-    "start-development": "set DEBUG=to-do-api:* & set PORT=3001 & node ./bin/www",
-    "start": "set PORT=3000 & node ./bin/www"
+    "start-development": "set DEBUG=to-do-api:* & set NODE_ENV=development & set PORT=3001 & node ./bin/www",
+    "start": "set NODE_ENV=production & set PORT=3000 & node ./bin/www"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "express": "~4.16.1",
+    "express-async-handler": "^1.1.4",
     "morgan": "~1.9.1",
     "swagger-jsdoc": "^4.0.0",
     "swagger-ui-express": "^4.1.4"
