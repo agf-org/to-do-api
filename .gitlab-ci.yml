@@ -4,23 +4,23 @@ before_script:
   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
 
 stages:
-  - build
+  - prepare-test
   - test
-  - prepare
+  - build
   - deploy
 
-build:
-  stage: build
+build_test:
+  stage: prepare-test
   rules:
     - if: ($CI_MERGE_REQUEST_IID || $CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "master")
   script:
-    - docker pull $CI_REGISTRY_IMAGE || true
+    - docker pull $CI_REGISTRY_IMAGE:test || true
     - > 
         docker build
         --cache-from $CI_REGISTRY_IMAGE
-        --tag $CI_REGISTRY_IMAGE:temp
+        --tag $CI_REGISTRY_IMAGE:test
         .
-    - docker push $CI_REGISTRY_IMAGE:temp
+    - docker push $CI_REGISTRY_IMAGE:test
 
 run_linter:
   stage: test
@@ -32,7 +32,7 @@ run_linter:
     - >
       docker container run
       --rm
-      $CI_REGISTRY_IMAGE:temp
+      $CI_REGISTRY_IMAGE:test
       run linter
       
 run_unit_tests:
@@ -45,37 +45,25 @@ run_unit_tests:
     - >
       docker container run
       --rm
-      $CI_REGISTRY_IMAGE:temp
+      $CI_REGISTRY_IMAGE:test
       test
 
-prepare_tag:
-  stage: prepare
-  variables:
-    GIT_STRATEGY: none
-  only:
-    - tags
-  script:
-    - docker pull $CI_REGISTRY_IMAGE:temp
-    - docker tag $CI_REGISTRY_IMAGE:temp $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
-    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
-
-prepare_development:
-  stage: prepare
-  variables:
-    GIT_STRATEGY: none
+build_development:
+  stage: build
   environment:
     name: development
     action: prepare
   only:
     - develop
   script:
-    - docker pull $CI_REGISTRY_IMAGE:temp
-    - docker tag $CI_REGISTRY_IMAGE:temp $CI_REGISTRY_IMAGE:develop
-    - docker push $CI_REGISTRY_IMAGE:develop
     - echo "NODE_ENV=$NODE_ENV" >> .env
-  artifacts:
-    reports:
-      dotenv: .env
+    - docker pull $CI_REGISTRY_IMAGE:develop || true
+    - > 
+        docker build
+        --cache-from $CI_REGISTRY_IMAGE:develop
+        --tag $CI_REGISTRY_IMAGE:develop
+        .
+    - docker push $CI_REGISTRY_IMAGE:develop
 
 deploy_development:
   stage: deploy
@@ -88,7 +76,6 @@ deploy_development:
   only:
     - develop
   script:
-    - echo $NODE_ENV
     - docker container stop develop_to-do-api || true
     - docker container rm develop_to-do-api || true
     - >
@@ -114,23 +101,22 @@ manual_stop_development:
     - docker container stop develop_to-do-api || true
     - docker container rm develop_to-do-api || true
       
-prepare_production:
-  stage: prepare
-  variables:
-    GIT_STRATEGY: none
+build_production:
+  stage: build
   environment:
     name: production
     action: prepare
   only:
     - master
   script:
-    - docker pull $CI_REGISTRY_IMAGE:temp
-    - docker tag $CI_REGISTRY_IMAGE:temp $CI_REGISTRY_IMAGE
-    - docker push $CI_REGISTRY_IMAGE
     - echo "NODE_ENV=$NODE_ENV" >> .env
-  artifacts:
-    reports:
-      dotenv: .env
+    - docker pull $CI_REGISTRY_IMAGE:latest || true
+    - > 
+        docker build
+        --cache-from $CI_REGISTRY_IMAGE:latest
+        --tag $CI_REGISTRY_IMAGE:latest
+        .
+    - docker push $CI_REGISTRY_IMAGE:latest
 
 deploy_production:
   stage: deploy
@@ -151,7 +137,7 @@ deploy_production:
       --name to-do-api
       --detach
       --restart unless-stopped
-      $CI_REGISTRY_IMAGE
+      $CI_REGISTRY_IMAGE:latest
       start
 
 manual_stop_production:
@@ -167,3 +153,14 @@ manual_stop_production:
   script:
     - docker container stop to-do-api || true
     - docker container rm to-do-api || true
+
+build_tag:
+  stage: build
+  variables:
+    GIT_STRATEGY: none
+  only:
+    - tags
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:latest
+    - docker tag $CI_REGISTRY_IMAGE:latest $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
