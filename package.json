@@ -5,7 +5,7 @@
   "scripts": {
     "linter": "npx eslint .",
     "test": "jest",
-    "start-develop": "set DEBUG=to-do-api:* & set PORT=3001 & node ./bin/www",
+    "start-development": "set DEBUG=to-do-api:* & set PORT=3001 & node ./bin/www",
     "start": "set PORT=3000 & node ./bin/www"
   },
   "dependencies": {
