@@ -99,7 +99,7 @@ Manual stop development:
     name: development
     action: stop
   only:
-    - master
+    - develop
   when: manual
   script:
     - docker container stop develop_to-do-api || true
