@@ -5,8 +5,8 @@
   "scripts": {
     "linter": "npx eslint .",
     "test": "jest",
-    "start-development": "set DEBUG=to-do-api:* & set PORT=3001 & node ./bin/www",
-    "start": "set PORT=3000 & node ./bin/www"
+    "start-development": "set DEBUG=to-do-api:* & set NODE_ENV=development & set PORT=3001 & node ./bin/www",
+    "start": "set NODE_ENV=production & set PORT=3000 & node ./bin/www"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",

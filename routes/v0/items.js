@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const asyncHandler = require('express-async-handler');
 
-const {items} = require('../data/data');
+const {items} = require('../../data/data');
 
 /**
  * @swagger
