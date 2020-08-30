@@ -81,20 +81,17 @@ deploy_development:
   only:
     - develop
   script:
-    - echo $PORT
-    - echo "$PORT"
     - docker container stop develop_to-do-api || true
     - docker container rm develop_to-do-api || true
     - >
       docker container run
+      --env NODE_ENV=$NODE_ENV
+      --env PORT=$PORT
       --publish $PORT:3000
       --name develop_to-do-api
       --detach
       --restart unless-stopped
-      $CI_REGISTRY/alvarogarciafer/to-do-api:develop
-      run
-      --env NODE_ENV=$NODE_ENV
-      --env PORT=$PORT
+      $CI_REGISTRY_IMAGE:develop
       start
 
 manual_stop_development:
@@ -137,14 +134,13 @@ deploy_production:
     - docker container rm to-do-api || true
     - >
       docker container run
+      --env NODE_ENV=$NODE_ENV
+      --env PORT=$PORT
       --publish $PORT:3000
       --name to-do-api
       --detach
       --restart unless-stopped
-      $CI_REGISTRY/alvarogarciafer/to-do-api
-      run
-      --env NODE_ENV=$NODE_ENV
-      --env PORT=$PORT
+      $CI_REGISTRY_IMAGE
       start
 
 manual_stop_production:
