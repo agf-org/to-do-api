@@ -1,14 +1,17 @@
 # To-do API
 
 ### Usage
+
+Create a `.env` file with the following environment variables:
+
+* DEBUG=to-do-api:*
+* NODE_ENV=development
+
+To start the app use:
 ```
 $ npm start
 ```
-Run linter:
-```
-$ npm run linter
-```
-Run unit tests:
-```
-$ npm test
-```
+
+### Documentation
+
+You can find the API specification at http://localhost:3000/api/v0/api-docs/
