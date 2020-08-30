@@ -86,7 +86,6 @@ deploy_development:
     - >
       docker container run
       --env NODE_ENV=$NODE_ENV
-      --env PORT=$PORT
       --publish $PORT:3000
       --name develop_to-do-api
       --detach
@@ -135,7 +134,6 @@ deploy_production:
     - >
       docker container run
       --env NODE_ENV=$NODE_ENV
-      --env PORT=$PORT
       --publish $PORT:3000
       --name to-do-api
       --detach
