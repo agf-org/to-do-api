@@ -7,13 +7,13 @@ const options = {
     openapi: '3.0.0',
     info: {
       title: 'To-do API',
-      version: '1.0.0',
+      version: `0`,
       description: 'Welcome to my To-do API!'
     },
   },
   apis: [
-      'routes/index.js',
-      'routes/items.js'
+      'routes/v0/index.js',
+      'routes/v0/items.js'
     ],
 };
 
