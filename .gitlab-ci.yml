@@ -9,7 +9,7 @@ stages:
   - push
   - deploy
 
-Build:
+build:
   stage: build
   rules:
     - if: ($CI_MERGE_REQUEST_IID || $CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "master")
@@ -22,7 +22,7 @@ Build:
         .
     - docker push $CI_REGISTRY_IMAGE:temp
 
-Run linter:
+run_linter:
   stage: test
   variables:
     GIT_STRATEGY: none
@@ -35,7 +35,7 @@ Run linter:
       $CI_REGISTRY_IMAGE:temp
       run linter
       
-Run unit tests:
+run_unit_tests:
   stage: test
   variables:
     GIT_STRATEGY: none
@@ -48,7 +48,7 @@ Run unit tests:
       $CI_REGISTRY_IMAGE:temp
       test
 
-Push tag image:
+push_tag_image:
   stage: push
   variables:
     GIT_STRATEGY: none
@@ -59,7 +59,7 @@ Push tag image:
     - docker tag $CI_REGISTRY_IMAGE:temp $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
 
-Push develop image:
+push_develop_image:
   stage: push
   variables:
     GIT_STRATEGY: none
@@ -70,15 +70,16 @@ Push develop image:
     - docker tag $CI_REGISTRY_IMAGE:temp $CI_REGISTRY_IMAGE:develop
     - docker push $CI_REGISTRY_IMAGE:develop
 
-Deploy development:
+deploy_development:
   stage: deploy
   variables:
     GIT_STRATEGY: none
   environment:
     name: development
-    on_stop: Manual stop development
-  rules:
-    - if: $CI_COMMIT_BRANCH == "develop"
+    action: start
+    on_stop: manual_stop_development
+  only:
+    - develop
   script:
     - docker container stop develop_to-do-api || true
     - docker container rm develop_to-do-api || true
@@ -91,7 +92,7 @@ Deploy development:
       $CI_REGISTRY/alvarogarciafer/to-do-api:develop
       run start-development
 
-Manual stop development:
+manual_stop_development:
   stage: deploy
   variables:
     GIT_STRATEGY: none
@@ -105,7 +106,7 @@ Manual stop development:
     - docker container stop develop_to-do-api || true
     - docker container rm develop_to-do-api || true
       
-Push production image:
+push_production_image:
   stage: push
   variables:
     GIT_STRATEGY: none
@@ -116,15 +117,16 @@ Push production image:
     - docker tag $CI_REGISTRY_IMAGE:temp $CI_REGISTRY_IMAGE
     - docker push $CI_REGISTRY_IMAGE
 
-Deploy production:
+deploy_production:
   stage: deploy
   variables:
     GIT_STRATEGY: none
   environment:
     name: production
-    on_stop: Manual stop production
-  rules:
-    - if: $CI_COMMIT_BRANCH == "master"
+    action: start
+    on_stop: manual_stop_production
+  only:
+    - master
   script:
     - docker container stop to-do-api || true
     - docker container rm to-do-api || true
@@ -137,7 +139,7 @@ Deploy production:
       $CI_REGISTRY/alvarogarciafer/to-do-api
       run start
 
-Manual stop production:
+manual_stop_production:
   stage: deploy
   variables:
     GIT_STRATEGY: none
