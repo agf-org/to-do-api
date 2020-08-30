@@ -101,7 +101,6 @@ manual_stop_development:
     action: stop
   only:
     - develop
-  when: manual
   script:
     - docker container stop develop_to-do-api || true
     - docker container rm develop_to-do-api || true
@@ -148,7 +147,6 @@ manual_stop_production:
     action: stop
   only:
     - master
-  when: manual
   script:
     - docker container stop to-do-api || true
     - docker container rm to-do-api || true
