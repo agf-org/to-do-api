@@ -70,34 +70,15 @@ Push develop image:
     - docker tag $CI_REGISTRY_IMAGE:temp $CI_REGISTRY_IMAGE:develop
     - docker push $CI_REGISTRY_IMAGE:develop
 
-# Deploy to development:
-#   stage: deploy
-#   variables:
-#     GIT_STRATEGY: none
-#   rules:
-#     - if: $CI_COMMIT_BRANCH == "develop"
-#   script:
-#     - docker container stop develop_to-do-api || true
-#     - docker container rm develop_to-do-api || true
-#     - >
-#       docker container run
-#       --publish 3001:3000
-#       --name develop_to-do-api
-#       --detach
-#       --restart unless-stopped
-#       $CI_REGISTRY/alvarogarciafer/to-do-api:develop
-#       run start-development
-
-Manual deploy development:
+Deploy development:
   stage: deploy
   variables:
     GIT_STRATEGY: none
   environment:
-    name: Development
+    name: development
     on_stop: Manual stop development
-  only:
-    - develop
-  when: manual
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
   script:
     - docker container stop develop_to-do-api || true
     - docker container rm develop_to-do-api || true
@@ -115,10 +96,10 @@ Manual stop development:
   variables:
     GIT_STRATEGY: none
   environment:
-    name: Development
+    name: development
     action: stop
   only:
-    - develop
+    - master
   when: manual
   script:
     - docker container stop develop_to-do-api || true
@@ -135,34 +116,15 @@ Push production image:
     - docker tag $CI_REGISTRY_IMAGE:temp $CI_REGISTRY_IMAGE
     - docker push $CI_REGISTRY_IMAGE
 
-# Deploy to production:
-#   stage: deploy
-#   variables:
-#     GIT_STRATEGY: none
-#   rules:
-#     - if: $CI_COMMIT_BRANCH == "master"
-#   script:
-#     - docker container stop to-do-api || true
-#     - docker container rm to-do-api || true
-#     - >
-#       docker container run
-#       --publish 3000:3000
-#       --name to-do-api
-#       --detach
-#       --restart unless-stopped
-#       $CI_REGISTRY/alvarogarciafer/to-do-api
-#       run start
-
-Manual deploy production:
+Deploy production:
   stage: deploy
   variables:
     GIT_STRATEGY: none
   environment:
-    name: Production
+    name: production
     on_stop: Manual stop production
-  only:
-    - master
-  when: manual
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
   script:
     - docker container stop to-do-api || true
     - docker container rm to-do-api || true
@@ -180,7 +142,7 @@ Manual stop production:
   variables:
     GIT_STRATEGY: none
   environment:
-    name: Production
+    name: production
     action: stop
   only:
     - master
