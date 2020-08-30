@@ -88,12 +88,13 @@ Push develop image:
 #       $CI_REGISTRY/alvarogarciafer/to-do-api:develop
 #       run start-development
 
-Manual deploy to development:
+Manual deploy development:
   stage: deploy
   variables:
     GIT_STRATEGY: none
   environment:
     name: Development
+    on_stop: Manual stop development
   only:
     - develop
   when: manual
@@ -108,6 +109,20 @@ Manual deploy to development:
       --restart unless-stopped
       $CI_REGISTRY/alvarogarciafer/to-do-api:develop
       run start-development
+
+Manual stop development:
+  stage: deploy
+  variables:
+    GIT_STRATEGY: none
+  environment:
+    name: Development
+    action: stop
+  only:
+    - develop
+  when: manual
+  script:
+    - docker container stop develop_to-do-api || true
+    - docker container rm develop_to-do-api || true
       
 Push production image:
   stage: push
@@ -138,12 +153,13 @@ Push production image:
 #       $CI_REGISTRY/alvarogarciafer/to-do-api
 #       run start
 
-Manual deploy to production:
+Manual deploy production:
   stage: deploy
   variables:
     GIT_STRATEGY: none
   environment:
     name: Production
+    on_stop: Manual stop production
   only:
     - master
   when: manual
@@ -158,3 +174,17 @@ Manual deploy to production:
       --restart unless-stopped
       $CI_REGISTRY/alvarogarciafer/to-do-api
       run start
+
+Manual stop production:
+  stage: deploy
+  variables:
+    GIT_STRATEGY: none
+  environment:
+    name: Production
+    action: stop
+  only:
+    - master
+  when: manual
+  script:
+    - docker container stop to-do-api || true
+    - docker container rm to-do-api || true
