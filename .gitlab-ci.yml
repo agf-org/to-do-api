@@ -56,7 +56,6 @@ build_development:
   only:
     - develop
   script:
-    - echo "NODE_ENV=$NODE_ENV" >> .env
     - docker pull $CI_REGISTRY_IMAGE:develop || true
     - > 
         docker build
@@ -78,14 +77,17 @@ deploy_development:
   script:
     - docker container stop develop_to-do-api || true
     - docker container rm develop_to-do-api || true
+    - echo "NODE_ENV=$NODE_ENV" >> .env
     - >
       docker container run
+      --env-file .env
       --publish $PORT:3000
       --name develop_to-do-api
       --detach
       --restart unless-stopped
       $CI_REGISTRY_IMAGE:develop
       start
+    - rm .env
 
 manual_stop_development:
   stage: deploy
@@ -109,7 +111,6 @@ build_production:
   only:
     - master
   script:
-    - echo "NODE_ENV=$NODE_ENV" >> .env
     - docker pull $CI_REGISTRY_IMAGE:latest || true
     - > 
         docker build
@@ -131,14 +132,17 @@ deploy_production:
   script:
     - docker container stop to-do-api || true
     - docker container rm to-do-api || true
+    - echo "NODE_ENV=$NODE_ENV" >> .env
     - >
       docker container run
+      --env-file .env
       --publish $PORT:3000
       --name to-do-api
       --detach
       --restart unless-stopped
       $CI_REGISTRY_IMAGE:latest
       start
+    - rm .env
 
 manual_stop_production:
   stage: deploy
