@@ -2,6 +2,16 @@ image: docker:19.03.12
 
 before_script:
   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  - >
+    if [ "$CI_COMMIT_BRANCH" == "master" ]; then
+      ENVIRONMENT_NAME="production"
+      IMAGE_TAG="latest"
+      CONTAINER_NAME="to-do-api"
+    else
+      ENVIRONMENT_NAME="development"
+      IMAGE_TAG="$CI_COMMIT_BRANCH"
+      CONTAINER_NAME=""$CI_COMMIT_BRANCH"to-do-api"
+    fi
 
 stages:
   - prepare-test
@@ -16,10 +26,10 @@ build_test:
   script:
     - docker pull $CI_REGISTRY_IMAGE:test || true
     - > 
-        docker build
-        --cache-from $CI_REGISTRY_IMAGE
-        --tag $CI_REGISTRY_IMAGE:test
-        .
+      docker build
+      --cache-from $CI_REGISTRY_IMAGE
+      --tag $CI_REGISTRY_IMAGE:test
+      .
     - docker push $CI_REGISTRY_IMAGE:test
 
 run_linter:
@@ -48,115 +58,61 @@ run_unit_tests:
       $CI_REGISTRY_IMAGE:test
       test
 
-build_development:
+build:
   stage: build
   environment:
-    name: development
+    name: $ENVIRONMENT_NAME
     action: prepare
-  only:
-    - develop
+  rules:
+    - if: ($CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "master")
   script:
-    - docker pull $CI_REGISTRY_IMAGE:develop || true
+    - docker pull $CI_REGISTRY_IMAGE:$IMAGE_TAG || true
     - > 
-        docker build
-        --cache-from $CI_REGISTRY_IMAGE:develop
-        --tag $CI_REGISTRY_IMAGE:develop
-        .
-    - docker push $CI_REGISTRY_IMAGE:develop
+      docker build
+      --cache-from $CI_REGISTRY_IMAGE:$IMAGE_TAG
+      --tag $CI_REGISTRY_IMAGE:$IMAGE_TAG
+      .
+    - docker push $CI_REGISTRY_IMAGE:$IMAGE_TAG
 
-deploy_development:
+deploy:
   stage: deploy
   variables:
     GIT_STRATEGY: none
   environment:
-    name: development
+    name: $ENVIRONMENT_NAME
     action: start
-    on_stop: manual_stop_development
-  only:
-    - develop
+    on_stop: manual_stop
+  rules:
+    - if: ($CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "master")
   script:
-    - docker container stop develop_to-do-api || true
-    - docker container rm develop_to-do-api || true
+    - docker container stop $CONTAINER_NAME || true
+    - docker container rm $CONTAINER_NAME || true
     - echo "NODE_ENV=$NODE_ENV" >> .env
     - >
       docker container run
       --env-file .env
       --publish $PORT:3000
-      --name develop_to-do-api
+      --name $CONTAINER_NAME
       --detach
       --restart unless-stopped
-      $CI_REGISTRY_IMAGE:develop
+      $CI_REGISTRY_IMAGE:$IMAGE_TAG
       start
     - rm .env
 
-manual_stop_development:
+manual_stop:
   stage: deploy
   variables:
     GIT_STRATEGY: none
   environment:
-    name: development
+    name: $ENVIRONMENT_NAME
     action: stop
-  only:
-    - develop
-  when: manual
+  rules:
+    - if: ($CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "master")
+      when: manual
+      allow_failure: true
   script:
-    - docker container stop develop_to-do-api || true
-    - docker container rm develop_to-do-api || true
-      
-build_production:
-  stage: build
-  environment:
-    name: production
-    action: prepare
-  only:
-    - master
-  script:
-    - docker pull $CI_REGISTRY_IMAGE:latest || true
-    - > 
-        docker build
-        --cache-from $CI_REGISTRY_IMAGE:latest
-        --tag $CI_REGISTRY_IMAGE:latest
-        .
-    - docker push $CI_REGISTRY_IMAGE:latest
-
-deploy_production:
-  stage: deploy
-  variables:
-    GIT_STRATEGY: none
-  environment:
-    name: production
-    action: start
-    on_stop: manual_stop_production
-  only:
-    - master
-  script:
-    - docker container stop to-do-api || true
-    - docker container rm to-do-api || true
-    - echo "NODE_ENV=$NODE_ENV" >> .env
-    - >
-      docker container run
-      --env-file .env
-      --publish $PORT:3000
-      --name to-do-api
-      --detach
-      --restart unless-stopped
-      $CI_REGISTRY_IMAGE:latest
-      start
-    - rm .env
-
-manual_stop_production:
-  stage: deploy
-  variables:
-    GIT_STRATEGY: none
-  environment:
-    name: production
-    action: stop
-  only:
-    - master
-  when: manual
-  script:
-    - docker container stop to-do-api || true
-    - docker container rm to-do-api || true
+    - docker container stop $CONTAINER_NAME || true
+    - docker container rm $CONTAINER_NAME || true
 
 build_tag:
   stage: build
