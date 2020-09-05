@@ -1,0 +1,55 @@
+build_production:
+  stage: build
+  environment:
+    name: production
+    action: prepare
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:latest || true
+    - > 
+      docker build
+      --cache-from $CI_REGISTRY_IMAGE:latest
+      --tag $CI_REGISTRY_IMAGE:latest
+      .
+    - docker push $CI_REGISTRY_IMAGE:latest
+
+deploy_production:
+  stage: deploy
+  variables:
+    GIT_STRATEGY: none
+  environment:
+    name: production
+    action: start
+    on_stop: manual_stop_production
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+  script:
+    - docker container stop to-do-api || true
+    - docker container rm to-do-api || true
+    - echo "NODE_ENV=$NODE_ENV" >> .env
+    - >
+      docker container run
+      --env-file .env
+      --publish $PORT:3000
+      --name to-do-api
+      --detach
+      --restart unless-stopped
+      $CI_REGISTRY_IMAGE:latest
+      start
+    - rm .env
+
+manual_stop_production:
+  stage: deploy
+  variables:
+    GIT_STRATEGY: none
+  environment:
+    name: production
+    action: stop
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+      when: manual
+      allow_failure: true
+  script:
+    - docker container stop to-do-api || true
+    - docker container rm to-do-api || true
