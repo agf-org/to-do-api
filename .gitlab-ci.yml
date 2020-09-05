@@ -1,8 +1,8 @@
 image: docker:19.03.12
 
 include:
-  - local: 'ci/development-ci.yml'
-  - local: 'ci/production-cy.yml'
+  - local: 'ci/gitlab-ci-development.yml'
+  - local: 'ci/gitlab-ci-production.yml'
 
 before_script:
   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
