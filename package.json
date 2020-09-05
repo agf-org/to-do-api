@@ -5,7 +5,10 @@
   "scripts": {
     "linter": "npx eslint .",
     "test": "jest",
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "bump_patch": "npm --no-git-tag-version version patch & git push origin --tags",
+    "bump_minor": "npm --no-git-tag-version version minor & git push origin --tags",
+    "bump_major": "npm --no-git-tag-version version major & git push origin --tags"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
