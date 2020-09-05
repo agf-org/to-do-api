@@ -74,6 +74,17 @@ build:
       .
     - docker push $CI_REGISTRY_IMAGE:$IMAGE_TAG
 
+build_tag:
+  stage: build
+  variables:
+    GIT_STRATEGY: none   
+  rules:
+    - if: ($CI_COMMIT_TAG && $CI_COMMIT_BRANCH == "master")
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:$IMAGE_TAG
+    - docker tag $CI_REGISTRY_IMAGE:$IMAGE_TAG $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+
 deploy:
   stage: deploy
   variables:
@@ -113,14 +124,3 @@ manual_stop:
   script:
     - docker container stop $CONTAINER_NAME || true
     - docker container rm $CONTAINER_NAME || true
-
-build_tag:
-  stage: build
-  variables:
-    GIT_STRATEGY: none
-  only:
-    - tags
-  script:
-    - docker pull $CI_REGISTRY_IMAGE:latest
-    - docker tag $CI_REGISTRY_IMAGE:latest $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
-    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
