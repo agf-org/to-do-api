@@ -1,17 +1,11 @@
 image: docker:19.03.12
 
+include:
+  - local: 'ci/development-ci.yml'
+  - local: 'ci/production-cy.yml'
+
 before_script:
   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-  - >
-    if [ "$CI_COMMIT_BRANCH" == "master" ]; then
-      ENVIRONMENT_NAME="production"
-      IMAGE_TAG="latest"
-      CONTAINER_NAME="to-do-api"
-    else
-      ENVIRONMENT_NAME="development"
-      IMAGE_TAG="develop"
-      CONTAINER_NAME="develop_to-do-api"
-    fi
 
 stages:
   - prepare-test
@@ -58,22 +52,6 @@ run_unit_tests:
       $CI_REGISTRY_IMAGE:test
       test
 
-build:
-  stage: build
-  environment:
-    name: $ENVIRONMENT_NAME
-    action: prepare
-  rules:
-    - if: ($CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "master")
-  script:
-    - docker pull $CI_REGISTRY_IMAGE:$IMAGE_TAG || true
-    - > 
-      docker build
-      --cache-from $CI_REGISTRY_IMAGE:$IMAGE_TAG
-      --tag $CI_REGISTRY_IMAGE:$IMAGE_TAG
-      .
-    - docker push $CI_REGISTRY_IMAGE:$IMAGE_TAG
-
 build_tag:
   stage: build
   variables:
@@ -84,43 +62,3 @@ build_tag:
     - docker pull $CI_REGISTRY_IMAGE:latest
     - docker tag $CI_REGISTRY_IMAGE:latest $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
-
-deploy:
-  stage: deploy
-  variables:
-    GIT_STRATEGY: none
-  environment:
-    name: $ENVIRONMENT_NAME
-    action: start
-    on_stop: manual_stop
-  rules:
-    - if: ($CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "master")
-  script:
-    - docker container stop $CONTAINER_NAME || true
-    - docker container rm $CONTAINER_NAME || true
-    - echo "NODE_ENV=$NODE_ENV" >> .env
-    - >
-      docker container run
-      --env-file .env
-      --publish $PORT:3000
-      --name $CONTAINER_NAME
-      --detach
-      --restart unless-stopped
-      $CI_REGISTRY_IMAGE:$IMAGE_TAG
-      start
-    - rm .env
-
-manual_stop:
-  stage: deploy
-  variables:
-    GIT_STRATEGY: none
-  environment:
-    name: $ENVIRONMENT_NAME
-    action: stop
-  rules:
-    - if: ($CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "master")
-      when: manual
-      allow_failure: true
-  script:
-    - docker container stop $CONTAINER_NAME || true
-    - docker container rm $CONTAINER_NAME || true
