@@ -10,7 +10,7 @@ before_script:
     else
       ENVIRONMENT_NAME="development"
       IMAGE_TAG="$CI_COMMIT_BRANCH"
-      CONTAINER_NAME=""$CI_COMMIT_BRANCH"to-do-api"
+      CONTAINER_NAME=""$CI_COMMIT_BRANCH"_to-do-api"
     fi
 
 stages:
