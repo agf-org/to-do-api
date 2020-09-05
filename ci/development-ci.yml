@@ -4,7 +4,7 @@ build_develop:
     name: development
     action: prepare
   rules:
-    - if: ($CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "master")
+    - if: $CI_COMMIT_BRANCH == "develop"
   script:
     - docker pull $CI_REGISTRY_IMAGE:develop || true
     - > 
@@ -23,7 +23,7 @@ deploy_develop:
     action: start
     on_stop: manual_stop_develop
   rules:
-    - if: ($CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "master")
+    - if: $CI_COMMIT_BRANCH == "develop"
   script:
     - docker container stop develop_to-do-api || true
     - docker container rm develop_to-do-api || true
@@ -47,7 +47,7 @@ manual_stop_develop:
     name: development
     action: stop
   rules:
-    - if: ($CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "master")
+    - if: $CI_COMMIT_BRANCH == "develop"
       when: manual
       allow_failure: true
   script:

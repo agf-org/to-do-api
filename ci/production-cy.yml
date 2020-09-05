@@ -4,7 +4,7 @@ build_production:
     name: production
     action: prepare
   rules:
-    - if: ($CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "master")
+    - if: $CI_COMMIT_BRANCH == "master"
   script:
     - docker pull $CI_REGISTRY_IMAGE:latest || true
     - > 
@@ -23,7 +23,7 @@ deploy_production:
     action: start
     on_stop: manual_stop_production
   rules:
-    - if: ($CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "master")
+    - if: $CI_COMMIT_BRANCH == "master"
   script:
     - docker container stop to-do-api || true
     - docker container rm to-do-api || true
@@ -47,7 +47,7 @@ manual_stop_production:
     name: production
     action: stop
   rules:
-    - if: ($CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "master")
+    - if: $CI_COMMIT_BRANCH == "master"
       when: manual
       allow_failure: true
   script:
