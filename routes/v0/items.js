@@ -34,7 +34,7 @@ const {items} = require('../../data/data');
  *  get:
  *    tags:
  *      - items
- *    description: Gets all the items
+ *    description: Gets all Items
  *    produces:
  *      - application/json
  *    responses:
