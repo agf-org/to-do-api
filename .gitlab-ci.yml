@@ -21,7 +21,7 @@ build_test:
     - docker pull $CI_REGISTRY_IMAGE:test || true
     - > 
       docker build
-      --cache-from $CI_REGISTRY_IMAGE
+      --cache-from $CI_REGISTRY_IMAGE:test
       --tag $CI_REGISTRY_IMAGE:test
       .
     - docker push $CI_REGISTRY_IMAGE:test
