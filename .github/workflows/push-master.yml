@@ -1,4 +1,4 @@
-name: push-production
+name: push-master
 
 env:
   NODE_ENV: 'production'
