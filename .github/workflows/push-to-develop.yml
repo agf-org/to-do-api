@@ -1,15 +1,15 @@
-name: push-master
+name: push-to-develop
 
 env:
-  NODE_ENV: 'production'
-  PORT: '3000'
+  NODE_ENV: 'development'
+  PORT: '3001'
   IMAGE: 'ghcr.io/agf-org/to-do-api'
-  IMAGE_TAG: 'latest'
-  CONTAINER_NAME: 'to-do-api'
+  IMAGE_TAG: 'develop'
+  CONTAINER_NAME: 'develop_to-do-api'
 
 on:
   push:
-    branches: [ master ]
+    branches: [ develop ]
 
 jobs:
   test:
