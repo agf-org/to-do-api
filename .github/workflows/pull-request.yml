@@ -1,0 +1,45 @@
+name: pull-request
+
+env:
+  IMAGE: 'ghcr.io/agf-org/to-do-api'
+
+on:
+  pull_request:
+    branches: [ develop, master ]
+
+jobs:
+  test:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.CR_PAT }}
+
+      - name: Build test image
+        run: |
+          docker pull ${{ env.IMAGE }}:test || true
+          docker build \
+          --cache-from ${{ env.IMAGE }}:test \
+          --tag ${{ env.IMAGE }}:test \
+          .
+          docker push ${{ env.IMAGE }}:test
+
+      - name: Run linter
+        run: |
+          docker container run \
+          --rm \
+          ${{ env.IMAGE }}:test \
+          run linter
+
+      - name: Run unit tests
+        run: |
+          docker container run \
+          --rm \
+          ${{ env.IMAGE }}:test \
+          test
