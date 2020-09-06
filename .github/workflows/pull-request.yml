@@ -1,5 +1,8 @@
 name: pull-request
 
+env:
+  IMAGE: 'ghcr.io/agf-org/to-do-api'
+
 on:
   pull_request:
     branches: [ develop, master ]
@@ -20,23 +23,23 @@ jobs:
 
       - name: Build test image
         run: |
-          docker pull ghcr.io/agf-org/to-do-api:test || true
+          docker pull ${{ env.IMAGE }}:test || true
           docker build \
-          --cache-from ghcr.io/agf-org/to-do-api:test \
-          --tag ghcr.io/agf-org/to-do-api:test \
+          --cache-from ${{ env.IMAGE }}:test \
+          --tag ${{ env.IMAGE }}:test \
           .
-          docker push ghcr.io/agf-org/to-do-api:test
+          docker push ${{ env.IMAGE }}:test
 
       - name: Run linter
         run: |
           docker container run \
           --rm \
-          ghcr.io/agf-org/to-do-api:test \
+          ${{ env.IMAGE }}:test \
           run linter
 
       - name: Run unit tests
         run: |
           docker container run \
           --rm \
-          ghcr.io/agf-org/to-do-api:test \
+          ${{ env.IMAGE }}:test \
           test
