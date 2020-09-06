@@ -1,5 +1,12 @@
 name: push-develop
 
+env:
+  NODE_ENV: 'development'
+  PORT: '3001'
+  IMAGE: 'ghcr.io/agf-org/to-do-api'
+  IMAGE_TAG: 'develop'
+  CONTAINER_NAME: 'develop_to-do-api'
+
 on:
   push:
     branches: [ develop ]
@@ -20,25 +27,25 @@ jobs:
 
       - name: Build test image
         run: |
-          docker pull ghcr.io/agf-org/to-do-api:test || true
+          docker pull ${{ env.IMAGE }}:test || true
           docker build \
-          --cache-from ghcr.io/agf-org/to-do-api:test \
-          --tag ghcr.io/agf-org/to-do-api:test \
+          --cache-from ${{ env.IMAGE }}:test \
+          --tag ${{ env.IMAGE }}:test \
           .
-          docker push ghcr.io/agf-org/to-do-api:test
+          docker push ${{ env.IMAGE }}:test
 
       - name: Run linter
         run: |
           docker container run \
           --rm \
-          ghcr.io/agf-org/to-do-api:test \
+          ${{ env.IMAGE }}:test \
           run linter
 
       - name: Run unit tests
         run: |
           docker container run \
           --rm \
-          ghcr.io/agf-org/to-do-api:test \
+          ${{ env.IMAGE }}:test \
           test
 
   build:
@@ -57,12 +64,12 @@ jobs:
 
       - name: Build develop image
         run: |
-          docker pull ghcr.io/agf-org/to-do-api:develop || true
+          docker pull ${{ env.IMAGE }}:${{ env.IMAGE_TAG}} || true
           docker build \
-          --cache-from ghcr.io/agf-org/to-do-api:develop \
-          --tag ghcr.io/agf-org/to-do-api:develop \
+          --cache-from ${{ env.IMAGE }}:${{ env.IMAGE_TAG}} \
+          --tag ${{ env.IMAGE }}:${{ env.IMAGE_TAG}} \
           .
-          docker push ghcr.io/agf-org/to-do-api:develop
+          docker push ${{ env.IMAGE }}:${{ env.IMAGE_TAG}}
           
   deploy:
     needs: build
@@ -80,15 +87,15 @@ jobs:
 
       - name: Deploy develop Container
         run: |
-          docker container stop develop_to-do-api || true
-          docker container rm develop_to-do-api || true
-          echo "NODE_ENV=$NODE_ENV" >> .env
+          docker container stop ${{ env.CONTAINER_NAME}} || true
+          docker container rm ${{ env.CONTAINER_NAME}} || true
+          echo "NODE_ENV=${{ env.NODE_ENV }}" >> .env
           docker container run \
           --env-file .env \
-          --publish $PORT:3000 \
-          --name develop_to-do-api \
+          --publish ${{ env.PORT }}:3000 \
+          --name ${{ env.CONTAINER_NAME}} \
           --detach \
           --restart unless-stopped \
-          ghcr.io/agf-org/to-do-api:develop \
+          ${{ env.IMAGE }}:${{ env.IMAGE_TAG}} \
           start
           rm .env
