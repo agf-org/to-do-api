@@ -1,8 +1,6 @@
-name: test
+name: pull-request
 
 on:
-  push:
-    branches: [ develop, master ]
   pull_request:
     branches: [ develop, master ]
 
@@ -20,7 +18,7 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.CR_PAT }}
 
-      - name: Build test container
+      - name: Build test image
         run: |
           docker pull ghcr.io/agf-org/to-do-api:test || true
           docker build \

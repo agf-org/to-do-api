@@ -1,0 +1,94 @@
+name: push-develop
+
+on:
+  push:
+    branches: [ develop ]
+
+jobs:
+  test:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.CR_PAT }}
+
+      - name: Build test image
+        run: |
+          docker pull ghcr.io/agf-org/to-do-api:test || true
+          docker build \
+          --cache-from ghcr.io/agf-org/to-do-api:test \
+          --tag ghcr.io/agf-org/to-do-api:test \
+          .
+          docker push ghcr.io/agf-org/to-do-api:test
+
+      - name: Run linter
+        run: |
+          docker container run \
+          --rm \
+          ghcr.io/agf-org/to-do-api:test \
+          run linter
+
+      - name: Run unit tests
+        run: |
+          docker container run \
+          --rm \
+          ghcr.io/agf-org/to-do-api:test \
+          test
+
+  build:
+    needs: test
+    runs-on: self-hosted
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.CR_PAT }}
+
+      - name: Build develop image
+        run: |
+          docker pull ghcr.io/agf-org/to-do-api:develop || true
+          docker build \
+          --cache-from ghcr.io/agf-org/to-do-api:develop \
+          --tag ghcr.io/agf-org/to-do-api:develop \
+          .
+          docker push ghcr.io/agf-org/to-do-api:develop
+          
+  deploy:
+    needs: build
+    runs-on: self-hosted
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.CR_PAT }}
+
+      - name: Deploy develop Container
+        run: |
+          docker container stop develop_to-do-api || true
+          docker container rm develop_to-do-api || true
+          echo "NODE_ENV=$NODE_ENV" >> .env
+          docker container run \
+          --env-file .env \
+          --publish $PORT:3000 \
+          --name develop_to-do-api \
+          --detach \
+          --restart unless-stopped \
+          ghcr.io/agf-org/to-do-api:develop \
+          start
+          rm .env
