@@ -1,0 +1,44 @@
+name: test
+
+on:
+  push:
+    branches: [ develop, master ]
+  pull_request:
+    branches: [ develop, master ]
+
+jobs:
+  test:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.CR_PAT }}
+
+      - name: Build test container
+        run: |
+          docker pull ghcr.io/agf-org/to-do-api:test || true
+          docker build \
+          --cache-from ghcr.io/agf-org/to-do-api:test \
+          --tag ghcr.io/agf-org/to-do-api:test \
+          .
+          docker push ghcr.io/agf-org/to-do-api:test
+
+      - name: Run linter
+        run: |
+          docker container run \
+          --rm \
+          ghcr.io/agf-org/to-do-api:test \
+          run linter
+
+      - name: Run unit tests
+        run: |
+          docker container run \
+          --rm \
+          ghcr.io/agf-org/to-do-api:test \
+          test
