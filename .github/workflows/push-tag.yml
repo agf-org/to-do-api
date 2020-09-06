@@ -60,8 +60,11 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.CR_PAT }}
 
+      - id: get_version
+        uses: battila7/get-version-action@v2
+
       - name: Build image
         run: |
           docker pull ${{ env.IMAGE }}:${{ env.IMAGE_TAG}}
-          docker tag ${{ env.IMAGE }}:${{ env.IMAGE_TAG}} ${{ env.IMAGE }}:${{ github.event.release.tag_name }}
-          docker push ${{ env.IMAGE }}:${{ github.event.release.tag_name }}
+          docker tag ${{ env.IMAGE }}:${{ env.IMAGE_TAG}} ${{ env.IMAGE }}:${{ steps.get_version.outputs.version }}
+          docker push ${{ env.IMAGE }}:${{ steps.get_version.outputs.version }}
