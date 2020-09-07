@@ -1,7 +1,8 @@
 name: push-tag
 
 env:
-  IMAGE: 'ghcr.io/agf-org/to-do-api'
+  IMAGE_REPOSITORY: 'ghcr.io/agf-org'
+  IMAGE_NAME: 'to-do-api'
   IMAGE_TAG: 'latest'
 
 on:
@@ -25,25 +26,25 @@ jobs:
 
       - name: Build test image
         run: |
-          docker pull ${{ env.IMAGE }}:test || true
+          docker pull ${{ env.IMAGE_REPOSITORY}}/${{ env.IMAGE_NAME }}:test || true
           docker build \
-          --cache-from ${{ env.IMAGE }}:test \
-          --tag ${{ env.IMAGE }}:test \
+          --cache-from ${{ env.IMAGE_REPOSITORY}}/${{ env.IMAGE_NAME }}:test \
+          --tag ${{ env.IMAGE_REPOSITORY}}/${{ env.IMAGE_NAME }}:test \
           .
-          docker push ${{ env.IMAGE }}:test
+          docker push ${{ env.IMAGE_REPOSITORY}}/${{ env.IMAGE_NAME }}:test
 
       - name: Run linter
         run: |
           docker container run \
           --rm \
-          ${{ env.IMAGE }}:test \
+          ${{ env.IMAGE_REPOSITORY}}/${{ env.IMAGE_NAME }}:test \
           run linter
 
       - name: Run unit tests
         run: |
           docker container run \
           --rm \
-          ${{ env.IMAGE }}:test \
+          ${{ env.IMAGE_REPOSITORY}}/${{ env.IMAGE_NAME }}:test \
           test
 
   build:
@@ -65,6 +66,6 @@ jobs:
 
       - name: Build image
         run: |
-          docker pull ${{ env.IMAGE }}:${{ env.IMAGE_TAG}}
-          docker tag ${{ env.IMAGE }}:${{ env.IMAGE_TAG}} ${{ env.IMAGE }}:${{ steps.get_version.outputs.version }}
-          docker push ${{ env.IMAGE }}:${{ steps.get_version.outputs.version }}
+          docker pull ${{ env.IMAGE_REPOSITORY}}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG}}
+          docker tag ${{ env.IMAGE_REPOSITORY}}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG}} ${{ env.IMAGE_REPOSITORY}}/${{ env.IMAGE_NAME }}:${{ steps.get_version.outputs.version }}
+          docker push ${{ env.IMAGE_REPOSITORY}}/${{ env.IMAGE_NAME }}:${{ steps.get_version.outputs.version }}

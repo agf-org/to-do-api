@@ -3,7 +3,8 @@ name: push-to-master
 env:
   NODE_ENV: 'production'
   PORT: '3000'
-  IMAGE: 'ghcr.io/agf-org/to-do-api'
+  IMAGE_REPOSITORY: 'ghcr.io/agf-org'
+  IMAGE_NAME: 'to-do-api'
   IMAGE_TAG: 'latest'
   CONTAINER_NAME: 'to-do-api'
 
@@ -27,25 +28,25 @@ jobs:
 
       - name: Build test image
         run: |
-          docker pull ${{ env.IMAGE }}:test || true
+          docker pull ${{ env.IMAGE_REPOSITORY}}/${{ env.IMAGE_NAME }}:test || true
           docker build \
-          --cache-from ${{ env.IMAGE }}:test \
-          --tag ${{ env.IMAGE }}:test \
+          --cache-from ${{ env.IMAGE_REPOSITORY}}/${{ env.IMAGE_NAME }}:test \
+          --tag ${{ env.IMAGE_REPOSITORY}}/${{ env.IMAGE_NAME }}:test \
           .
-          docker push ${{ env.IMAGE }}:test
+          docker push ${{ env.IMAGE_REPOSITORY}}/${{ env.IMAGE_NAME }}:test
 
       - name: Run linter
         run: |
           docker container run \
           --rm \
-          ${{ env.IMAGE }}:test \
+          ${{ env.IMAGE_REPOSITORY}}/${{ env.IMAGE_NAME }}:test \
           run linter
 
       - name: Run unit tests
         run: |
           docker container run \
           --rm \
-          ${{ env.IMAGE }}:test \
+          ${{ env.IMAGE_REPOSITORY}}/${{ env.IMAGE_NAME }}:test \
           test
 
   build:
@@ -64,12 +65,12 @@ jobs:
 
       - name: Build image
         run: |
-          docker pull ${{ env.IMAGE }}:${{ env.IMAGE_TAG}} || true
+          docker pull ${{ env.IMAGE_REPOSITORY}}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG}} || true
           docker build \
-          --cache-from ${{ env.IMAGE }}:${{ env.IMAGE_TAG}} \
-          --tag ${{ env.IMAGE }}:${{ env.IMAGE_TAG}} \
+          --cache-from ${{ env.IMAGE_REPOSITORY}}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG}} \
+          --tag ${{ env.IMAGE_REPOSITORY}}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG}} \
           .
-          docker push ${{ env.IMAGE }}:${{ env.IMAGE_TAG}}
+          docker push ${{ env.IMAGE_REPOSITORY}}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG}}
           
   deploy:
     needs: build
@@ -96,6 +97,6 @@ jobs:
           --name ${{ env.CONTAINER_NAME}} \
           --detach \
           --restart unless-stopped \
-          ${{ env.IMAGE }}:${{ env.IMAGE_TAG}} \
+          ${{ env.IMAGE_REPOSITORY}}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG}} \
           start
           rm .env
