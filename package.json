@@ -1,6 +1,6 @@
 {
   "name": "to-do-api",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "private": true,
   "scripts": {
     "linter": "npx eslint .",
