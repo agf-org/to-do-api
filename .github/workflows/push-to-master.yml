@@ -1,11 +1,12 @@
 name: push-to-master
 
 env:
-  NODE_ENV: 'production'
-  PORT: '3000'
+  DOCKER_HUB_USERNAME: 'alvarogarciafer'
   IMAGE_REPOSITORY: 'alvarogarciafer/to-do-api'
   IMAGE_TAG: 'latest'
   CONTAINER_NAME: 'to-do-api'
+  NODE_ENV: 'production'
+  PORT: '3000'
 
 on:
   push:
