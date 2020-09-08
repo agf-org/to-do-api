@@ -1,6 +1,7 @@
 name: push-tag
 
 env:
+  DOCKER_HUB_USERNAME: 'alvarogarciafer'
   IMAGE_REPOSITORY: 'alvarogarciafer/to-do-api'
   IMAGE_TAG: 'latest'
 
