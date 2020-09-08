@@ -30,7 +30,7 @@ jobs:
           password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
 
       - name: Build and push Docker images
-        uses: docker/build-push-action@v1
+        uses: docker/build-push-action@v2
         with:
           push: true
           tags: ${{ env.DOCKER_REPOSITORY }}:${{ env.TEST_IMAGE_TAG }}
@@ -72,7 +72,7 @@ jobs:
         uses: battila7/get-version-action@v2
 
       - name: Build and push Docker images
-        uses: docker/build-push-action@v1
+        uses: docker/build-push-action@v2
         with:
           push: true
           tags: ${{ env.DOCKER_REPOSITORY }}:${{ env.TEST_IMAGE_TAG }}
