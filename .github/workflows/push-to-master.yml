@@ -54,7 +54,7 @@ jobs:
     # needs: test
     runs-on: self-hosted
     outputs:
-      tagname: ${{ steps.action-autotag.outputs.tagname }}
+      tagrequested: ${{ steps.action-autotag.outputs.tagrequested }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -82,7 +82,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: ${{ env.DOCKER_REPOSITORY }}:${{ steps.action-autotag.outputs.tagname }}
+          tags: ${{ env.DOCKER_REPOSITORY }}:${{ steps.action-autotag.outputs.tagrequested }}
           
   deploy:
     needs: build
