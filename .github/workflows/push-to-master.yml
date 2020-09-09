@@ -63,7 +63,7 @@ jobs:
         uses: butlerlogic/action-autotag@stable
         id: action-autotag
         with:
-          GITHUB_TOKEN : ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           strategy: package
           tag_prefix: v
 
