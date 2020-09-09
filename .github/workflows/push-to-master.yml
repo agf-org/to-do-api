@@ -53,8 +53,8 @@ jobs:
   build:
     # needs: test
     runs-on: self-hosted
-    outputs:
-      tagname: ${{ steps.action-autotag.outputs.tagname }}
+    # outputs:
+    #   tagname: ${{ steps.action-autotag.outputs.tagname }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -66,10 +66,9 @@ jobs:
 
       - name: Autotag package
         uses: butlerlogic/action-autotag@master
-        id: action-autotag
+        # id: action-autotag
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          root: "/home/runner/_work/to-do-api/to-do-api"
           tag_prefix: v
 
       - name: Set up QEMU
