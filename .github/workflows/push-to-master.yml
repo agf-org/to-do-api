@@ -114,6 +114,6 @@ jobs:
           --name ${{ env.CONTAINER_NAME}} \
           --detach \
           --restart unless-stopped \
-          ${{ env.DOCKER_REPOSITORY}}:${{ needs.build.outputs.tagname}} \
+          ${{ env.DOCKER_REPOSITORY}}:${{ needs.build.outputs.tagrequested}} \
           start
           rm .env
