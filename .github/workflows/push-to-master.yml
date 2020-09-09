@@ -63,9 +63,9 @@ jobs:
         uses: butlerlogic/action-autotag@stable
         id: action-autotag
         with:
-          INPUT_GITHUB_TOKEN : ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN : ${{ secrets.GITHUB_TOKEN }}
           strategy: package
-          root: to-do-api/to-do-api
+          root: '..'
           tag_prefix: v
 
       - name: Set up QEMU
