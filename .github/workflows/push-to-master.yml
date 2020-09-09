@@ -60,10 +60,10 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Autotag package
-        uses: butlerlogic/action-autotag@1.1.1
+        uses: butlerlogic/action-autotag@stable
         id: action-autotag
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          INPUT_GITHUB_TOKEN : ${{ secrets.GITHUB_TOKEN }}
           strategy: package
           root: to-do-api/to-do-api
           tag_prefix: v
