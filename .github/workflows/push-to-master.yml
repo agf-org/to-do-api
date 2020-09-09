@@ -3,7 +3,6 @@ name: push-to-master
 env:
   DOCKER_REPOSITORY: 'alvarogarciafer/to-do-api'
   TEST_IMAGE_TAG: 'test'
-  IMAGE_TAG: 'latest'
   CONTAINER_NAME: 'to-do-api'
   NODE_ENV: 'production'
   PORT: '3000'
@@ -54,9 +53,18 @@ jobs:
   build:
     needs: test
     runs-on: self-hosted
+    outputs:
+      tagname: ${{ steps.action-autotag.outputs.tagname }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - uses: butlerlogic/action-autotag@stable
+        id: action-autotag
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          strategy: package
+          tag_prefix: v
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@master
@@ -74,7 +82,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: ${{ env.DOCKER_REPOSITORY }}:${{ env.TEST_IMAGE_TAG }}
+          tags: ${{ env.DOCKER_REPOSITORY }}:${{ steps.action-autotag.outputs.tagname }}
           
   deploy:
     needs: build
@@ -106,6 +114,6 @@ jobs:
           --name ${{ env.CONTAINER_NAME}} \
           --detach \
           --restart unless-stopped \
-          ${{ env.DOCKER_REPOSITORY}}:${{ env.IMAGE_TAG}} \
+          ${{ env.DOCKER_REPOSITORY}}:${{ needs.build.outputs.tagname}} \
           start
           rm .env
