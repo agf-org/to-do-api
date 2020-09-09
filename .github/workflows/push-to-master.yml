@@ -56,8 +56,14 @@ jobs:
     outputs:
       tagname: ${{ steps.action-autotag.outputs.tagname }}
     steps:
-      - uses: actions/checkout@v2
-      - uses: butlerlogic/action-autotag@master
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: ls
+        run: ls -l
+
+      - name: Autotag package
+        uses: butlerlogic/action-autotag@master
         id: action-autotag
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
