@@ -56,15 +56,11 @@ jobs:
     outputs:
       tagname: ${{ steps.action-autotag.outputs.tagname }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Autotag package
-        uses: butlerlogic/action-autotag@master
+      - uses: actions/checkout@v2
+      - uses: butlerlogic/action-autotag@master
         id: action-autotag
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          root: 'to-do-api/'
           tag_prefix: v
 
       - name: Set up QEMU
