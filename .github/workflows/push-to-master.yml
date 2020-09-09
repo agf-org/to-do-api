@@ -53,15 +53,15 @@ jobs:
   build:
     # needs: test
     runs-on: self-hosted
-    # outputs:
-    #   tagname: ${{ steps.action-autotag.outputs.tagname }}
+    outputs:
+      tagname: ${{ steps.action-autotag.outputs.tagname }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
       - name: Autotag package
         uses: butlerlogic/action-autotag@stable
-        # id: action-autotag
+        id: action-autotag
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           tag_prefix: v
