@@ -51,7 +51,7 @@ jobs:
   #         test
 
   build:
-    needs: test
+    # needs: test
     runs-on: self-hosted
     outputs:
       tagname: ${{ steps.action-autotag.outputs.tagname }}
