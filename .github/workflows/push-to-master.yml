@@ -64,7 +64,7 @@ jobs:
         id: action-autotag
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          root: "."
+          root: "./"
           tag_prefix: v
 
       - name: Set up QEMU
