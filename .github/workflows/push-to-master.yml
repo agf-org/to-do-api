@@ -65,7 +65,7 @@ jobs:
           ls -l
 
       - name: Autotag package
-        uses: butlerlogic/action-autotag@master
+        uses: butlerlogic/action-autotag@stable
         # id: action-autotag
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
