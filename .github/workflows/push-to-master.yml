@@ -59,11 +59,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: ls
-        run: |
-          pwd
-          ls -l
-
       - name: Autotag package
         uses: butlerlogic/action-autotag@stable
         # id: action-autotag
