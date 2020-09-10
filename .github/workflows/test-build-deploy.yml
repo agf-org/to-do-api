@@ -1,4 +1,4 @@
-name: push-to-master
+name: test-build-deploy
 
 env:
   DOCKER_REPOSITORY: 'alvarogarciafer/to-do-api'
