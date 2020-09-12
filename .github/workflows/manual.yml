@@ -1,0 +1,41 @@
+name: stop
+
+env:
+  DOCKER_REPOSITORY: 'alvarogarciafer/to-do-api'
+  CONTAINER_NAME: 'to-do-api'
+  NODE_ENV: 'production'
+  PORT: '3000'
+
+on: 
+  workflow_dispatch:
+
+jobs:
+  stop:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Stop containers
+        run: |
+          docker container stop ${{ env.CONTAINER_NAME}} || true
+          docker container rm ${{ env.CONTAINER_NAME}} || true
+          
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Deploy containers
+        run: |
+          docker container stop ${{ env.CONTAINER_NAME}} || true
+          docker container rm ${{ env.CONTAINER_NAME}} || true
+          docker image pull ${{ env.DOCKER_REPOSITORY}}:latest
+          echo "NODE_ENV=${{ env.NODE_ENV }}" >> .env
+          docker container run \
+          --env-file .env \
+          --publish ${{ env.PORT }}:3000 \
+          --name ${{ env.CONTAINER_NAME}} \
+          --detach \
+          --restart unless-stopped \
+          ${{ env.DOCKER_REPOSITORY}}:latest \
+          start
+          rm .env
