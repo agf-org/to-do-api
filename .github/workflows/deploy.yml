@@ -1,4 +1,4 @@
-name: stop
+name: deploy
 
 env:
   DOCKER_REPOSITORY: 'alvarogarciafer/to-do-api'
@@ -10,17 +10,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  stop:
-    runs-on: self-hosted
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Stop containers
-        run: |
-          docker container stop ${{ env.CONTAINER_NAME}} || true
-          docker container rm ${{ env.CONTAINER_NAME}} || true
-          
   deploy:
     runs-on: self-hosted
     steps:
