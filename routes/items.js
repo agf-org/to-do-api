@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const asyncHandler = require('express-async-handler');
+const {v4: uuidv4} = require('uuid');
 
 const {items} = require('../data/data');
 
@@ -8,6 +9,17 @@ const {items} = require('../data/data');
  * @swagger
  *
  * definitions:
+ *   Items:
+ *     type: array
+ *     items:
+ *       $ref: '#/definitions/Item'
+ *   NewItem:
+ *     type: object
+ *     required:
+ *       - text
+ *     properties:
+ *       text:
+ *         type: string
  *   Item:
  *     type: object
  *     required:
@@ -21,10 +33,6 @@ const {items} = require('../data/data');
  *         type: string
  *       done:
  *         type: boolean
- *   Items:
- *     type: array
- *     items:
- *       $ref: '#/definitions/Item'
  */
 
 /**
@@ -34,7 +42,7 @@ const {items} = require('../data/data');
  *  get:
  *    tags:
  *      - items
- *    description: Gets all items
+ *    summary: Returns all items
  *    produces:
  *      - application/json
  *    responses:
@@ -53,6 +61,47 @@ const getItems = asyncHandler(async (request, response) => {
   response.status(200).json(items);
 });
 
+/**
+ * @swagger
+ * 
+ * /items:
+ *  post:
+ *    tags:
+ *      - items
+ *    summary: Adds an item
+ *    consumes:
+ *      - application/json
+ *    requestBody:
+ *        name: Text item
+ *        description: Object with the text of the item
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/definitions/NewItem'
+ *    responses:
+ *      201:
+ *        description: Created
+ *      400:
+ *        description: Bad Request
+ *      405:
+ *        description: Method Not Allowed
+ */
+const addItem = asyncHandler(async (request, response) => {
+  const {text} = request.body;
+  if (text) {
+    const newItem = {
+      "id": `${uuidv4()}`,
+      "text": text,
+      "done": false
+    }
+    items.push(newItem)
+    response.sendStatus(201);
+  } else {
+    response.sendStatus(400);
+  }
+});
+
 
 /**
  * @swagger
@@ -61,9 +110,9 @@ const getItems = asyncHandler(async (request, response) => {
  *  get:
  *    tags:
  *      - items
- *    description: Gets a given item
+ *    summary: Returns an item
  *    parameters:
- *      - name: id
+ *      - name: ID
  *        description: ID of the item
  *        in: path
  *        required: true
@@ -99,6 +148,7 @@ const methodNotAllowed = asyncHandler(async (request, response) => {
 
 router.route('/')
   .get(getItems)
+  .post(addItem)
   .all(methodNotAllowed)
 
 router.route('/:id')
