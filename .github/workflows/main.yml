@@ -1,4 +1,4 @@
-name: test-build-deploy
+name: main
 
 env:
   DOCKER_REPOSITORY: 'alvarogarciafer/to-do-api'
@@ -7,8 +7,12 @@ env:
   PORT: '3000'
 
 on:
+  pull_request:
+    branches:
+      - master
   push:
-    branches: [ master ]
+    branches:
+      - master
 
 jobs:
   test:
@@ -49,10 +53,9 @@ jobs:
           test
 
   build:
-    needs: test
     runs-on: self-hosted
-    outputs:
-      tagname: ${{ steps.action-autotag.outputs.tagname }}
+    needs: test
+    if: ${{ github.event_name == 'push' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -93,8 +96,9 @@ jobs:
           tags: ${{ steps.get-tags.outputs.tags }}
           
   deploy:
-    needs: build
     runs-on: self-hosted
+    needs: build
+    if: ${{ github.event_name == 'push' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -112,7 +116,6 @@ jobs:
           password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
 
       - name: Deploy container
-        if: ${{ needs.build.outputs.tagname != '' }}
         run: |
           docker container stop ${{ env.CONTAINER_NAME}} || true
           docker container rm ${{ env.CONTAINER_NAME}} || true
@@ -123,6 +126,6 @@ jobs:
           --name ${{ env.CONTAINER_NAME}} \
           --detach \
           --restart unless-stopped \
-          ${{ env.DOCKER_REPOSITORY}}:${{ needs.build.outputs.tagname}} \
+          ${{ env.DOCKER_REPOSITORY}}:latest \
           start
           rm .env
