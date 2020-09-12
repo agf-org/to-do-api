@@ -116,3 +116,5 @@ jobs:
           ${{ env.DOCKER_REPOSITORY}}:${{ needs.build.outputs.tagrequested}} \
           start
           rm .env
+
+          
