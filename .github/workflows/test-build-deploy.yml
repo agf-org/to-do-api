@@ -52,7 +52,7 @@ jobs:
     needs: test
     runs-on: self-hosted
     outputs:
-      tagrequested: ${{ steps.action-autotag.outputs.tagrequested }}
+      tagrequested: ${{ steps.action-autotag.outputs.tagname }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -81,8 +81,8 @@ jobs:
         id: get-tags
         run: |
           TAGS="${{ env.DOCKER_REPOSITORY }}:latest"
-          if [[ -z ${{ steps.action-autotag.outputs.tagrequested }} ]]; then
-            TAGS="$TAGS,${{ env.DOCKER_REPOSITORY }}:${{ steps.action-autotag.outputs.tagrequested }}"
+          if [[ -z ${{ steps.action-autotag.outputs.tagname }} ]]; then
+            TAGS="$TAGS,${{ env.DOCKER_REPOSITORY }}:${{ steps.action-autotag.outputs.tagname }}"
           fi
           echo ::set-output name=tags::${TAGS}
 
@@ -112,6 +112,7 @@ jobs:
           password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
 
       - name: Deploy container
+        if: ${{ needs.build.outputs.tagname}} != ''
         run: |
           docker container stop ${{ env.CONTAINER_NAME}} || true
           docker container rm ${{ env.CONTAINER_NAME}} || true
@@ -122,6 +123,6 @@ jobs:
           --name ${{ env.CONTAINER_NAME}} \
           --detach \
           --restart unless-stopped \
-          ${{ env.DOCKER_REPOSITORY}}:${{ needs.build.outputs.tagrequested}} \
+          ${{ env.DOCKER_REPOSITORY}}:${{ needs.build.outputs.tagname}} \
           start
           rm .env
