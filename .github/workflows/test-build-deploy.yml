@@ -52,7 +52,7 @@ jobs:
     needs: test
     runs-on: self-hosted
     outputs:
-      tagrequested: ${{ steps.action-autotag.outputs.tagname }}
+      tagname: ${{ steps.action-autotag.outputs.tagname }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
