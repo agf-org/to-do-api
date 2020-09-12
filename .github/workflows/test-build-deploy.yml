@@ -84,7 +84,7 @@ jobs:
           if [[ "${{ steps.action-autotag.outputs.tagname }}" != "" ]]; then
             TAGS="$TAGS,${{ env.DOCKER_REPOSITORY }}:${{ steps.action-autotag.outputs.tagname }}"
           fi
-          echo ${TAGS}
+          echo "Tags: ${TAGS}""
           echo ::set-output name=tags::${TAGS}
 
       - name: Build and push Docker images
