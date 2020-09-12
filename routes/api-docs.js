@@ -1,9 +1,10 @@
 const router = require('express').Router();
 const swaggerUi = require('swagger-ui-express');
 const swaggerJSDoc = require('swagger-jsdoc');
-const {version} = require('../../package');
+const {version} = require('../package');
 
 const options = {
+  explorer: true,
   definition: {
     openapi: '3.0.0',
     info: {
@@ -11,10 +12,16 @@ const options = {
       version: version,
       description: 'Welcome to my To-do API!'
     },
+    servers: [
+        {
+            url: `/api`
+        }
+    ]
+
   },
   apis: [
-      'routes/v0/index.js',
-      'routes/v0/items.js'
+      'routes/index.js',
+      'routes/items.js'
     ],
 };
 

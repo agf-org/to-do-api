@@ -12,9 +12,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/api/v0/', require('./routes/v0/index'));
-app.use('/api/v0/api-docs', require('./routes/v0/api-docs'));
-app.use('/api/v0/items', require('./routes/v0/items'));
+app.use('/api', require('./routes/index'));
+app.use('/api/api-docs', require('./routes/api-docs'));
+app.use('/api/items', require('./routes/items'));
 
 app.use((request, response, next) => {
   const error = new Error(`${request.method} ${request.url} Not Found`);
