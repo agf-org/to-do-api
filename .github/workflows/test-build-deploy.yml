@@ -112,7 +112,7 @@ jobs:
           password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
 
       - name: Deploy container
-        if: ${{ needs.build.outputs.tagname }} != ""
+        if: ${{ needs.build.outputs.tagname != '' }}
         run: |
           docker container stop ${{ env.CONTAINER_NAME}} || true
           docker container rm ${{ env.CONTAINER_NAME}} || true
