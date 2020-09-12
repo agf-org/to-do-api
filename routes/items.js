@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const asyncHandler = require('express-async-handler');
 
-const {items} = require('../../data/data');
+const {items} = require('../data/data');
 
 /**
  * @swagger
@@ -34,7 +34,7 @@ const {items} = require('../../data/data');
  *  get:
  *    tags:
  *      - items
- *    description: Gets all Items
+ *    description: Gets all items
  *    produces:
  *      - application/json
  *    responses:
@@ -50,7 +50,47 @@ const {items} = require('../../data/data');
  *        description: Method Not Allowed
  */
 const getItems = asyncHandler(async (request, response) => {
-  response.status(200).send(items);
+  response.status(200).json(items);
+});
+
+
+/**
+ * @swagger
+ * 
+ * /items/{id}:
+ *  get:
+ *    tags:
+ *      - items
+ *    description: Gets a given item
+ *    parameters:
+ *      - name: id
+ *        description: ID of the item
+ *        in: path
+ *        required: true
+ *        schema:
+ *          type: string
+ *    produces:
+ *      - application/json
+ *    responses:
+ *      200:
+ *        description: OK
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/definitions/Item'
+ *      404:
+ *        description: Not Found
+ *      405:
+ *        description: Method Not Allowed
+ */
+const getItem = asyncHandler(async (request, response) => {
+  const id = request.params.id;
+  const item = items.find(item => item.id == id);
+  if (item) {
+    response.status(200).json(item);
+  } else {
+    response.sendStatus(404);
+  }
 });
 
 const methodNotAllowed = asyncHandler(async (request, response) => {
@@ -59,6 +99,10 @@ const methodNotAllowed = asyncHandler(async (request, response) => {
 
 router.route('/')
   .get(getItems)
+  .all(methodNotAllowed)
+
+router.route('/:id')
+  .get(getItem)
   .all(methodNotAllowed)
 
 module.exports = router;
