@@ -81,7 +81,7 @@ jobs:
         id: get-tags
         run: |
           TAGS="${{ env.DOCKER_REPOSITORY }}:latest"
-          if [[ -z ${{ steps.action-autotag.outputs.tagname }} ]]; then
+          if [[ -z "${{ steps.action-autotag.outputs.tagname }}" ]]; then
             TAGS="$TAGS,${{ env.DOCKER_REPOSITORY }}:${{ steps.action-autotag.outputs.tagname }}"
           fi
           echo ::set-output name=tags::${TAGS}
