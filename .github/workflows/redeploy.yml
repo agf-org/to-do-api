@@ -1,4 +1,4 @@
-name: deploy
+name: redeploy
 
 env:
   DOCKER_REPOSITORY: 'alvarogarciafer/to-do-api'
@@ -10,10 +10,10 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
+  redeploy:
     runs-on: self-hosted
     steps:
-      - name: Deploy containers
+      - name: Redeploy containers
         run: |
           docker container stop ${{ env.CONTAINER_NAME}} || true
           docker container rm ${{ env.CONTAINER_NAME}} || true
