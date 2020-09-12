@@ -119,6 +119,7 @@ jobs:
         run: |
           docker container stop ${{ env.CONTAINER_NAME}} || true
           docker container rm ${{ env.CONTAINER_NAME}} || true
+          docker image pull ${{ env.DOCKER_REPOSITORY}}:latest
           echo "NODE_ENV=${{ env.NODE_ENV }}" >> .env
           docker container run \
           --env-file .env \
