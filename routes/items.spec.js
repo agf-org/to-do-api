@@ -16,7 +16,7 @@ describe('/items', () => {
       const response = await request(app)
         .get(basePath);
       response.body.map(item => {
-        expect(typeof item.id).toBe('number');
+        expect(typeof item.id).toBe('string');
         expect(typeof item.text).toBe('string');
         expect(typeof item.done).toBe('boolean');
       });
@@ -66,9 +66,27 @@ describe('/items/:id', () => {
     it('should return a valid item', async () => {
       const response = await request(app)
         .get(`${basePath}/0`);
-      expect(typeof response.body.id).toBe('number');
+      expect(typeof response.body.id).toBe('string');
       expect(typeof response.body.text).toBe('string');
       expect(typeof response.body.done).toBe('boolean');
+    });
+
+    it('should return a valid 404 response for a non-existing item', async () => {
+      const response = await request(app)
+        .get(`${basePath}/1`);
+      expect(response.statusCode).toBe(404);
+      expect(response.type).toBe('text/plain');
+      expect(response.text).toBe('Not Found');
+    });
+  });
+  
+  describe('DELETE', () => {
+    it('should return a valid 200 response', async () => {
+      const response = await request(app)
+        .delete(`${basePath}/0`);
+      expect(response.statusCode).toBe(200);
+      expect(response.type).toBe('text/plain');
+      expect(response.text).toBe('OK');
     });
 
     it('should return a valid 404 response for a non-existing item', async () => {
