@@ -5,7 +5,7 @@ const basePath = '/api/items';
 
 describe('/items', () => {
   describe('GET', () => {
-    it('should return a valid 200 response', async () => {
+    it('should return a 200 response', async () => {
       const response = await request(app)
         .get(basePath);
       expect(response.statusCode).toBe(200);
@@ -24,28 +24,42 @@ describe('/items', () => {
   });
 
   describe('POST', () => {
-    it('should return a valid 201 response', async () => {
+    it('should return a 201 response', async () => {
       const response = await request(app)
         .post(basePath)
         .send({
-          "text": "test"
+          "text": "test",
+          "done": false
         });
       expect(response.statusCode).toBe(201);
       expect(response.type).toBe('text/plain');
       expect(response.text).toBe('Created');
     });
 
-    it('should return a valid 400 response for a non-existing text', async () => {
+    it('should return a 400 response for an item without text field', async () => {
       const response = await request(app)
         .post(basePath)
-        .send({});
+        .send({
+          "done": false
+        });
+      expect(response.statusCode).toBe(400);
+      expect(response.type).toBe('text/plain');
+      expect(response.text).toBe('Bad Request');
+    });
+
+    it('should return a 400 response for an item without done field', async () => {
+      const response = await request(app)
+        .post(basePath)
+        .send({
+          "text": "test"
+        });
       expect(response.statusCode).toBe(400);
       expect(response.type).toBe('text/plain');
       expect(response.text).toBe('Bad Request');
     });
   });
   
-  it('should return a valid 405 response for unsupported request method', async () => {
+  it('should return a 405 response for unsupported request method', async () => {
     const response = await request(app)
       .patch(basePath);
     expect(response.statusCode).toBe(405);
@@ -56,7 +70,7 @@ describe('/items', () => {
 
 describe('/items/:id', () => {
   describe('GET', () => {
-    it('should return a valid 200 response', async () => {
+    it('should return a 200 response', async () => {
       const response = await request(app)
         .get(`${basePath}/0`);
       expect(response.statusCode).toBe(200);
@@ -71,9 +85,57 @@ describe('/items/:id', () => {
       expect(typeof response.body.done).toBe('boolean');
     });
 
-    it('should return a valid 404 response for a non-existing item', async () => {
+    it('should return a 404 response for a non-existing item', async () => {
       const response = await request(app)
         .get(`${basePath}/1`);
+      expect(response.statusCode).toBe(404);
+      expect(response.type).toBe('text/plain');
+      expect(response.text).toBe('Not Found');
+    });
+  });
+
+  describe('PUT', () => {
+    it('should return a 200 response', async () => {
+      const response = await request(app)
+        .put(`${basePath}/0`)
+        .send({
+          "text": "test",
+          "done": false
+        });
+      expect(response.statusCode).toBe(200);
+      expect(response.type).toBe('text/plain');
+      expect(response.text).toBe('OK');
+    });
+
+    it('should return a 400 response for an item without text field', async () => {
+      const response = await request(app)
+      .put(`${basePath}/0`)
+        .send({
+          "done": false
+        });
+      expect(response.statusCode).toBe(400);
+      expect(response.type).toBe('text/plain');
+      expect(response.text).toBe('Bad Request');
+    });
+
+    it('should return a 400 response for an item without done field', async () => {
+      const response = await request(app)
+      .put(`${basePath}/0`)
+        .send({
+          "text": "test"
+        });
+      expect(response.statusCode).toBe(400);
+      expect(response.type).toBe('text/plain');
+      expect(response.text).toBe('Bad Request');
+    });
+
+    it('should return a 404 response for a non-existing item', async () => {
+      const response = await request(app)
+        .put(`${basePath}/1`)
+        .send({
+          "text": "test",
+          "done": false
+        });
       expect(response.statusCode).toBe(404);
       expect(response.type).toBe('text/plain');
       expect(response.text).toBe('Not Found');
@@ -81,7 +143,7 @@ describe('/items/:id', () => {
   });
   
   describe('DELETE', () => {
-    it('should return a valid 200 response', async () => {
+    it('should return a 200 response', async () => {
       const response = await request(app)
         .delete(`${basePath}/0`);
       expect(response.statusCode).toBe(200);
@@ -89,7 +151,7 @@ describe('/items/:id', () => {
       expect(response.text).toBe('OK');
     });
 
-    it('should return a valid 404 response for a non-existing item', async () => {
+    it('should return a 404 response for a non-existing item', async () => {
       const response = await request(app)
         .get(`${basePath}/1`);
       expect(response.statusCode).toBe(404);
@@ -98,7 +160,7 @@ describe('/items/:id', () => {
     });
   });
   
-  it('should return a valid 405 response for unsupported request method', async () => {
+  it('should return a 405 response for unsupported request method', async () => {
     const response = await request(app)
       .patch(`${basePath}/0`);
     expect(response.statusCode).toBe(405);

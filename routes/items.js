@@ -17,9 +17,12 @@ const {items} = require('../model/data');
  *     type: object
  *     required:
  *       - text
+ *       - done
  *     properties:
  *       text:
  *         type: string
+ *       done:
+ *         type: boolean
  *   Item:
  *     type: object
  *     required:
@@ -66,8 +69,8 @@ const getItems = asyncHandler(async (request, response) => {
  *      - items
  *    summary: Adds an item
  *    requestBody:
- *        name: text
- *        description: Object with the text of the item
+ *        name: item
+ *        description: Object representing the item
  *        required: true
  *        content:
  *          application/json:
@@ -80,12 +83,12 @@ const getItems = asyncHandler(async (request, response) => {
  *        description: Bad Request
  */
 const addItem = asyncHandler(async (request, response) => {
-  const {text} = request.body;
-  if (text) {
+  const {text, done} = request.body;
+  if (text != undefined && done != undefined) {
     const newItem = {
       "id": `${uuidv4()}`,
       "text": text,
-      "done": false
+      "done": done
     }
     items.push(newItem)
     response.sendStatus(201);
@@ -130,6 +133,58 @@ const getItem = asyncHandler(async (request, response) => {
   }
 });
 
+/**
+ * @swagger
+ * 
+ * /items/{id}:
+ *  put:
+ *    tags:
+ *      - items
+ *    summary: Updates an item
+ *    parameters:
+ *      - name: id
+ *        description: ID of the item
+ *        in: path
+ *        required: true
+ *        schema:
+ *          type: string
+ *    requestBody:
+ *        name: item
+ *        description: Object representing the item
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/definitions/NewItem'
+ *    responses:
+ *      200:
+ *        description: OK
+ *      400:
+ *        description: Bad Request
+ *      404:
+ *        description: Not Found
+ */
+const updateItem = asyncHandler(async (request, response) => {
+  const id = request.params.id;
+  const itemIndex = items.findIndex(item => item.id == id);
+  if (itemIndex != -1) {
+    const {text, done} = request.body;
+    if (text != undefined && done != undefined) {
+      items.splice(itemIndex, 1);
+      const newItem = {
+        "id": id,
+        "text": text,
+        "done": done
+      }
+      items.push(newItem)
+      response.sendStatus(200);
+    } else {
+      response.sendStatus(400);
+    }
+  } else {
+    response.sendStatus(404);
+  }
+});
 
 /**
  * @swagger
@@ -174,6 +229,7 @@ router.route('/')
 
 router.route('/:id')
   .get(getItem)
+  .put(updateItem)
   .delete(deleteItem)
   .all(methodNotAllowed)
 
