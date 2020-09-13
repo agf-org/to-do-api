@@ -3,6 +3,7 @@ const express = require('express');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const path = require('path');
+const {config} = require('./config');
 
 const app = express();
 
@@ -14,11 +15,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 const indexRouter = require('./routes/index');
 const apiDocsRouter = require('./routes/api-docs');
-const itemsRouter = require('./routes/items');
+const toDoRouter = require('./routes/to-do');
 
-app.use('/api', indexRouter);
-app.use('/api/api-docs', apiDocsRouter);
-app.use('/api/items', itemsRouter);
+app.use(config.baseUrl, indexRouter);
+app.use(`${config.baseUrl}/api-docs`, apiDocsRouter);
+app.use(`${config.baseUrl}/to-do`, toDoRouter);
 
 app.use((request, response, next) => {
   const error = new Error(`${request.method} ${request.url} Not Found`);

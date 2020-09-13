@@ -1,5 +1,3 @@
-const express = require('express');
-const router = express.Router();
 const asyncHandler = require('express-async-handler');
 const {v4: uuidv4} = require('uuid');
 
@@ -41,7 +39,7 @@ const {items} = require('../models/items');
 /**
  * @swagger
  * 
- * /items:
+ * /to-do/items:
  *  get:
  *    tags:
  *      - items
@@ -63,7 +61,7 @@ const getItems = asyncHandler(async (request, response) => {
 /**
  * @swagger
  * 
- * /items:
+ * /to-do/items:
  *  post:
  *    tags:
  *      - items
@@ -101,7 +99,7 @@ const addItem = asyncHandler(async (request, response) => {
 /**
  * @swagger
  * 
- * /items/{id}:
+ * /to-do/items/{id}:
  *  get:
  *    tags:
  *      - items
@@ -136,7 +134,7 @@ const getItem = asyncHandler(async (request, response) => {
 /**
  * @swagger
  * 
- * /items/{id}:
+ * /to-do/items/{id}:
  *  put:
  *    tags:
  *      - items
@@ -189,7 +187,7 @@ const updateItem = asyncHandler(async (request, response) => {
 /**
  * @swagger
  * 
- * /items/{id}:
+ * /to-do/items/{id}:
  *  delete:
  *    tags:
  *      - items
@@ -218,19 +216,8 @@ const deleteItem = asyncHandler(async (request, response) => {
   }
 });
 
-const methodNotAllowed = asyncHandler(async (request, response) => {
-  response.sendStatus(405);
-});
-
-router.route('/')
-  .get(getItems)
-  .post(addItem)
-  .all(methodNotAllowed)
-
-router.route('/:id')
-  .get(getItem)
-  .put(updateItem)
-  .delete(deleteItem)
-  .all(methodNotAllowed)
-
-module.exports = router;
+module.exports.getItems = getItems;
+module.exports.getItem = getItem;
+module.exports.addItem = addItem;
+module.exports.updateItem = updateItem;
+module.exports.deleteItem = deleteItem;

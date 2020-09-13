@@ -17,11 +17,9 @@ const options = {
             url: `/api`
         }
     ]
-
   },
   apis: [
-      'src/routes/index.js',
-      'src/routes/items.js'
+      'src/controllers/itemController.js'
     ],
 };
 
@@ -32,7 +30,9 @@ const serveSwaggerSpec = (request, response) => {
     response.send(swaggerSpec);
 };
 
-router.use(`/`, swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-router.route('/').get(serveSwaggerSpec);
+router.use('/', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+router.route('/')
+  .get(serveSwaggerSpec);
 
 module.exports = router;
