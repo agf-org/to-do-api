@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const swaggerUi = require('swagger-ui-express');
 const swaggerJSDoc = require('swagger-jsdoc');
-const {version} = require('../package');
+const {version} = require('../../package');
 
 const options = {
   explorer: true,
@@ -17,11 +17,9 @@ const options = {
             url: `/api`
         }
     ]
-
   },
   apis: [
-      'routes/index.js',
-      'routes/items.js'
+      'src/controllers/itemController.js'
     ],
 };
 
@@ -32,7 +30,9 @@ const serveSwaggerSpec = (request, response) => {
     response.send(swaggerSpec);
 };
 
-router.use(`/`, swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-router.route('/').get(serveSwaggerSpec);
+router.use('/', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+router.route('/')
+  .get(serveSwaggerSpec);
 
 module.exports = router;

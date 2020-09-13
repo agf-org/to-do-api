@@ -1,9 +1,10 @@
 const app = require('../app');
 const request = require('supertest');
+const {config} = require('../config');
 
-const basePath = '/api/items';
+const basePath = `${config.baseUrl}/to-do/items`;
 
-describe('/items', () => {
+describe('/to-do/items', () => {
   describe('GET', () => {
     it('should return a 200 response', async () => {
       const response = await request(app)
@@ -68,7 +69,7 @@ describe('/items', () => {
   });
 });
 
-describe('/items/:id', () => {
+describe('/to-do/items/:id', () => {
   describe('GET', () => {
     it('should return a 200 response', async () => {
       const response = await request(app)

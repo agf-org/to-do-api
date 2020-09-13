@@ -1,7 +1,8 @@
 const app = require('../app');
 const request = require('supertest');
+const {config} = require('../config');
 
-const basePath = '/api/'
+const basePath = config.baseUrl;
 
 describe('/', () => {
   describe('GET', () => {
