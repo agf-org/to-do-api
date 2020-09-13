@@ -3,7 +3,7 @@ const router = express.Router();
 const asyncHandler = require('express-async-handler');
 const {v4: uuidv4} = require('uuid');
 
-const {items} = require('../data/data');
+const {items} = require('../model/data');
 
 /**
  * @swagger
@@ -43,8 +43,6 @@ const {items} = require('../data/data');
  *    tags:
  *      - items
  *    summary: Returns all items
- *    produces:
- *      - application/json
  *    responses:
  *      200:
  *        description: OK
@@ -54,8 +52,6 @@ const {items} = require('../data/data');
  *              $ref: '#/definitions/Items'
  *      404:
  *        description: Not Found
- *      405:
- *        description: Method Not Allowed
  */
 const getItems = asyncHandler(async (request, response) => {
   response.status(200).json(items);
@@ -69,10 +65,8 @@ const getItems = asyncHandler(async (request, response) => {
  *    tags:
  *      - items
  *    summary: Adds an item
- *    consumes:
- *      - application/json
  *    requestBody:
- *        name: Text item
+ *        name: text
  *        description: Object with the text of the item
  *        required: true
  *        content:
@@ -84,8 +78,6 @@ const getItems = asyncHandler(async (request, response) => {
  *        description: Created
  *      400:
  *        description: Bad Request
- *      405:
- *        description: Method Not Allowed
  */
 const addItem = asyncHandler(async (request, response) => {
   const {text} = request.body;
@@ -112,14 +104,12 @@ const addItem = asyncHandler(async (request, response) => {
  *      - items
  *    summary: Returns an item
  *    parameters:
- *      - name: ID
+ *      - name: id
  *        description: ID of the item
  *        in: path
  *        required: true
  *        schema:
  *          type: string
- *    produces:
- *      - application/json
  *    responses:
  *      200:
  *        description: OK
@@ -129,14 +119,45 @@ const addItem = asyncHandler(async (request, response) => {
  *              $ref: '#/definitions/Item'
  *      404:
  *        description: Not Found
- *      405:
- *        description: Method Not Allowed
  */
 const getItem = asyncHandler(async (request, response) => {
   const id = request.params.id;
   const item = items.find(item => item.id == id);
   if (item) {
     response.status(200).json(item);
+  } else {
+    response.sendStatus(404);
+  }
+});
+
+
+/**
+ * @swagger
+ * 
+ * /items/{id}:
+ *  delete:
+ *    tags:
+ *      - items
+ *    summary: Deletes an item
+ *    parameters:
+ *      - name: id
+ *        description: ID of the item
+ *        in: path
+ *        required: true
+ *        schema:
+ *          type: string
+ *    responses:
+ *      200:
+ *        description: OK
+ *      404:
+ *        description: Not Found
+ */
+const deleteItem = asyncHandler(async (request, response) => {
+  const id = request.params.id;
+  const itemIndex = items.findIndex(item => item.id == id);
+  if (itemIndex != -1) {
+    items.splice(itemIndex, 1);
+    response.sendStatus(200);
   } else {
     response.sendStatus(404);
   }
@@ -153,6 +174,7 @@ router.route('/')
 
 router.route('/:id')
   .get(getItem)
+  .delete(deleteItem)
   .all(methodNotAllowed)
 
 module.exports = router;
