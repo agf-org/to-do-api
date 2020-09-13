@@ -12,9 +12,13 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/api', require('./routes/index'));
-app.use('/api/api-docs', require('./routes/api-docs'));
-app.use('/api/items', require('./routes/items'));
+const indexRouter = require('./routes/index');
+const apiDocsRouter = require('./routes/api-docs');
+const itemsRouter = require('./routes/items');
+
+app.use('/api', indexRouter);
+app.use('/api/api-docs', apiDocsRouter);
+app.use('/api/items', itemsRouter);
 
 app.use((request, response, next) => {
   const error = new Error(`${request.method} ${request.url} Not Found`);

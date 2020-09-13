@@ -3,7 +3,7 @@ const router = express.Router();
 const asyncHandler = require('express-async-handler');
 const {v4: uuidv4} = require('uuid');
 
-const {items} = require('../model/data');
+const {items} = require('../models/items');
 
 /**
  * @swagger

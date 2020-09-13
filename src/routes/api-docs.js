@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const swaggerUi = require('swagger-ui-express');
 const swaggerJSDoc = require('swagger-jsdoc');
-const {version} = require('../package');
+const {version} = require('../../package');
 
 const options = {
   explorer: true,
@@ -20,8 +20,8 @@ const options = {
 
   },
   apis: [
-      'routes/index.js',
-      'routes/items.js'
+      'src/routes/index.js',
+      'src/routes/items.js'
     ],
 };
 
