@@ -14,4 +14,4 @@ $ npm start
 
 ### Documentation
 
-You can find the API specification at http://localhost:3000/api/v0/api-docs/
+You can find the API specification at http://localhost:3000/api/api-docs/
