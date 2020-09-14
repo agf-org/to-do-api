@@ -39,11 +39,18 @@ const {notebook} = require('../models/notebook');
 /**
  * @swagger
  * 
- * /to-do/items:
+ * /to-do/pages/{pageId}/items:
  *  get:
  *    tags:
  *      - items
  *    summary: Returns all items
+ *    parameters:
+ *      - name: pageId
+ *        description: ID of the page
+ *        in: path
+ *        required: true
+ *        schema:
+ *          type: string
  *    responses:
  *      200:
  *        description: OK
@@ -55,17 +62,30 @@ const {notebook} = require('../models/notebook');
  *        description: Not Found
  */
 const getItems = asyncHandler(async (request, response) => {
-  response.status(200).json(notebook.pages[0].items);
+  const pageId = request.params.pageId;
+  const page = notebook.pages.find(page => page.id === pageId);
+  if (page) {
+    response.status(200).json(page.items);
+  } else {
+    response.status(404).send(`Page ${pageId} not found!`);
+  }
 });
 
 /**
  * @swagger
  * 
- * /to-do/items:
+ * /to-do/pages/{pageId}/items:
  *  post:
  *    tags:
  *      - items
  *    summary: Adds an item
+ *    parameters:
+ *      - name: pageId
+ *        description: ID of the page
+ *        in: path
+ *        required: true
+ *        schema:
+ *          type: string
  *    requestBody:
  *        name: item
  *        description: Object representing the item
@@ -79,19 +99,27 @@ const getItems = asyncHandler(async (request, response) => {
  *        description: Created
  *      400:
  *        description: Bad Request
+ *      404:
+ *        description: Not Found
  */
 const addItem = asyncHandler(async (request, response) => {
-  const {text, done} = request.body;
-  if (text != undefined && done != undefined) {
-    const newItem = {
-      "id": `${uuidv4()}`,
-      "text": text,
-      "done": done
+  const pageId = request.params.pageId;
+  const page = notebook.pages.find(page => page.id === pageId);
+  if (page) {
+    const {text, done} = request.body;
+    if (text != undefined && done != undefined) {
+      const newItem = {
+        "id": `${uuidv4()}`,
+        "text": text,
+        "done": done
+      }
+      page.items.push(newItem)
+      response.sendStatus(201);
+    } else {
+      response.sendStatus(400);
     }
-    notebook.pages[0].items.push(newItem)
-    response.sendStatus(201);
   } else {
-    response.sendStatus(400);
+    response.status(404).send(`Page ${pageId} not found!`);
   }
 });
 
@@ -99,13 +127,19 @@ const addItem = asyncHandler(async (request, response) => {
 /**
  * @swagger
  * 
- * /to-do/items/{id}:
+ * /to-do/pages/{pageId}/items/{itemId}:
  *  get:
  *    tags:
  *      - items
  *    summary: Returns an item
  *    parameters:
- *      - name: id
+ *      - name: pageId
+ *        description: ID of the page
+ *        in: path
+ *        required: true
+ *        schema:
+ *          type: string
+ *      - name: itemId
  *        description: ID of the item
  *        in: path
  *        required: true
@@ -122,25 +156,36 @@ const addItem = asyncHandler(async (request, response) => {
  *        description: Not Found
  */
 const getItem = asyncHandler(async (request, response) => {
-  const id = request.params.id;
-  const item = notebook.pages[0].items.find(item => item.id == id);
-  if (item) {
-    response.status(200).json(item);
+  const {pageId, itemId} = request.params;
+  const page = notebook.pages.find(page => page.id === pageId);
+  if (page) {
+    const item = page.items.find(item => item.id === itemId);
+    if (item) {
+      response.status(200).json(item);
+    } else {
+      response.status(404).send(`Item ${itemId} not found!`);
+    }
   } else {
-    response.sendStatus(404);
+    response.status(404).send(`Page ${pageId} not found!`);
   }
 });
 
 /**
  * @swagger
  * 
- * /to-do/items/{id}:
+ * /to-do/pages/{pageId}/items/{itemId}:
  *  put:
  *    tags:
  *      - items
  *    summary: Updates an item
  *    parameters:
- *      - name: id
+ *      - name: pageId
+ *        description: ID of the page
+ *        in: path
+ *        required: true
+ *        schema:
+ *          type: string
+ *      - name: itemId
  *        description: ID of the item
  *        in: path
  *        required: true
@@ -163,38 +208,49 @@ const getItem = asyncHandler(async (request, response) => {
  *        description: Not Found
  */
 const updateItem = asyncHandler(async (request, response) => {
-  const id = request.params.id;
-  const items = notebook.pages[0].items;
-  const itemIndex = items.findIndex(item => item.id == id);
-  if (itemIndex != -1) {
-    const {text, done} = request.body;
-    if (text != undefined && done != undefined) {
-      items.splice(itemIndex, 1);
-      const newItem = {
-        "id": id,
-        "text": text,
-        "done": done
+  const {pageId, itemId} = request.params;
+  const page = notebook.pages.find(page => page.id === pageId);
+  if (page) {
+    const items = page.items;
+    const itemIndex = items.findIndex(item => item.id === itemId);
+    if (itemIndex != -1) {
+      const {text, done} = request.body;
+      if (text != undefined && done != undefined) {
+        items.splice(itemIndex, 1);
+        const newItem = {
+          "id": itemId,
+          "text": text,
+          "done": done
+        }
+        items.push(newItem)
+        response.sendStatus(200);
+      } else {
+        response.sendStatus(400);
       }
-      items.push(newItem)
-      response.sendStatus(200);
     } else {
-      response.sendStatus(400);
+      response.status(404).send(`Item ${itemId} not found!`);
     }
   } else {
-    response.sendStatus(404);
+    response.status(404).send(`Page ${pageId} not found!`);
   }
 });
 
 /**
  * @swagger
  * 
- * /to-do/items/{id}:
+ * /to-do/pages/{pageId}/items/{itemId}:
  *  delete:
  *    tags:
  *      - items
  *    summary: Deletes an item
  *    parameters:
- *      - name: id
+ *      - name: pageId
+ *        description: ID of the page
+ *        in: path
+ *        required: true
+ *        schema:
+ *          type: string
+ *      - name: itemId
  *        description: ID of the item
  *        in: path
  *        required: true
@@ -207,14 +263,19 @@ const updateItem = asyncHandler(async (request, response) => {
  *        description: Not Found
  */
 const deleteItem = asyncHandler(async (request, response) => {
-  const id = request.params.id;
-  const items = notebook.pages[0].items;
-  const itemIndex = items.findIndex(item => item.id == id);
-  if (itemIndex != -1) {
-    items.splice(itemIndex, 1);
-    response.sendStatus(200);
+  const {itemId, pageId} = request.params;
+  const page = notebook.pages.find(page => page.id === pageId);
+  if (page) {
+    const items = page.items;
+    const itemIndex = items.findIndex(item => item.id === itemId);
+    if (itemIndex != -1) {
+      items.splice(itemIndex, 1);
+      response.sendStatus(200);
+    } else {
+      response.status(404).send(`Item ${itemId} not found!`);
+    }
   } else {
-    response.sendStatus(404);
+    response.status(404).send(`Page ${pageId} not found!`);
   }
 });
 

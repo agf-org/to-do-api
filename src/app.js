@@ -13,11 +13,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-const indexRouter = require('./routes/index');
 const apiDocsRouter = require('./routes/api-docs');
-const toDoRouter = require('./routes/to-do');
+const toDoRouter = require('./routes/toDoRouter');
 
-app.use(config.baseUrl, indexRouter);
 app.use(`${config.baseUrl}/api-docs`, apiDocsRouter);
 app.use(`${config.baseUrl}/to-do`, toDoRouter);
 
