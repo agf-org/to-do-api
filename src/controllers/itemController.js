@@ -1,7 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const {v4: uuidv4} = require('uuid');
 
-const {items} = require('../models/items');
+const {notebook} = require('../models/notebook');
 
 /**
  * @swagger
@@ -55,7 +55,7 @@ const {items} = require('../models/items');
  *        description: Not Found
  */
 const getItems = asyncHandler(async (request, response) => {
-  response.status(200).json(items);
+  response.status(200).json(notebook.pages[0].items);
 });
 
 /**
@@ -88,7 +88,7 @@ const addItem = asyncHandler(async (request, response) => {
       "text": text,
       "done": done
     }
-    items.push(newItem)
+    notebook.pages[0].items.push(newItem)
     response.sendStatus(201);
   } else {
     response.sendStatus(400);
@@ -123,7 +123,7 @@ const addItem = asyncHandler(async (request, response) => {
  */
 const getItem = asyncHandler(async (request, response) => {
   const id = request.params.id;
-  const item = items.find(item => item.id == id);
+  const item = notebook.pages[0].items.find(item => item.id == id);
   if (item) {
     response.status(200).json(item);
   } else {
@@ -164,6 +164,7 @@ const getItem = asyncHandler(async (request, response) => {
  */
 const updateItem = asyncHandler(async (request, response) => {
   const id = request.params.id;
+  const items = notebook.pages[0].items;
   const itemIndex = items.findIndex(item => item.id == id);
   if (itemIndex != -1) {
     const {text, done} = request.body;
@@ -207,6 +208,7 @@ const updateItem = asyncHandler(async (request, response) => {
  */
 const deleteItem = asyncHandler(async (request, response) => {
   const id = request.params.id;
+  const items = notebook.pages[0].items;
   const itemIndex = items.findIndex(item => item.id == id);
   if (itemIndex != -1) {
     items.splice(itemIndex, 1);
