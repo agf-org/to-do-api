@@ -1,12 +1,11 @@
 const asyncHandler = require('express-async-handler');
 
-const ok = asyncHandler(async (request, response) => {
-  response.sendStatus(200)
+const methodsAllowed = (methods) => asyncHandler(async (request, response, next) => {
+  if (methods.includes(request.method)) {
+    return next();
+  } else {
+    return response.sendStatus(405);
+  }
 });
 
-const methodNotAllowed = asyncHandler(async (request, response) => {
-  response.sendStatus(405);
-});
-
-module.exports.ok = ok;
-module.exports.methodNotAllowed = methodNotAllowed;
+module.exports.methodsAllowed = methodsAllowed;

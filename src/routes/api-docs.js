@@ -19,7 +19,7 @@ const options = {
     ]
   },
   apis: [
-      'src/controllers/itemController.js'
+      'src/**/*.js'
     ],
 };
 
