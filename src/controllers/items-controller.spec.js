@@ -3,7 +3,7 @@ const request = require('supertest');
 const {config} = require('../config');
 
 describe(`${config.baseUrl}/to-do/pages/0/items tests`, () => {
-  describe('GET tests', () => {
+  describe('Get all items', () => {
     it('should return a 200 response', async () => {
       const response = await request(app)
         .get(`${config.baseUrl}/to-do/pages/0/items`);
@@ -30,7 +30,7 @@ describe(`${config.baseUrl}/to-do/pages/0/items tests`, () => {
     });
   });
 
-  describe('POST tests', () => {
+  describe('Add an item', () => {
     it('should return a 201 response', async () => {
       const response = await request(app)
         .post(`${config.baseUrl}/to-do/pages/0/items`)
@@ -43,26 +43,57 @@ describe(`${config.baseUrl}/to-do/pages/0/items tests`, () => {
       expect(response.text).toBe('Created');
     });
 
-    it('should return a 400 response for an item without text field', async () => {
+    it('should return a 400 response for an item without a "text" field', async () => {
       const response = await request(app)
         .post(`${config.baseUrl}/to-do/pages/0/items`)
         .send({
           "done": false
         });
       expect(response.statusCode).toBe(400);
-      expect(response.type).toBe('text/plain');
-      expect(response.text).toBe('Bad Request');
+      expect(response.type).toBe('application/json');
     });
 
-    it('should return a 400 response for an item without done field', async () => {
+    it('should return a 400 response for an item with a "text" field that is not a string', async () => {
+      const response = await request(app)
+        .post(`${config.baseUrl}/to-do/pages/0/items`)
+        .send({
+          "text": 0,
+          "done": false
+        });
+      expect(response.statusCode).toBe(400);
+      expect(response.type).toBe('application/json');
+    });
+
+    it('should return a 400 response for an item with a "text" field that is empty', async () => {
+      const response = await request(app)
+        .post(`${config.baseUrl}/to-do/pages/0/items`)
+        .send({
+          "text": "",
+          "done": false
+        });
+      expect(response.statusCode).toBe(400);
+      expect(response.type).toBe('application/json');
+    });
+
+    it('should return a 400 response for an item without a "done" field', async () => {
       const response = await request(app)
         .post(`${config.baseUrl}/to-do/pages/0/items`)
         .send({
           "text": "test"
         });
       expect(response.statusCode).toBe(400);
-      expect(response.type).toBe('text/plain');
-      expect(response.text).toBe('Bad Request');
+      expect(response.type).toBe('application/json');
+    });
+
+    it('should return a 400 response for an item with a "done" field that is not a boolean', async () => {
+      const response = await request(app)
+        .post(`${config.baseUrl}/to-do/pages/0/items`)
+        .send({
+          "text": "test",
+          "done": "not a boolean"
+        });
+      expect(response.statusCode).toBe(400);
+      expect(response.type).toBe('application/json');
     });
 
     it('should return a 404 response for a non-existing page', async () => {
@@ -88,7 +119,7 @@ describe(`${config.baseUrl}/to-do/pages/0/items tests`, () => {
 });
 
 describe(`${config.baseUrl}/to-do/pages/0/items/:id`, () => {
-  describe('GET tests', () => {
+  describe('Get an item', () => {
     it('should return a 200 response', async () => {
       const response = await request(app)
         .get(`${config.baseUrl}/to-do/pages/0/items/0`);
@@ -121,7 +152,7 @@ describe(`${config.baseUrl}/to-do/pages/0/items/:id`, () => {
     });
   });
 
-  describe('PUT tests', () => {
+  describe('Update an item', () => {
     it('should return a 200 response', async () => {
       const response = await request(app)
         .put(`${config.baseUrl}/to-do/pages/0/items/0`)
@@ -134,26 +165,57 @@ describe(`${config.baseUrl}/to-do/pages/0/items/:id`, () => {
       expect(response.text).toBe('OK');
     });
 
-    it('should return a 400 response for an item without text field', async () => {
+    it('should return a 400 response for an item without a "text" field', async () => {
       const response = await request(app)
       .put(`${config.baseUrl}/to-do/pages/0/items/0`)
         .send({
           "done": false
         });
       expect(response.statusCode).toBe(400);
-      expect(response.type).toBe('text/plain');
-      expect(response.text).toBe('Bad Request');
+      expect(response.type).toBe('application/json');
     });
 
-    it('should return a 400 response for an item without done field', async () => {
+    it('should return a 400 response for an item with a "text" field that is not a string', async () => {
+      const response = await request(app)
+        .put(`${config.baseUrl}/to-do/pages/0/items/0`)
+        .send({
+          "text": 0,
+          "done": false
+        });
+      expect(response.statusCode).toBe(400);
+      expect(response.type).toBe('application/json');
+    });
+
+    it('should return a 400 response for an item with a "text" field that is empty', async () => {
+      const response = await request(app)
+        .put(`${config.baseUrl}/to-do/pages/0/items/0`)
+        .send({
+          "text": "",
+          "done": false
+        });
+      expect(response.statusCode).toBe(400);
+      expect(response.type).toBe('application/json');
+    });
+
+    it('should return a 400 response for an item without a "done" field', async () => {
       const response = await request(app)
       .put(`${config.baseUrl}/to-do/pages/0/items/0`)
         .send({
           "text": "test"
         });
       expect(response.statusCode).toBe(400);
-      expect(response.type).toBe('text/plain');
-      expect(response.text).toBe('Bad Request');
+      expect(response.type).toBe('application/json');
+    });
+
+    it('should return a 400 response for an item with a "done" field that is not a boolean', async () => {
+      const response = await request(app)
+        .put(`${config.baseUrl}/to-do/pages/0/items/0`)
+        .send({
+          "text": "test",
+          "done": "not a boolean"
+        });
+      expect(response.statusCode).toBe(400);
+      expect(response.type).toBe('application/json');
     });
 
     it('should return a 404 response for a non-existing page', async () => {
@@ -181,7 +243,7 @@ describe(`${config.baseUrl}/to-do/pages/0/items/:id`, () => {
     });
   });
   
-  describe('DELETE tests', () => {
+  describe('Delete an item', () => {
     it('should return a 200 response', async () => {
       const response = await request(app)
         .delete(`${config.baseUrl}/to-do/pages/0/items/0`);

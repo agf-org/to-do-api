@@ -1,6 +1,6 @@
 const item = {
   "id": "0",
-  "text": "test to-do 0",
+  "text": "test",
   "done": false
 };
   

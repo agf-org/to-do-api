@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
+const itemsValidator = require('../validators/items-validator');
 const pagesController = require('../controllers/pages-controller');
 const itemsController = require('../controllers/items-controller');
 const commonController = require('../controllers/common-controller');
@@ -14,9 +15,15 @@ router.use(
   pagesController.getPageIfExists,
   itemsController.getItemIfExists
 );
-router.route('/pages/:pageId/items/:itemId')
+router.route(
+  '/pages/:pageId/items/:itemId'
+  )
   .get(itemsController.getItem)
-  .put(itemsController.updateItem)
+  .put(
+    itemsValidator.validateItem,
+    itemsValidator.validate,
+    itemsController.updateItem
+  )
   .delete(itemsController.deleteItem);
 
 router.use(
@@ -27,8 +34,14 @@ router.use(
   '/pages/:pageId/items',
   pagesController.getPageIfExists
 );
-router.route('/pages/:pageId/items')
+router.route(
+  '/pages/:pageId/items'
+  )
   .get(itemsController.getItems)
-  .post(itemsController.addItem);
+  .post(
+    itemsValidator.validateItem,
+    itemsValidator.validate,
+    itemsController.addItem
+  );
 
 module.exports = router;
