@@ -19,7 +19,7 @@ const getItemIfExists = asyncHandler(async (request, response, next) => {
  *  get:
  *    tags:
  *      - items
- *    summary: Returns an item
+ *    summary: Gets an item
  *    parameters:
  *      - name: pageId
  *        description: ID of the page
@@ -87,18 +87,14 @@ const getItem = asyncHandler(async (request, response) => {
 const updateItem = asyncHandler(async (request, response) => {
   const itemIndex = response.locals.page.items.indexOf(response.locals.item);
   const {text, done} = request.body;
-  if (text != undefined && done != undefined) {
-    response.locals.page.items.splice(itemIndex, 1);
-    const newItem = {
-      "id": request.params.itemId,
-      "text": text,
-      "done": done
-    }
-    response.locals.page.items.push(newItem)
-    response.sendStatus(200);
-  } else {
-    response.sendStatus(400);
+  response.locals.page.items.splice(itemIndex, 1);
+  const newItem = {
+    "id": request.params.itemId,
+    "text": text,
+    "done": done
   }
+  response.locals.page.items.push(newItem)
+  response.sendStatus(200);
 });
 
 /**
@@ -141,7 +137,7 @@ const deleteItem = asyncHandler(async (request, response) => {
  *  get:
  *    tags:
  *      - items
- *    summary: Returns all items
+ *    summary: Gets all items
  *    parameters:
  *      - name: pageId
  *        description: ID of the page
@@ -196,17 +192,13 @@ const getItems = asyncHandler(async (request, response) => {
  */
 const addItem = asyncHandler(async (request, response) => {
   const {text, done} = request.body;
-  if (text != undefined && done != undefined) {
-    const newItem = {
-      "id": `${uuidv4()}`,
-      "text": text,
-      "done": done
-    }
-    response.locals.page.items.push(newItem)
-    response.sendStatus(201);
-  } else {
-    response.sendStatus(400);
+  const newItem = {
+    "id": `${uuidv4()}`,
+    "text": text,
+    "done": done
   }
+  response.locals.page.items.push(newItem)
+  response.sendStatus(201);
 });
 
 module.exports.getItemIfExists = getItemIfExists;
