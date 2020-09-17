@@ -29,4 +29,19 @@
  *     type: array
  *     items:
  *       $ref: '#/definitions/Item'
+ *   Page:
+ *     type: object
+ *     required:
+ *       - id
+ *       - items
+ *     properties:
+ *       id:
+ *         type: integer
+ *       items:
+ *         type: array
+ *         $ref: '#/definitions/Items'
+ *   Pages:
+ *     type: array
+ *     items:
+ *       $ref: '#/definitions/Page'
  */
