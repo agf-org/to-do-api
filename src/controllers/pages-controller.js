@@ -17,6 +17,35 @@ const getPageIfExists = asyncHandler(async (request, response, next) => {
 /**
  * @swagger
  * 
+ * /to-do/pages/{pageId}:
+ *  get:
+ *    tags:
+ *      - Pages
+ *    summary: Gets a page
+ *    parameters:
+ *      - name: pageId
+ *        description: ID of the page
+ *        in: path
+ *        required: true
+ *        schema:
+ *          type: string
+ *    responses:
+ *      200:
+ *        description: OK
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/definitions/Page'
+ *      404:
+ *        description: Not Found
+ */
+const getPage = asyncHandler(async (request, response) => {
+  response.status(200).json(response.locals.page);
+});
+
+/**
+ * @swagger
+ * 
  * /to-do/pages:
  *  get:
  *    tags:
@@ -56,5 +85,6 @@ const addPage = asyncHandler(async (request, response) => {
 });
 
 module.exports.getPageIfExists = getPageIfExists;
+module.exports.getPage = getPage;
 module.exports.getPages = getPages;
 module.exports.addPage = addPage;

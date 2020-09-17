@@ -45,6 +45,18 @@ router.route(
   );
 
 router.use(
+  '/pages/:pageId',
+  commonController.methodsAllowed(['GET']),
+  pagesController.getPageIfExists
+);
+router.route(
+  '/pages/:pageId'
+)
+  .get(
+    pagesController.getPage
+  );
+
+router.use(
   '/pages',
   commonController.methodsAllowed(['GET', 'POST'])
 );
