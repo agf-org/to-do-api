@@ -2,6 +2,32 @@ const app = require('../app');
 const request = require('supertest');
 const {config} = require('../config');
 
+describe(`${config.baseUrl}/to-do/pages/0`, () => {
+  describe('Get a page', () => {
+    it('should return a 200 response', async () => {
+      const response = await request(app)
+        .get(`${config.baseUrl}/to-do/pages/0`);
+      expect(response.statusCode).toBe(200);
+      expect(response.type).toBe('application/json');
+    });
+
+    it('should return a page', async () => {
+      const response = await request(app)
+        .get(`${config.baseUrl}/to-do/pages/0`);
+      expect(typeof response.body.id).toBe('string');
+      expect(Array.isArray(response.body.items)).toBe(true)
+    });
+
+    it('should return a 404 response for a non-existing page', async () => {
+      const response = await request(app)
+        .get(`${config.baseUrl}/to-do/pages/1`);
+      expect(response.statusCode).toBe(404);
+      expect(response.type).toBe('text/html');
+      expect(response.text).toBe('Page 1 not found!');
+    });
+  });
+});
+
 describe(`${config.baseUrl}/to-do/pages`, () => {
   describe('Get all pages', () => {
     it('should return a 200 response', async () => {
