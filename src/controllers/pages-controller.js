@@ -46,6 +46,33 @@ const getPage = asyncHandler(async (request, response) => {
 /**
  * @swagger
  * 
+ * /to-do/pages/{pageId}:
+ *  delete:
+ *    tags:
+ *      - Pages
+ *    summary: Deletes a page
+ *    parameters:
+ *      - name: pageId
+ *        description: ID of the page
+ *        in: path
+ *        required: true
+ *        schema:
+ *          type: string
+ *    responses:
+ *      200:
+ *        description: OK
+ *      404:
+ *        description: Not Found
+ */
+const deletePage = asyncHandler(async (request, response) => {
+  const pageIndex = notebook.pages.indexOf(response.locals.page);
+  notebook.pages.splice(pageIndex, 1);
+  response.sendStatus(200);
+});
+
+/**
+ * @swagger
+ * 
  * /to-do/pages:
  *  get:
  *    tags:
@@ -86,5 +113,6 @@ const addPage = asyncHandler(async (request, response) => {
 
 module.exports.getPageIfExists = getPageIfExists;
 module.exports.getPage = getPage;
+module.exports.deletePage = deletePage;
 module.exports.getPages = getPages;
 module.exports.addPage = addPage;

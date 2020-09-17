@@ -46,7 +46,7 @@ router.route(
 
 router.use(
   '/pages/:pageId',
-  commonController.methodsAllowed(['GET']),
+  commonController.methodsAllowed(['GET', 'DELETE']),
   pagesController.getPageIfExists
 );
 router.route(
@@ -54,6 +54,9 @@ router.route(
 )
   .get(
     pagesController.getPage
+  )
+  .delete(
+    pagesController.deletePage
   );
 
 router.use(
