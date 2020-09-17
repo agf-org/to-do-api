@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 
-const itemsValidator = require('../validators/items-validator');
-const pagesController = require('../controllers/pages-controller');
-const itemsController = require('../controllers/items-controller');
 const commonController = require('../controllers/common-controller');
+const itemsValidator = require('../validators/items-validator');
+const itemsController = require('../controllers/items-controller');
+const pagesController = require('../controllers/pages-controller');
 
 router.use(
   '/pages/:pageId/items/:itemId',
@@ -14,7 +14,7 @@ router.use(
 );
 router.route(
   '/pages/:pageId/items/:itemId'
-  )
+)
   .get(
     itemsController.getItem
   )
@@ -34,7 +34,7 @@ router.use(
 );
 router.route(
   '/pages/:pageId/items'
-  )
+)
   .get(
     itemsController.getItems
   )
@@ -42,6 +42,17 @@ router.route(
     itemsValidator.validateItem,
     itemsValidator.validate,
     itemsController.addItem
+  );
+
+router.use(
+  '/pages',
+  commonController.methodsAllowed(['GET'])
+);
+router.route(
+  '/pages'
+)
+  .get(
+    pagesController.getPages
   );
 
 module.exports = router;

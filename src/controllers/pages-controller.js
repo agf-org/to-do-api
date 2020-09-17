@@ -13,4 +13,25 @@ const getPageIfExists = asyncHandler(async (request, response, next) => {
   }
 });
 
+/**
+ * @swagger
+ * 
+ * /to-do/pages:
+ *  get:
+ *    tags:
+ *      - pages
+ *    summary: Gets all pages
+ *    responses:
+ *      200:
+ *        description: OK
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/definitions/Pages'
+ */
+const getPages = asyncHandler(async (request, response) => {
+  response.status(200).json(notebook.pages);
+});
+
 module.exports.getPageIfExists = getPageIfExists;
+module.exports.getPages = getPages;
