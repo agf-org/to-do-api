@@ -18,7 +18,7 @@ const getItemIfExists = asyncHandler(async (request, response, next) => {
  * /to-do/pages/{pageId}/items/{itemId}:
  *  get:
  *    tags:
- *      - items
+ *      - Items
  *    summary: Gets an item
  *    parameters:
  *      - name: pageId
@@ -53,7 +53,7 @@ const getItem = asyncHandler(async (request, response) => {
  * /to-do/pages/{pageId}/items/{itemId}:
  *  put:
  *    tags:
- *      - items
+ *      - Items
  *    summary: Updates an item
  *    parameters:
  *      - name: pageId
@@ -103,7 +103,7 @@ const updateItem = asyncHandler(async (request, response) => {
  * /to-do/pages/{pageId}/items/{itemId}:
  *  delete:
  *    tags:
- *      - items
+ *      - Items
  *    summary: Deletes an item
  *    parameters:
  *      - name: pageId
@@ -136,7 +136,7 @@ const deleteItem = asyncHandler(async (request, response) => {
  * /to-do/pages/{pageId}/items:
  *  get:
  *    tags:
- *      - items
+ *      - Items
  *    summary: Gets all items
  *    parameters:
  *      - name: pageId
@@ -165,7 +165,7 @@ const getItems = asyncHandler(async (request, response) => {
  * /to-do/pages/{pageId}/items:
  *  post:
  *    tags:
- *      - items
+ *      - Items
  *    summary: Adds an item
  *    parameters:
  *      - name: pageId
@@ -193,7 +193,7 @@ const getItems = asyncHandler(async (request, response) => {
 const addItem = asyncHandler(async (request, response) => {
   const {text, done} = request.body;
   const newItem = {
-    "id": `${uuidv4()}`,
+    "id": uuidv4(),
     "text": text,
     "done": done
   }

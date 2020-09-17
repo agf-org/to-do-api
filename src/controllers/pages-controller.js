@@ -1,4 +1,5 @@
 const asyncHandler = require('express-async-handler');
+const {v4: uuidv4} = require('uuid');
 
 const {notebook} = require('../models/notebook');
 
@@ -19,7 +20,7 @@ const getPageIfExists = asyncHandler(async (request, response, next) => {
  * /to-do/pages:
  *  get:
  *    tags:
- *      - pages
+ *      - Pages
  *    summary: Gets all pages
  *    responses:
  *      200:
@@ -33,5 +34,27 @@ const getPages = asyncHandler(async (request, response) => {
   response.status(200).json(notebook.pages);
 });
 
+/**
+ * @swagger
+ * 
+ * /to-do/pages:
+ *  post:
+ *    tags:
+ *      - Pages
+ *    summary: Adds a page
+ *    responses:
+ *      201:
+ *        description: Created
+ */
+const addPage = asyncHandler(async (request, response) => {
+  const newPage = {
+    "id": uuidv4(),
+    "items": []
+  }
+  notebook.pages.push(newPage)
+  response.sendStatus(201);
+});
+
 module.exports.getPageIfExists = getPageIfExists;
 module.exports.getPages = getPages;
+module.exports.addPage = addPage;

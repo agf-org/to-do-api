@@ -46,13 +46,16 @@ router.route(
 
 router.use(
   '/pages',
-  commonController.methodsAllowed(['GET'])
+  commonController.methodsAllowed(['GET', 'POST'])
 );
 router.route(
   '/pages'
 )
   .get(
     pagesController.getPages
+  )
+  .post(
+    pagesController.addPage
   );
 
 module.exports = router;

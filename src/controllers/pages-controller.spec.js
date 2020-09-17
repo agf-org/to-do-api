@@ -25,6 +25,16 @@ describe(`${config.baseUrl}/to-do/pages`, () => {
       });
     });
   });
+
+  describe('Add a page', () => {
+    it('should return a 201 response', async () => {
+      const response = await request(app)
+        .post(`${config.baseUrl}/to-do/pages`);
+      expect(response.statusCode).toBe(201);
+      expect(response.type).toBe('text/plain');
+      expect(response.text).toBe('Created');
+    });
+  });
   
   it('should return a 405 response for an unsupported request method', async () => {
     const response = await request(app)
