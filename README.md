@@ -1,9 +1,10 @@
 # To-do API
 
-### Usage
+## Usage
 
-Create a `.env` file with the following environment variables:
+Create a `.env` file inside the project directory with the following environment variables:
 
+* TO_DO_API_DEPLOYMENT_TAG=local
 * DEBUG=to-do-api:*
 * NODE_ENV=development
 
@@ -12,6 +13,11 @@ To start the app use:
 $ npm start
 ```
 
-### Documentation
+With Docker Compose:
+```
+$ docker-compose up -d
+```
 
-You can find the API specification at http://localhost:3000/api/api-docs/
+## Documentation
+
+API specification can be found at http://localhost:3000/api/api-docs/

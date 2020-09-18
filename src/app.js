@@ -13,6 +13,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// var mongoose = require('mongoose');
+// var mongoDB = 'mongodb://mongo_to-do-api:27017/test';
+// mongoose.connect(mongoDB, {useNewUrlParser: true , useUnifiedTopology: true});
+// var connection = mongoose.connection;
+// connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
+
 const apiDocsRouter = require('./routes/api-docs');
 const toDoRouter = require('./routes/to-do-router');
 

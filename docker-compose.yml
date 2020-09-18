@@ -1,0 +1,33 @@
+version: '3.1'
+
+volumes:
+  mongodb:
+
+services:
+  mongo:
+    image: mongo:4
+    volumes:
+      - mongodb:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongoadmin
+      MONGO_INITDB_ROOT_PASSWORD: secret
+    restart: unless-stopped
+
+  mongo-express:
+    image: mongo-express:0.54.0
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: mongoadmin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: secret
+    restart: unless-stopped
+
+  to-do-api:
+    image: alvarogarciafer/to-do-api:$TO_DO_API_DEPLOYMENT_TAG
+    build: .
+    ports:
+      - 3000:3000
+    env_file: .env
+    restart: unless-stopped
+    command: 
+      - start
