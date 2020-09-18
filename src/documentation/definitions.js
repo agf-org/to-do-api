@@ -15,16 +15,18 @@
  *   Item:
  *     type: object
  *     required:
- *       - id
+ *       - _id
  *       - text
  *       - done
  *     properties:
- *       id:
- *         type: integer
+ *       _id:
+ *         type: string
  *       text:
  *         type: string
  *       done:
  *         type: boolean
+ *       __v:
+ *         type: integer
  *   Items:
  *     type: array
  *     items:
@@ -32,14 +34,16 @@
  *   Page:
  *     type: object
  *     required:
- *       - id
+ *       - _id
  *       - items
  *     properties:
- *       id:
- *         type: integer
+ *       _id:
+ *         type: string
  *       items:
  *         type: array
  *         $ref: '#/definitions/Items'
+ *       __v:
+ *         type: integer
  *   Pages:
  *     type: array
  *     items:

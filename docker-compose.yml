@@ -1,39 +1,43 @@
-version: '3.1'
+version: "3.7"
 
 volumes:
   mongodb:
+  mongodb-config:
 
 services:
   mongo:
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: $MONGO_INITDB_ROOT_USERNAME
-      MONGO_INITDB_ROOT_PASSWORD: $MONGO_INITDB_ROOT_PASSWORD
+    env_file:
+      - .env
     image: mongo:4
     volumes:
-      - mongodb:/data/db
+      - type: volume
+        source: mongodb
+        target: /data/db
+      - type: volume
+        source: mongodb-config
+        target: /data/configdb
+    ports:
+      - $MONGODB_PORT:27017
+    container_name: mongo
     restart: unless-stopped
 
   mongo-express:
-    environment:
-      ME_CONFIG_MONGODB_ENABLE_ADMIN: $ME_CONFIG_MONGODB_ENABLE_ADMIN
-      ME_CONFIG_MONGODB_ADMINUSERNAME: $MONGO_INITDB_ROOT_USERNAME
-      ME_CONFIG_MONGODB_ADMINPASSWORD: $MONGO_INITDB_ROOT_PASSWORD
-      ME_CONFIG_BASICAUTH_USERNAME: $ME_CONFIG_BASICAUTH_USERNAME
-      ME_CONFIG_BASICAUTH_PASSWORD: $ME_CONFIG_BASICAUTH_PASSWORD
     image: mongo-express:0.54.0
     ports:
       - 8081:8081
+    container_name: mongo-express
     restart: unless-stopped
 
   to-do-api:
+    env_file:
+      - .env
     environment:
-      TO_DO_API_TAG: $TO_DO_API_TAG
-      DEBUG: $DEBUG
-      NODE_ENV: $NODE_ENV
+      - MONGODB_HOST=mongo
     image: alvarogarciafer/to-do-api:$TO_DO_API_TAG
     build: .
     ports:
-      - 3000:3000
+      - $TO_DO_API_PORT:3000
+    container_name: to-do-api
     restart: unless-stopped
     command: 
       - start

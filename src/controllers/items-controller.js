@@ -1,8 +1,9 @@
 const asyncHandler = require('express-async-handler');
-const {v4: uuidv4} = require('uuid');
+
+const ItemModel = require('../models/item-model');
 
 const getItemIfExists = asyncHandler(async (request, response, next) => {
-  const {itemId} = request.params;
+  const itemId = request.params.itemId;
   const item = response.locals.page.items.find(item => item.id === itemId);
   if (item) {
     response.locals.item = item;
@@ -16,32 +17,34 @@ const getItemIfExists = asyncHandler(async (request, response, next) => {
  * @swagger
  * 
  * /to-do/pages/{pageId}/items/{itemId}:
- *  get:
- *    tags:
- *      - Items
- *    summary: Gets an item
- *    parameters:
- *      - name: pageId
- *        description: ID of the page
- *        in: path
- *        required: true
- *        schema:
- *          type: string
- *      - name: itemId
- *        description: ID of the item
- *        in: path
- *        required: true
- *        schema:
- *          type: string
- *    responses:
- *      200:
- *        description: OK
- *        content:
- *          application/json:
- *            schema:
- *              $ref: '#/definitions/Item'
- *      404:
- *        description: Not Found
+ *   get:
+ *     tags:
+ *       - Items
+ *     summary: Gets an item
+ *     parameters:
+ *       - name: pageId
+ *         description: ID of the page
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - name: itemId
+ *         description: ID of the item
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/definitions/Item'
+ *       400:
+ *         description: Bad Request
+ *       404:
+ *         description: Not Found
  */
 const getItem = asyncHandler(async (request, response) => {
   response.status(200).json(response.locals.item);
@@ -51,154 +54,161 @@ const getItem = asyncHandler(async (request, response) => {
  * @swagger
  * 
  * /to-do/pages/{pageId}/items/{itemId}:
- *  put:
- *    tags:
- *      - Items
- *    summary: Updates an item
- *    parameters:
- *      - name: pageId
- *        description: ID of the page
- *        in: path
- *        required: true
- *        schema:
- *          type: string
- *      - name: itemId
- *        description: ID of the item
- *        in: path
- *        required: true
- *        schema:
- *          type: string
- *    requestBody:
- *        name: item
- *        description: Object representing the item
- *        required: true
- *        content:
- *          application/json:
- *            schema:
- *              $ref: '#/definitions/NewItem'
- *    responses:
- *      200:
- *        description: OK
- *      400:
- *        description: Bad Request
- *      404:
- *        description: Not Found
+ *   put:
+ *     tags:
+ *       - Items
+ *     summary: Updates an item
+ *     parameters:
+ *       - name: pageId
+ *         description: ID of the page
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - name: itemId
+ *         description: ID of the item
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *         name: item
+ *         description: Object representing the item
+ *         required: true
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/definitions/NewItem'
+ *     responses:
+ *       200:
+ *         description: OK
+ *       400:
+ *         description: Bad Request
+ *       404:
+ *         description: Not Found
  */
 const updateItem = asyncHandler(async (request, response) => {
-  const itemIndex = response.locals.page.items.indexOf(response.locals.item);
   const {text, done} = request.body;
-  response.locals.page.items.splice(itemIndex, 1);
-  const newItem = {
-    "id": request.params.itemId,
-    "text": text,
-    "done": done
-  }
-  response.locals.page.items.push(newItem)
-  response.sendStatus(200);
+  response.locals.item.text = text;
+  response.locals.item.done = done;
+  const item = await response.locals.item.save();
+  response.status(200).send(item);
 });
 
 /**
  * @swagger
  * 
  * /to-do/pages/{pageId}/items/{itemId}:
- *  delete:
- *    tags:
- *      - Items
- *    summary: Deletes an item
- *    parameters:
- *      - name: pageId
- *        description: ID of the page
- *        in: path
- *        required: true
- *        schema:
- *          type: string
- *      - name: itemId
- *        description: ID of the item
- *        in: path
- *        required: true
- *        schema:
- *          type: string
- *    responses:
- *      200:
- *        description: OK
- *      404:
- *        description: Not Found
+ *   delete:
+ *     tags:
+ *       - Items
+ *     summary: Deletes an item
+ *     parameters:
+ *       - name: pageId
+ *         description: ID of the page
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - name: itemId
+ *         description: ID of the item
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: OK
+ *       400:
+ *         description: Bad Request
+ *       404:
+ *         description: Not Found
  */
 const deleteItem = asyncHandler(async (request, response) => {
-  const itemIndex = response.locals.page.items.indexOf(response.locals.item);
-  response.locals.page.items.splice(itemIndex, 1);
-  response.sendStatus(200);
+    const item = await response.locals.item.delete();
+    const itemIndex = response.locals.page.items.indexOf(item);
+    response.locals.page.items.splice(itemIndex, 1);
+    await response.locals.page.save();
+    response.status(200).send(item);
 });
 
 /**
  * @swagger
  * 
  * /to-do/pages/{pageId}/items:
- *  get:
- *    tags:
- *      - Items
- *    summary: Gets all items
- *    parameters:
- *      - name: pageId
- *        description: ID of the page
- *        in: path
- *        required: true
- *        schema:
- *          type: string
- *    responses:
- *      200:
- *        description: OK
- *        content:
- *          application/json:
- *            schema:
- *              $ref: '#/definitions/Items'
- *      404:
- *        description: Not Found
+ *   get:
+ *     tags:
+ *       - Items
+ *     summary: Gets all items of a page
+ *     parameters:
+ *       - name: pageId
+ *         description: ID of the page
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/definitions/Items'
+ *       400:
+ *         description: Bad Request
+ *       404:
+ *         description: Not Found
  */
 const getItems = asyncHandler(async (request, response) => {
-  response.status(200).json(response.locals.page.items);
+  response.status(200).send(response.locals.page.items);
 });
 
 /**
  * @swagger
  * 
  * /to-do/pages/{pageId}/items:
- *  post:
- *    tags:
- *      - Items
- *    summary: Adds an item
- *    parameters:
- *      - name: pageId
- *        description: ID of the page
- *        in: path
- *        required: true
- *        schema:
- *          type: string
- *    requestBody:
- *        name: item
- *        description: Object representing the item
- *        required: true
- *        content:
- *          application/json:
- *            schema:
- *              $ref: '#/definitions/NewItem'
- *    responses:
- *      201:
- *        description: Created
- *      400:
- *        description: Bad Request
- *      404:
- *        description: Not Found
+ *   post:
+ *     tags:
+ *       - Items
+ *     summary: Adds an item
+ *     parameters:
+ *       - name: pageId
+ *         description: ID of the page
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *         name: item
+ *         description: Object representing the item
+ *         required: true
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/definitions/NewItem'
+ *     responses:
+ *       201:
+ *         description: Created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/definitions/Item'
+ *       400:
+ *         description: Bad Request
+ *       404:
+ *         description: Not Found
  */
 const addItem = asyncHandler(async (request, response) => {
-  const {text, done} = request.body;
-  const newItem = {
-    "id": uuidv4(),
-    "text": text,
-    "done": done
-  }
-  response.locals.page.items.push(newItem)
-  response.sendStatus(201);
+    const {text, done} = request.body;
+    const newItem = new ItemModel({
+      page: response.locals.page._id,
+      text: text,
+      done: done
+    });
+    const item = await newItem.save();
+    await response.locals.page.items.push(item);
+    await response.locals.page.save();
+    response.status(201).json(item);
 });
 
 module.exports.getItemIfExists = getItemIfExists;

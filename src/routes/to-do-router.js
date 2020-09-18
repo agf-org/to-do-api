@@ -2,25 +2,28 @@ const express = require('express');
 const router = express.Router();
 
 const commonController = require('../controllers/common-controller');
-const itemsValidator = require('../validators/items-validator');
+const itemValidator = require('../validators/item-validator');
 const itemsController = require('../controllers/items-controller');
+const pageValidator = require('../validators/page-validator');
 const pagesController = require('../controllers/pages-controller');
 
 router.use(
   '/pages/:pageId/items/:itemId',
   commonController.methodsAllowed(['GET', 'PUT', 'DELETE']),
+  pageValidator.validatePageId,
+  pageValidator.validate,
   pagesController.getPageIfExists,
+  itemValidator.validateItemId,
+  itemValidator.validate,
   itemsController.getItemIfExists
 );
-router.route(
-  '/pages/:pageId/items/:itemId'
-)
+router.route('/pages/:pageId/items/:itemId')
   .get(
     itemsController.getItem
   )
   .put(
-    itemsValidator.validateItem,
-    itemsValidator.validate,
+    itemValidator.validateItem,
+    itemValidator.validate,
     itemsController.updateItem
   )
   .delete(
@@ -30,28 +33,28 @@ router.route(
 router.use(
   '/pages/:pageId/items',
   commonController.methodsAllowed(['GET', 'POST']),
+  pageValidator.validatePageId,
+  pageValidator.validate,
   pagesController.getPageIfExists
 );
-router.route(
-  '/pages/:pageId/items'
-)
+router.route('/pages/:pageId/items')
   .get(
     itemsController.getItems
   )
   .post(
-    itemsValidator.validateItem,
-    itemsValidator.validate,
+    itemValidator.validateItem,
+    itemValidator.validate,
     itemsController.addItem
   );
 
 router.use(
   '/pages/:pageId',
   commonController.methodsAllowed(['GET', 'DELETE']),
+  pageValidator.validatePageId,
+  pageValidator.validate,
   pagesController.getPageIfExists
 );
-router.route(
-  '/pages/:pageId'
-)
+router.route('/pages/:pageId')
   .get(
     pagesController.getPage
   )
@@ -63,9 +66,7 @@ router.use(
   '/pages',
   commonController.methodsAllowed(['GET', 'POST'])
 );
-router.route(
-  '/pages'
-)
+router.route('/pages')
   .get(
     pagesController.getPages
   )

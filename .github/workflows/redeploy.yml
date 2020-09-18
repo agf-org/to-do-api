@@ -9,13 +9,12 @@ jobs:
     steps:
       - name: Deploy containers
         run: |
-          echo "ME_CONFIG_MONGODB_ENABLE_ADMIN=true" >> .env
-          echo "MONGO_INITDB_ROOT_USERNAME=${{ secrets.MONGO_INITDB_ROOT_USERNAME }}" >> .env
-          echo "MONGO_INITDB_ROOT_PASSWORD=${{ secrets.MONGO_INITDB_ROOT_PASSWORD }}" >> .env
-          echo "ME_CONFIG_BASICAUTH_USERNAME=${{ secrets.ME_CONFIG_BASICAUTH_USERNAME }}" >> .env
-          echo "ME_CONFIG_BASICAUTH_PASSWORD=${{ secrets.ME_CONFIG_BASICAUTH_PASSWORD }}" >> .env
-          echo "TO_DO_API_TAG=latest" >> .env
           echo "NODE_ENV=production" >> .env
+          echo "MONGODB_HOST=mongo" >> .env
+          echo "MONGODB_PORT=27017" >> .env
+          echo "MONGODB_DATABASE=notebook" >> .env
+          echo "TO_DO_API_TAG=latest" >> .env
+          echo "TO_DO_API_PORT=3000" >> .env
           docker-compose down
           docker-compose up -d
           rm .env

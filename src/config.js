@@ -1,5 +1,3 @@
-const config = {
-  "baseUrl": "/api"
+module.exports = {
+  baseUrl: "/api"
 }
-
-module.exports.config = config;

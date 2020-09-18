@@ -1,9 +1,11 @@
-require('dotenv').config()
+require('dotenv').config();
 const express = require('express');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const path = require('path');
-const {config} = require('./config');
+const mongoose = require('mongoose');
+
+const config = require('./config');
 
 const app = express();
 
@@ -13,15 +15,17 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// var mongoose = require('mongoose');
-// var mongoDB = 'mongodb://mongo_to-do-api:27017/test';
-// mongoose.connect(mongoDB, {useNewUrlParser: true , useUnifiedTopology: true});
-// var connection = mongoose.connection;
-// connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
+if (process.env.NODE_ENV != 'test') {
+  const mongoUri = `mongodb://${process.env.MONGODB_HOST}:${process.env.MONGODB_PORT}/${process.env.MONGODB_DATABASE}`;
+  const mongooseOpts = {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  };
+  mongoose.connect(mongoUri, mongooseOpts);
+}
 
 const apiDocsRouter = require('./routes/api-docs');
 const toDoRouter = require('./routes/to-do-router');
-
 app.use(`${config.baseUrl}/api-docs`, apiDocsRouter);
 app.use(`${config.baseUrl}/to-do`, toDoRouter);
 
