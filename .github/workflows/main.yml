@@ -84,6 +84,7 @@ jobs:
     steps:
       - name: Deploy containers
         run: |
+          echo "ME_CONFIG_MONGODB_ENABLE_ADMIN=true" >> .env
           echo "MONGO_INITDB_ROOT_USERNAME=${{ secrets.MONGO_INITDB_ROOT_USERNAME }}" >> .env
           echo "MONGO_INITDB_ROOT_PASSWORD=${{ secrets.MONGO_INITDB_ROOT_PASSWORD }}" >> .env
           echo "ME_CONFIG_BASICAUTH_USERNAME=${{ secrets.ME_CONFIG_BASICAUTH_USERNAME }}" >> .env
