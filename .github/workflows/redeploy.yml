@@ -9,9 +9,8 @@ jobs:
     steps:
       - name: Deploy containers
         run: |
+          docker-compose down
           echo "TO_DO_API_TAG=latest" >> .env
           echo "NODE_ENV=production" >> .env
-          docker-compose down || true
-          docker-compose pull to-do-api
           docker-compose up -d
           rm .env
