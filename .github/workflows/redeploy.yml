@@ -9,6 +9,8 @@ jobs:
     steps:
       - name: Deploy containers
         run: |
+          echo "MONGO_ADMIN_USERNAME=${{ secrets.MONGO_ADMIN_USERNAME }}" >> .env
+          echo "MONGO_ADMIN_PASSWORD=${{ secrets.MONGO_ADMIN_PASSWORD }}" >> .env
           echo "TO_DO_API_TAG=latest" >> .env
           echo "NODE_ENV=production" >> .env
           docker-compose down
