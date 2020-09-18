@@ -1,8 +1,7 @@
 name: redeploy
 
 env:
-  DOCKER_REPOSITORY: 'alvarogarciafer/to-do-api'
-  CONTAINER_NAME: 'to-do-api'
+  TO_DO_API_DEPLOYMENT_TAG: 'latest'
   NODE_ENV: 'production'
   PORT: '3000'
 
@@ -13,18 +12,17 @@ jobs:
   redeploy:
     runs-on: self-hosted
     steps:
-      - name: Redeploy containers
+      - name: Create .env file
         run: |
-          docker container stop ${{ env.CONTAINER_NAME}} || true
-          docker container rm ${{ env.CONTAINER_NAME}} || true
-          docker image pull ${{ env.DOCKER_REPOSITORY}}:latest
+          echo "TO_DO_API_DEPLOYMENT_TAG=${{ env.TO_DO_API_DEPLOYMENT_TAG }}" >> .env
           echo "NODE_ENV=${{ env.NODE_ENV }}" >> .env
-          docker container run \
-          --env-file .env \
-          --publish ${{ env.PORT }}:3000 \
-          --name ${{ env.CONTAINER_NAME}} \
-          --detach \
-          --restart unless-stopped \
-          ${{ env.DOCKER_REPOSITORY}}:latest \
-          start
+
+      - name: Deploy containers
+        run: |
+          docker-compose down || true
+          docker-compose pull to-do-api
+          docker-compose up -d
+
+      - name: Create .env file
+        run: |
           rm .env

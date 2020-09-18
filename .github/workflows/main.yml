@@ -1,8 +1,7 @@
 name: main
 
 env:
-  DOCKER_REPOSITORY: 'alvarogarciafer/to-do-api'
-  CONTAINER_NAME: 'to-do-api'
+  TO_DO_API_DEPLOYMENT_TAG: 'latest'
   NODE_ENV: 'production'
   PORT: '3000'
 
@@ -37,20 +36,20 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           load: true
-          tags: ${{ env.DOCKER_REPOSITORY }}:test
+          tags: alvarogarciafer/to-do-api:test
           
       - name: Run linter
         run: |
           docker container run \
           --rm \
-          ${{ env.DOCKER_REPOSITORY }}:test \
+          alvarogarciafer/to-do-api:test \
           run linter
 
       - name: Run unit tests
         run: |
           docker container run \
           --rm \
-          ${{ env.DOCKER_REPOSITORY }}:test \
+          alvarogarciafer/to-do-api:test \
           test
 
   build:
@@ -84,9 +83,9 @@ jobs:
       - name: Get tags
         id: get-tags
         run: |
-          TAGS="${{ env.DOCKER_REPOSITORY }}:latest"
+          TAGS="alvarogarciafer/to-do-api:${{ env.TO_DO_API_DEPLOYMENT_TAG }}"
           if [[ "${{ steps.action-autotag.outputs.tagname }}" != "" ]]; then
-            TAGS="$TAGS,${{ env.DOCKER_REPOSITORY }}:${{ steps.action-autotag.outputs.tagname }}"
+            TAGS="$TAGS,alvarogarciafer/to-do-api:${{ steps.action-autotag.outputs.tagname }}"
           fi
           echo ::set-output name=tags::${TAGS}
 
@@ -101,18 +100,17 @@ jobs:
     needs: build
     if: ${{ github.event_name == 'push' }}
     steps:
+      - name: Create .env file
+        run: |
+          echo "TO_DO_API_DEPLOYMENT_TAG=${{ env.TO_DO_API_DEPLOYMENT_TAG }}" >> .env
+          echo "NODE_ENV=${{ env.NODE_ENV }}" >> .env
+
       - name: Deploy containers
         run: |
-          docker container stop ${{ env.CONTAINER_NAME}} || true
-          docker container rm ${{ env.CONTAINER_NAME}} || true
-          docker image pull ${{ env.DOCKER_REPOSITORY}}:latest
-          echo "NODE_ENV=${{ env.NODE_ENV }}" >> .env
-          docker container run \
-          --env-file .env \
-          --publish ${{ env.PORT }}:3000 \
-          --name ${{ env.CONTAINER_NAME}} \
-          --detach \
-          --restart unless-stopped \
-          ${{ env.DOCKER_REPOSITORY}}:latest \
-          start
+          docker-compose down || true
+          docker-compose pull to-do-api
+          docker-compose up -d
+
+      - name: Create .env file
+        run: |
           rm .env
