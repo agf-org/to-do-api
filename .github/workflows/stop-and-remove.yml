@@ -8,4 +8,7 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Stop and remove containers
-        run: docker-compose down
+        run: |
+          echo "TO_DO_API_TAG=latest" >> .env
+          echo "NODE_ENV=production" >> .env
+          docker-compose down
