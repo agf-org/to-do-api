@@ -25,18 +25,18 @@ jobs:
         run: |
           echo "TO_DO_API_TAG=test" >> .env
           docker-compose run \
-          --rm \
-          to-do-api \
-          run linter
+            --rm \
+            to-do-api \
+            run linter
           rm .env
 
       - name: Run unit tests
         run: |
           echo "TO_DO_API_TAG=test" >> .env
           docker-compose run \
-          --rm \
-          to-do-api \
-          test
+            --rm \
+            to-do-api \
+            test
           rm .env
 
   build:
@@ -87,5 +87,6 @@ jobs:
           docker-compose down
           echo "TO_DO_API_TAG=latest" >> .env
           echo "NODE_ENV=production" >> .env
+          docker-compose down
           docker-compose up -d
           rm .env
