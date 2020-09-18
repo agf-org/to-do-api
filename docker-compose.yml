@@ -6,8 +6,8 @@ volumes:
 services:
   mongo:
     environment:
-      MONGO_INITDB_ROOT_USERNAME: mongoadmin
-      MONGO_INITDB_ROOT_PASSWORD: secret
+      MONGO_INITDB_ROOT_USERNAME: $MONGO_INITDB_ROOT_USERNAME
+      MONGO_INITDB_ROOT_PASSWORD: $MONGO_INITDB_ROOT_PASSWORD
     image: mongo:4
     volumes:
       - mongodb:/data/db
@@ -15,15 +15,21 @@ services:
 
   mongo-express:
     environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: mongoadmin
-      ME_CONFIG_MONGODB_ADMINPASSWORD: secret
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: "true"
+      ME_CONFIG_MONGODB_ADMINUSERNAME: $MONGO_INITDB_ROOT_USERNAME
+      ME_CONFIG_MONGODB_ADMINPASSWORD: $MONGO_INITDB_ROOT_PASSWORD
+      ME_CONFIG_BASICAUTH_USERNAME: $ME_CONFIG_BASICAUTH_USERNAME
+      ME_CONFIG_BASICAUTH_PASSWORD: $ME_CONFIG_BASICAUTH_PASSWORD
     image: mongo-express:0.54.0
     ports:
       - 8081:8081
     restart: unless-stopped
 
   to-do-api:
-    env_file: .env
+    environment:
+      TO_DO_API_TAG: $TO_DO_API_TAG
+      DEBUG: $DEBUG
+      NODE_ENV: $NODE_ENV
     image: alvarogarciafer/to-do-api:$TO_DO_API_TAG
     build: .
     ports:
