@@ -1,10 +1,5 @@
 name: redeploy
 
-env:
-  TO_DO_API_DEPLOYMENT_TAG: 'latest'
-  NODE_ENV: 'production'
-  PORT: '3000'
-
 on: 
   workflow_dispatch:
 
@@ -12,17 +7,11 @@ jobs:
   redeploy:
     runs-on: self-hosted
     steps:
-      - name: Create .env file
-        run: |
-          echo "TO_DO_API_DEPLOYMENT_TAG=${{ env.TO_DO_API_DEPLOYMENT_TAG }}" >> .env
-          echo "NODE_ENV=${{ env.NODE_ENV }}" >> .env
-
       - name: Deploy containers
         run: |
+          echo "TO_DO_API_TAG=latest" >> .env
+          echo "NODE_ENV=production" >> .env
           docker-compose down || true
           docker-compose pull to-do-api
           docker-compose up -d
-
-      - name: Create .env file
-        run: |
           rm .env
