@@ -1,13 +1,9 @@
 const {check, validationResult} = require('express-validator');
 
-const validateItem = [
-  check('text')
-    .isString()
-    .trim()
+const validatePageId = [
+  check('pageId')
     .not().isEmpty()
-    .escape(),
-  check('done')
-    .isBoolean()
+    .isLength({min: 24, max: 24})
 ];
 
 const validate = (request, response, next) => {
@@ -19,5 +15,5 @@ const validate = (request, response, next) => {
     }
 };
 
-module.exports.validateItem = validateItem;
+module.exports.validatePageId = validatePageId;
 module.exports.validate = validate;

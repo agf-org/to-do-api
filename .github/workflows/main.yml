@@ -23,7 +23,12 @@ jobs:
           
       - name: Run linter
         run: |
+          echo "NODE_ENV=test" >> .env
+          echo "MONGODB_HOST=mongo" >> .env
+          echo "MONGODB_PORT=27017" >> .env
+          echo "MONGODB_DATABASE=notebook" >> .env
           echo "TO_DO_API_TAG=test" >> .env
+          echo "TO_DO_API_PORT=3000" >> .env
           docker-compose run \
             --rm \
             to-do-api \
@@ -32,7 +37,12 @@ jobs:
 
       - name: Run unit tests
         run: |
+          echo "NODE_ENV=test" >> .env
+          echo "MONGODB_HOST=mongo" >> .env
+          echo "MONGODB_PORT=27017" >> .env
+          echo "MONGODB_DATABASE=notebook" >> .env
           echo "TO_DO_API_TAG=test" >> .env
+          echo "TO_DO_API_PORT=3000" >> .env
           docker-compose run \
             --rm \
             to-do-api \
@@ -55,9 +65,14 @@ jobs:
 
       - name: Build and push latest image
         run: |
+          echo "NODE_ENV=production" >> .env
+          echo "MONGODB_HOST=mongo" >> .env
+          echo "MONGODB_PORT=27017" >> .env
+          echo "MONGODB_DATABASE=notebook" >> .env
           echo "TO_DO_API_TAG=latest" >> .env
+          echo "TO_DO_API_PORT=3000" >> .env
           docker-compose build to-do-api
-          docker-compose push  to-do-api
+          docker-compose push to-do-api
           rm .env
 
       - name: Autotag package
@@ -71,7 +86,12 @@ jobs:
       - name: Build and push tagged image
         run: |
           if [[ "${{ steps.action-autotag.outputs.tagname }}" != "" ]]; then
+            echo "NODE_ENV=production" >> .env
+            echo "MONGODB_HOST=mongo" >> .env
+            echo "MONGODB_PORT=27017" >> .env
+            echo "MONGODB_DATABASE=notebook" >> .env
             echo "TO_DO_API_TAG=${{ steps.action-autotag.outputs.tagname }}" >> .env
+            echo "TO_DO_API_PORT=3000" >> .env
             docker-compose build to-do-api
             docker-compose push to-do-api
             rm .env
@@ -84,13 +104,12 @@ jobs:
     steps:
       - name: Deploy containers
         run: |
-          echo "ME_CONFIG_MONGODB_ENABLE_ADMIN=true" >> .env
-          echo "MONGO_INITDB_ROOT_USERNAME=${{ secrets.MONGO_INITDB_ROOT_USERNAME }}" >> .env
-          echo "MONGO_INITDB_ROOT_PASSWORD=${{ secrets.MONGO_INITDB_ROOT_PASSWORD }}" >> .env
-          echo "ME_CONFIG_BASICAUTH_USERNAME=${{ secrets.ME_CONFIG_BASICAUTH_USERNAME }}" >> .env
-          echo "ME_CONFIG_BASICAUTH_PASSWORD=${{ secrets.ME_CONFIG_BASICAUTH_PASSWORD }}" >> .env
-          echo "TO_DO_API_TAG=latest" >> .env
           echo "NODE_ENV=production" >> .env
+          echo "MONGODB_HOST=mongo" >> .env
+          echo "MONGODB_PORT=27017" >> .env
+          echo "MONGODB_DATABASE=notebook" >> .env
+          echo "TO_DO_API_TAG=latest" >> .env
+          echo "TO_DO_API_PORT=3000" >> .env
           docker-compose down
           docker-compose up -d
           rm .env

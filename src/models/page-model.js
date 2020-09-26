@@ -1,10 +1,9 @@
-var mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
-var Schema = mongoose.Schema;
+const Schema = mongoose.Schema;
 
-var pageSchema = new Schema({
-  id: String,
-  items: [{ type: Schema.Types.ObjectId, ref: 'ItemModel' }],
+const pageSchema = new Schema({
+  items: [{type: Schema.Types.ObjectId, ref: 'ItemModel'}],
 });
 
-module.exports = mongoose.model('PageModel', pageSchema );
+module.exports = mongoose.model('PageModel', pageSchema);
