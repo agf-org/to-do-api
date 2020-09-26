@@ -1,6 +1,6 @@
 const asyncHandler = require('express-async-handler');
 
-const methodsAllowed = (methods) => asyncHandler(async (request, response, next) => {
+const validateMethod = (methods) => asyncHandler(async (request, response, next) => {
   if (methods.includes(request.method)) {
     return next();
   } else {
@@ -8,4 +8,4 @@ const methodsAllowed = (methods) => asyncHandler(async (request, response, next)
   }
 });
 
-module.exports.methodsAllowed = methodsAllowed;
+module.exports.validateMethod = validateMethod;
