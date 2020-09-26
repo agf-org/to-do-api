@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const commonController = require('../controllers/common-controller');
+const commonValidator = require('../validators/common-validator');
 const itemValidator = require('../validators/item-validator');
 const itemsController = require('../controllers/items-controller');
 const pageValidator = require('../validators/page-validator');
@@ -9,12 +9,10 @@ const pagesController = require('../controllers/pages-controller');
 
 router.use(
   '/pages/:pageId/items/:itemId',
-  commonController.methodsAllowed(['GET', 'PUT', 'DELETE']),
+  commonValidator.validateMethod(['GET', 'PUT', 'DELETE']),
   pageValidator.validatePageId,
-  pageValidator.validate,
   pagesController.getPageIfExists,
   itemValidator.validateItemId,
-  itemValidator.validate,
   itemsController.getItemIfExists
 );
 router.route('/pages/:pageId/items/:itemId')
@@ -23,7 +21,6 @@ router.route('/pages/:pageId/items/:itemId')
   )
   .put(
     itemValidator.validateItem,
-    itemValidator.validate,
     itemsController.updateItem
   )
   .delete(
@@ -32,9 +29,8 @@ router.route('/pages/:pageId/items/:itemId')
 
 router.use(
   '/pages/:pageId/items',
-  commonController.methodsAllowed(['GET', 'POST']),
+  commonValidator.validateMethod(['GET', 'POST']),
   pageValidator.validatePageId,
-  pageValidator.validate,
   pagesController.getPageIfExists
 );
 router.route('/pages/:pageId/items')
@@ -43,15 +39,13 @@ router.route('/pages/:pageId/items')
   )
   .post(
     itemValidator.validateItem,
-    itemValidator.validate,
     itemsController.addItem
   );
 
 router.use(
   '/pages/:pageId',
-  commonController.methodsAllowed(['GET', 'DELETE']),
+  commonValidator.validateMethod(['GET', 'DELETE']),
   pageValidator.validatePageId,
-  pageValidator.validate,
   pagesController.getPageIfExists
 );
 router.route('/pages/:pageId')
@@ -64,7 +58,7 @@ router.route('/pages/:pageId')
 
 router.use(
   '/pages',
-  commonController.methodsAllowed(['GET', 'POST'])
+  commonValidator.validateMethod(['GET', 'POST'])
 );
 router.route('/pages')
   .get(

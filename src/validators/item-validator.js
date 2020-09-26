@@ -3,7 +3,15 @@ const {check, validationResult} = require('express-validator');
 const validateItemId = [
   check('itemId')
     .not().isEmpty()
-    .isLength({min: 24, max: 24})
+    .isLength({min: 24, max: 24}),
+  (request, response, next) => {
+    const errors = validationResult(request);
+    if (errors.isEmpty()) {
+      return next();
+    } else {
+      return response.sendStatus(400);
+    }
+  }
 ];
 
 const validateItem = [
@@ -13,18 +21,16 @@ const validateItem = [
     .not().isEmpty()
     .escape(),
   check('done')
-    .isBoolean()
-];
-
-const validate = (request, response, next) => {
+    .isBoolean(),
+  (request, response, next) => {
     const errors = validationResult(request);
     if (errors.isEmpty()) {
       return next();
     } else {
-      return response.status(400).json({errors: errors.array()});
+      return response.sendStatus(400);
     }
-};
+  }
+];
 
 module.exports.validateItemId = validateItemId;
 module.exports.validateItem = validateItem;
-module.exports.validate = validate;
