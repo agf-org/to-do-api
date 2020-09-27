@@ -1,22 +1,22 @@
-const asyncHandler = require('express-async-handler');
+const asyncHandler = require('express-async-handler')
 
-const ItemModel = require('../models/item-model');
+const ItemModel = require('../models/item-model')
 
 const isItemInPage = (page, itemId) => {
-  return page.items.includes(itemId);
-};
+  return page.items.includes(itemId)
+}
 
 const getItemIfExists = asyncHandler(async (request, response, next) => {
-  const page = response.locals.page;
-  const itemId = request.params.itemId;
-  const item = await ItemModel.findById(itemId);
+  const page = response.locals.page
+  const itemId = request.params.itemId
+  const item = await ItemModel.findById(itemId)
   if (isItemInPage(page, itemId) && item) {
-    response.locals.item = item;
-    return next();
+    response.locals.item = item
+    return next()
   } else {
-    return response.status(404).send(`Item ${itemId} not found!`);
+    return response.status(404).send(`Item ${itemId} not found!`)
   }
-});
+})
 
 /**
  * @swagger
@@ -52,9 +52,9 @@ const getItemIfExists = asyncHandler(async (request, response, next) => {
  *         description: Not Found
  */
 const getItem = asyncHandler(async (request, response) => {
-  const item = response.locals.item;
-  response.status(200).json(item);
-});
+  const item = response.locals.item
+  response.status(200).json(item)
+})
 
 /**
  * @swagger
@@ -94,13 +94,13 @@ const getItem = asyncHandler(async (request, response) => {
  *         description: Not Found
  */
 const updateItem = asyncHandler(async (request, response) => {
-  const item = response.locals.item;
-  const {text, done} = request.body;
-  item.text = text;
-  item.done = done;
-  const savedItem = await item.save();
-  response.status(200).send(savedItem);
-});
+  const item = response.locals.item
+  const {text, done} = request.body
+  item.text = text
+  item.done = done
+  const savedItem = await item.save()
+  response.status(200).send(savedItem)
+})
 
 /**
  * @swagger
@@ -132,14 +132,14 @@ const updateItem = asyncHandler(async (request, response) => {
  *         description: Not Found
  */
 const deleteItem = asyncHandler(async (request, response) => {
-  const page = response.locals.page;
-  const item = response.locals.item;
-  const deletedItem = await item.delete();
-  const deletedItemIndex = page.items.indexOf(deletedItem);
-  page.items.splice(deletedItemIndex, 1);
-  await page.save();
-  response.status(200).send(deletedItem);
-});
+  const page = response.locals.page
+  const item = response.locals.item
+  const deletedItem = await item.delete()
+  const deletedItemIndex = page.items.indexOf(deletedItem)
+  page.items.splice(deletedItemIndex, 1)
+  await page.save()
+  response.status(200).send(deletedItem)
+})
 
 /**
  * @swagger
@@ -169,12 +169,12 @@ const deleteItem = asyncHandler(async (request, response) => {
  *         description: Not Found
  */
 const getItems = asyncHandler(async (request, response) => {
-  const page = response.locals.page;
+  const page = response.locals.page
   const items = await Promise.all(
     page.items.map(async (itemId) => await ItemModel.findById(itemId))
-  );
-  response.status(200).send(items);
-});
+  )
+  response.status(200).send(items)
+})
 
 /**
  * @swagger
@@ -212,22 +212,22 @@ const getItems = asyncHandler(async (request, response) => {
  *         description: Not Found
  */
 const addItem = asyncHandler(async (request, response) => {
-  const page = response.locals.page;
-  const {text, done} = request.body;
+  const page = response.locals.page
+  const {text, done} = request.body
   const newItem = new ItemModel({
     page: page._id,
     text: text,
     done: done
-  });
-  const savedItem = await newItem.save();
-  await page.items.push(savedItem);
-  await page.save();
-  response.status(201).json(savedItem);
-});
+  })
+  const savedItem = await newItem.save()
+  await page.items.push(savedItem)
+  await page.save()
+  response.status(201).json(savedItem)
+})
 
-module.exports.getItemIfExists = getItemIfExists;
-module.exports.getItem = getItem;
-module.exports.updateItem = updateItem;
-module.exports.deleteItem = deleteItem;
-module.exports.getItems = getItems;
-module.exports.addItem = addItem;
+module.exports.getItemIfExists = getItemIfExists
+module.exports.getItem = getItem
+module.exports.updateItem = updateItem
+module.exports.deleteItem = deleteItem
+module.exports.getItems = getItems
+module.exports.addItem = addItem

@@ -1,11 +1,11 @@
-const express = require('express');
-const router = express.Router();
+const express = require('express')
+const router = express.Router()
 
-const commonValidator = require('../validators/common-validator');
-const itemValidator = require('../validators/item-validator');
-const itemsController = require('../controllers/items-controller');
-const pageValidator = require('../validators/page-validator');
-const pagesController = require('../controllers/pages-controller');
+const commonValidator = require('../validators/common-validator')
+const itemValidator = require('../validators/item-validator')
+const itemsController = require('../controllers/items-controller')
+const pageValidator = require('../validators/page-validator')
+const pagesController = require('../controllers/pages-controller')
 
 router
   .use(
@@ -15,7 +15,7 @@ router
     pagesController.getPageIfExists,
     itemValidator.validateItemId,
     itemsController.getItemIfExists
-  );
+  )
 router
   .route('/pages/:pageId/items/:itemId')
   .get(
@@ -27,7 +27,7 @@ router
   )
   .delete(
     itemsController.deleteItem
-  );
+  )
 
 router
   .use(
@@ -35,7 +35,7 @@ router
     commonValidator.validateMethod(['GET', 'POST']),
     pageValidator.validatePageId,
     pagesController.getPageIfExists
-  );
+  )
 router
   .route('/pages/:pageId/items')
   .get(
@@ -44,7 +44,7 @@ router
   .post(
     itemValidator.validateItem,
     itemsController.addItem
-  );
+  )
 
 router
   .use(
@@ -52,7 +52,7 @@ router
     commonValidator.validateMethod(['GET', 'DELETE']),
     pageValidator.validatePageId,
     pagesController.getPageIfExists
-  );
+  )
 router
   .route('/pages/:pageId')
   .get(
@@ -60,13 +60,13 @@ router
   )
   .delete(
     pagesController.deletePage
-  );
+  )
 
 router
   .use(
     '/pages',
     commonValidator.validateMethod(['GET', 'POST'])
-  );
+  )
 router
   .route('/pages')
   .get(
@@ -74,6 +74,6 @@ router
   )
   .post(
     pagesController.addPage
-  );
+  )
 
-module.exports = router;
+module.exports = router
