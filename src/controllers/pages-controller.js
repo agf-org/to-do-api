@@ -1,7 +1,6 @@
 const asyncHandler = require('express-async-handler')
 
-const PageModel = require('../models/page-model')
-const pageDbController = require('./page-db-controller')
+const pagesDbHandler = require('./pages-db-handler')
 
 /**
  * @swagger
@@ -30,9 +29,9 @@ const pageDbController = require('./page-db-controller')
  *       404:
  *         description: Not Found
  */
-const getPage = asyncHandler(async (request, response) => {
+module.exports.getPage = asyncHandler(async (request, response) => {
   const pageId = request.params.pageId
-  const page = await pageDbController.getPage(pageId)
+  const page = await pagesDbHandler.getPage(pageId)
   if (page) {
     response.status(200).json(page)
   } else {
@@ -63,11 +62,11 @@ const getPage = asyncHandler(async (request, response) => {
  *       404:
  *         description: Not Found
  */
-const deletePage = asyncHandler(async (request, response) => {
+module.exports.deletePage = asyncHandler(async (request, response) => {
   const pageId = request.params.pageId
-  const page = await pageDbController.getPage(pageId)
+  const page = await pagesDbHandler.getPage(pageId)
   if (page) {
-    const deletedPage = await page.delete()
+    const deletedPage = await pagesDbHandler.deletePage(page)
     response.status(200).json(deletedPage)
   } else {
     response.status(404).send(`Page ${pageId} not found!`)
@@ -90,8 +89,8 @@ const deletePage = asyncHandler(async (request, response) => {
  *             schema:
  *               $ref: '#/definitions/Pages'
  */
-const getAllPages = asyncHandler(async (request, response) => {
-  const pages = await PageModel.find({})
+module.exports.getAllPages = asyncHandler(async (request, response) => {
+  const pages = await pagesDbHandler.getAllPages()
   response.status(200).json(pages)
 })
 
@@ -102,7 +101,7 @@ const getAllPages = asyncHandler(async (request, response) => {
  *   post:
  *     tags:
  *       - Pages
- *     summary: Adds a page
+ *     summary: Creates an empty page
  *     responses:
  *       201:
  *         description: Created
@@ -111,15 +110,7 @@ const getAllPages = asyncHandler(async (request, response) => {
  *             schema:
  *               $ref: '#/definitions/Page'
  */
-const addPage = asyncHandler(async (request, response) => {
-  const newPage = new PageModel({
-    items: []
-  })
-  const page = await newPage.save()
-  response.status(201).json(page)
+module.exports.createEmptyPage = asyncHandler(async (request, response) => {
+  const createdPage = await pagesDbHandler.createEmptyPage()
+  response.status(201).json(createdPage)
 })
-
-module.exports.getPage = getPage
-module.exports.deletePage = deletePage
-module.exports.getAllPages = getAllPages
-module.exports.addPage = addPage

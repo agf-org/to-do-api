@@ -40,7 +40,7 @@ router
   )
   .post(
     itemValidator.validateItem,
-    itemsController.addItemInPage
+    itemsController.createItemInPage
   )
 
 router
@@ -69,7 +69,7 @@ router
     pagesController.getAllPages
   )
   .post(
-    pagesController.addPage
+    pagesController.createEmptyPage
   )
 
 module.exports = router

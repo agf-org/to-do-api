@@ -20,7 +20,7 @@ afterAll(async () => {
 })
 
 describe(`${config.baseUrl}/to-do/pages/:pageId/items/:itemId`, () => {
-  describe('Get an item', () => {
+  describe('Get an item in a page', () => {
     it('should return a 200 response', async () => {
       const page = new PageModel({items: []})
       const item = new ItemModel({page: page._id, text: "Buy groceries", done: false})
@@ -75,7 +75,7 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items/:itemId`, () => {
     })
   })
 
-  describe('Update an item', () => {
+  describe('Update an item in a page', () => {
     it('should return a 200 response', async () => {
       const page = new PageModel({items: []})
       const item = new ItemModel({page: page._id, text: "Buy groceries", done: false})
@@ -225,7 +225,7 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items/:itemId`, () => {
     })
   })
   
-  describe('Delete an item', () => {
+  describe('Delete an item in a page', () => {
     it('should return a 200 response', async () => {
       const page = new PageModel({items: []})
       const item = new ItemModel({page: page._id, text: "Buy groceries", done: false})
@@ -295,7 +295,7 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items/:itemId`, () => {
 })
 
 describe(`${config.baseUrl}/to-do/pages/:pageId/items tests`, () => {
-  describe('Get all items of a page', () => {
+  describe('Get all items in a page', () => {
     it('should return a 200 response', async () => {
       const page = new PageModel({items: []})
       const item = new ItemModel({page: page._id, text: "Buy groceries", done: false})
@@ -337,7 +337,7 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items tests`, () => {
     })
   })
 
-  describe('Add an item', () => {
+  describe('Creates an item in a page', () => {
     it('should return a 201 response', async () => {
       const page = new PageModel({items: []})
       const savedPage = await page.save()

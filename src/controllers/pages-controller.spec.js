@@ -110,7 +110,7 @@ describe(`${config.baseUrl}/to-do/pages`, () => {
     })
   })
 
-  describe('Add a page', () => {
+  describe('Create an empty page', () => {
     it('should return a 201 response', async () => {
       const response = await request(app)
         .post(`${config.baseUrl}/to-do/pages`)
