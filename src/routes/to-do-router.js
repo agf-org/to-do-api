@@ -12,9 +12,7 @@ router
     '/pages/:pageId/items/:itemId',
     commonValidator.validateMethod(['GET', 'PUT', 'DELETE']),
     pageValidator.validatePageId,
-    pagesController.getPageIfExists,
-    itemValidator.validateItemId,
-    itemsController.getItemIfExists
+    itemValidator.validateItemId
   )
 router
   .route('/pages/:pageId/items/:itemId')
@@ -33,13 +31,12 @@ router
   .use(
     '/pages/:pageId/items',
     commonValidator.validateMethod(['GET', 'POST']),
-    pageValidator.validatePageId,
-    pagesController.getPageIfExists
+    pageValidator.validatePageId
   )
 router
   .route('/pages/:pageId/items')
   .get(
-    itemsController.getItemsInPage
+    itemsController.getAllItemsInPage
   )
   .post(
     itemValidator.validateItem,
@@ -50,8 +47,7 @@ router
   .use(
     '/pages/:pageId',
     commonValidator.validateMethod(['GET', 'DELETE']),
-    pageValidator.validatePageId,
-    pagesController.getPageIfExists
+    pageValidator.validatePageId
   )
 router
   .route('/pages/:pageId')

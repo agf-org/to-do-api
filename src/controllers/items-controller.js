@@ -1,20 +1,21 @@
 const asyncHandler = require('express-async-handler')
 
 const ItemModel = require('../models/item-model')
-
-const isItemInPage = (page, itemId) => {
-  return page.items.includes(itemId)
-}
+const pageDbController = require('./page-db-controller')
 
 const getItemIfExists = asyncHandler(async (request, response, next) => {
-  const page = response.locals.page
-  const itemId = request.params.itemId
-  const item = await ItemModel.findById(itemId)
-  if (isItemInPage(page, itemId) && item) {
-    response.locals.item = item
-    return next()
+  const pageId = request.params.pageId
+  const page = await pageDbController.getPage(pageId)
+  if (page) {
+    const itemId = request.params.itemId
+    const isItemInPage = page.items.includes(itemId)
+    const item = await ItemModel.findById(itemId)
+    if (isItemInPage && item) {
+    } else {
+      response.status(404).send(`Item ${itemId} not found!`)
+    }
   } else {
-    return response.status(404).send(`Item ${itemId} not found!`)
+    response.status(404).send(`Page ${pageId} not found!`)
   }
 })
 
@@ -52,8 +53,20 @@ const getItemIfExists = asyncHandler(async (request, response, next) => {
  *         description: Not Found
  */
 const getItemInPage = asyncHandler(async (request, response) => {
-  const item = response.locals.item
-  response.status(200).json(item)
+  const pageId = request.params.pageId
+  const page = await pageDbController.getPage(pageId)
+  if (page) {
+    const itemId = request.params.itemId
+    const isItemInPage = page.items.includes(itemId)
+    const item = await ItemModel.findById(itemId)
+    if (isItemInPage && item) {
+      response.status(200).json(item)
+    } else {
+      response.status(404).send(`Item ${itemId} not found!`)
+    }
+  } else {
+    response.status(404).send(`Page ${pageId} not found!`)
+  }
 })
 
 /**
@@ -94,12 +107,24 @@ const getItemInPage = asyncHandler(async (request, response) => {
  *         description: Not Found
  */
 const updateItemInPage = asyncHandler(async (request, response) => {
-  const item = response.locals.item
-  const {text, done} = request.body
-  item.text = text
-  item.done = done
-  const savedItem = await item.save()
-  response.status(200).send(savedItem)
+  const pageId = request.params.pageId
+  const page = await pageDbController.getPage(pageId)
+  if (page) {
+    const itemId = request.params.itemId
+    const isItemInPage = page.items.includes(itemId)
+    const item = await ItemModel.findById(itemId)
+    if (isItemInPage && item) {
+      const {text, done} = request.body
+      item.text = text
+      item.done = done
+      const savedItem = await item.save()
+      response.status(200).json(savedItem)
+    } else {
+      response.status(404).send(`Item ${itemId} not found!`)
+    }
+  } else {
+    response.status(404).send(`Page ${pageId} not found!`)
+  }
 })
 
 /**
@@ -132,13 +157,24 @@ const updateItemInPage = asyncHandler(async (request, response) => {
  *         description: Not Found
  */
 const deleteItemInPage = asyncHandler(async (request, response) => {
-  const page = response.locals.page
-  const item = response.locals.item
-  const deletedItem = await item.delete()
-  const deletedItemIndex = page.items.indexOf(deletedItem)
-  page.items.splice(deletedItemIndex, 1)
-  await page.save()
-  response.status(200).send(deletedItem)
+  const pageId = request.params.pageId
+  const page = await pageDbController.getPage(pageId)
+  if (page) {
+    const itemId = request.params.itemId
+    const isItemInPage = page.items.includes(itemId)
+    const item = await ItemModel.findById(itemId)
+    if (isItemInPage && item) {
+      const deletedItem = await item.delete()
+      const deletedItemIndex = page.items.indexOf(deletedItem)
+      page.items.splice(deletedItemIndex, 1)
+      await page.save()
+      response.status(200).json(deletedItem)
+    } else {
+      response.status(404).send(`Item ${itemId} not found!`)
+    }
+  } else {
+    response.status(404).send(`Page ${pageId} not found!`)
+  }
 })
 
 /**
@@ -168,12 +204,17 @@ const deleteItemInPage = asyncHandler(async (request, response) => {
  *       404:
  *         description: Not Found
  */
-const getItemsInPage = asyncHandler(async (request, response) => {
-  const page = response.locals.page
-  const items = await Promise.all(
-    page.items.map(async (itemId) => await ItemModel.findById(itemId))
-  )
-  response.status(200).send(items)
+const getAllItemsInPage = asyncHandler(async (request, response) => {
+  const pageId = request.params.pageId
+  const page = await pageDbController.getPage(pageId)
+  if (page) {
+    const items = await Promise.all(
+      page.items.map(async (itemId) => await ItemModel.findById(itemId))
+    )
+    response.status(200).json(items)
+  } else {
+    response.status(404).send(`Page ${pageId} not found!`)
+  }
 })
 
 /**
@@ -212,22 +253,26 @@ const getItemsInPage = asyncHandler(async (request, response) => {
  *         description: Not Found
  */
 const addItemInPage = asyncHandler(async (request, response) => {
-  const page = response.locals.page
-  const {text, done} = request.body
-  const newItem = new ItemModel({
-    page: page._id,
-    text: text,
-    done: done
-  })
-  const savedItem = await newItem.save()
-  await page.items.push(savedItem)
-  await page.save()
-  response.status(201).json(savedItem)
+  const pageId = request.params.pageId
+  const page = await pageDbController.getPage(pageId)
+  if (page) {
+    const {text, done} = request.body
+    const newItem = new ItemModel({
+      page: page._id,
+      text: text,
+      done: done
+    })
+    const savedItem = await newItem.save()
+    await page.items.push(savedItem)
+    await page.save()
+    response.status(201).json(savedItem)
+  } else {
+    response.status(404).send(`Page ${pageId} not found!`)
+  }
 })
 
-module.exports.getItemIfExists = getItemIfExists
 module.exports.getItemInPage = getItemInPage
 module.exports.updateItemInPage = updateItemInPage
 module.exports.deleteItemInPage = deleteItemInPage
-module.exports.getItemsInPage = getItemsInPage
+module.exports.getAllItemsInPage = getAllItemsInPage
 module.exports.addItemInPage = addItemInPage

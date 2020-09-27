@@ -1,17 +1,7 @@
 const asyncHandler = require('express-async-handler')
 
 const PageModel = require('../models/page-model')
-
-const getPageIfExists = asyncHandler(async (request, response, next) => {
-  const pageId = request.params.pageId
-  const page = await PageModel.findById(pageId)
-  if (page) {
-    response.locals.page = page
-    return next()
-  } else {
-    return response.status(404).send(`Page ${pageId} not found!`)
-  }
-})
+const pageDbController = require('./page-db-controller')
 
 /**
  * @swagger
@@ -41,8 +31,13 @@ const getPageIfExists = asyncHandler(async (request, response, next) => {
  *         description: Not Found
  */
 const getPage = asyncHandler(async (request, response) => {
-  const page = response.locals.page
-  response.status(200).send(page)
+  const pageId = request.params.pageId
+  const page = await pageDbController.getPage(pageId)
+  if (page) {
+    response.status(200).json(page)
+  } else {
+    response.status(404).send(`Page ${pageId} not found!`)
+  }
 })
 
 /**
@@ -69,9 +64,14 @@ const getPage = asyncHandler(async (request, response) => {
  *         description: Not Found
  */
 const deletePage = asyncHandler(async (request, response) => {
-  const page = response.locals.page
-  const deletedPage = await page.delete()
-  response.status(200).send(deletedPage)
+  const pageId = request.params.pageId
+  const page = await pageDbController.getPage(pageId)
+  if (page) {
+    const deletedPage = await page.delete()
+    response.status(200).json(deletedPage)
+  } else {
+    response.status(404).send(`Page ${pageId} not found!`)
+  }
 })
 
 /**
@@ -119,7 +119,6 @@ const addPage = asyncHandler(async (request, response) => {
   response.status(201).json(page)
 })
 
-module.exports.getPageIfExists = getPageIfExists
 module.exports.getPage = getPage
 module.exports.deletePage = deletePage
 module.exports.getAllPages = getAllPages
