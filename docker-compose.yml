@@ -28,16 +28,16 @@ services:
     container_name: mongo-express
     restart: unless-stopped
 
-  # to-do-api:
-  #   env_file:
-  #     - .env
-  #   environment:
-  #     - MONGODB_HOST=mongo
-  #   image: alvarogarciafer/to-do-api:$TO_DO_API_TAG
-  #   build: .
-  #   ports:
-  #     - $TO_DO_API_PORT:3000
-  #   container_name: to-do-api
-  #   restart: unless-stopped
-  #   command: 
-  #     - start
+  to-do-api:
+    env_file:
+      - .env
+    environment:
+      - MONGODB_HOST=mongo
+    image: alvarogarciafer/to-do-api:$TO_DO_API_TAG
+    build: .
+    ports:
+      - $TO_DO_API_PORT:3000
+    container_name: to-do-api
+    restart: unless-stopped
+    command: 
+      - start
