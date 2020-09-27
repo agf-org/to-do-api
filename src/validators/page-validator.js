@@ -1,17 +1,17 @@
-const {check, validationResult} = require('express-validator');
+const {check, validationResult} = require('express-validator')
 
 const validatePageId = [
   check('pageId')
     .not().isEmpty()
     .isLength({min: 24, max: 24}),
   (request, response, next) => {
-    const errors = validationResult(request);
+    const errors = validationResult(request)
     if (errors.isEmpty()) {
-      return next();
+      return next()
     } else {
-      return response.sendStatus(400);
+      return response.sendStatus(400)
     }
   }
-];
+]
 
-module.exports.validatePageId = validatePageId;
+module.exports.validatePageId = validatePageId

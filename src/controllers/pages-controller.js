@@ -1,17 +1,6 @@
-const asyncHandler = require('express-async-handler');
+const asyncHandler = require('express-async-handler')
 
-const PageModel = require('../models/page-model');
-
-const getPageIfExists = asyncHandler(async (request, response, next) => {
-  const pageId = request.params.pageId;
-  const page = await PageModel.findById(pageId).populate('items');
-  if (page) {
-    response.locals.page = page;
-    return next();
-  } else {
-    return response.status(404).send(`Page ${pageId} not found!`);
-  }
-});
+const pagesDbHandler = require('./pages-db-handler')
 
 /**
  * @swagger
@@ -40,9 +29,15 @@ const getPageIfExists = asyncHandler(async (request, response, next) => {
  *       404:
  *         description: Not Found
  */
-const getPage = asyncHandler(async (request, response) => {
-  response.status(200).send(response.locals.page);
-});
+module.exports.getPage = asyncHandler(async (request, response) => {
+  const pageId = request.params.pageId
+  const page = await pagesDbHandler.getPage(pageId)
+  if (page) {
+    response.status(200).json(page)
+  } else {
+    response.status(404).send(`Page ${pageId} not found!`)
+  }
+})
 
 /**
  * @swagger
@@ -67,10 +62,16 @@ const getPage = asyncHandler(async (request, response) => {
  *       404:
  *         description: Not Found
  */
-const deletePage = asyncHandler(async (request, response) => {
-  const page = await response.locals.page.delete();
-  response.status(200).send(page);
-});
+module.exports.deletePage = asyncHandler(async (request, response) => {
+  const pageId = request.params.pageId
+  const page = await pagesDbHandler.getPage(pageId)
+  if (page) {
+    const deletedPage = await pagesDbHandler.deletePage(page)
+    response.status(200).json(deletedPage)
+  } else {
+    response.status(404).send(`Page ${pageId} not found!`)
+  }
+})
 
 /**
  * @swagger
@@ -88,10 +89,10 @@ const deletePage = asyncHandler(async (request, response) => {
  *             schema:
  *               $ref: '#/definitions/Pages'
  */
-const getPages = asyncHandler(async (request, response) => {
-  const pages = await PageModel.find({}).populate('items');
-  response.status(200).json(pages);
-});
+module.exports.getAllPages = asyncHandler(async (request, response) => {
+  const pages = await pagesDbHandler.getAllPages()
+  response.status(200).json(pages)
+})
 
 /**
  * @swagger
@@ -100,7 +101,7 @@ const getPages = asyncHandler(async (request, response) => {
  *   post:
  *     tags:
  *       - Pages
- *     summary: Adds a page
+ *     summary: Creates an empty page
  *     responses:
  *       201:
  *         description: Created
@@ -109,16 +110,7 @@ const getPages = asyncHandler(async (request, response) => {
  *             schema:
  *               $ref: '#/definitions/Page'
  */
-const addPage = asyncHandler(async (request, response) => {
-  const newPage = new PageModel({
-    items: []
-  });
-  const page = await newPage.save();
-  response.status(201).json(page);
-});
-
-module.exports.getPageIfExists = getPageIfExists;
-module.exports.getPage = getPage;
-module.exports.deletePage = deletePage;
-module.exports.getPages = getPages;
-module.exports.addPage = addPage;
+module.exports.createEmptyPage = asyncHandler(async (request, response) => {
+  const createdPage = await pagesDbHandler.createEmptyPage()
+  response.status(201).json(createdPage)
+})

@@ -1,7 +1,7 @@
-const router = require('express').Router();
-const swaggerUi = require('swagger-ui-express');
-const swaggerJSDoc = require('swagger-jsdoc');
-const {version} = require('../../package');
+const router = require('express').Router()
+const swaggerUi = require('swagger-ui-express')
+const swaggerJSDoc = require('swagger-jsdoc')
+const {version} = require('../../package')
 
 const options = {
   explorer: true,
@@ -21,18 +21,18 @@ const options = {
   apis: [
       'src/**/*.js'
     ],
-};
+}
 
-const swaggerSpec = swaggerJSDoc(options);
+const swaggerSpec = swaggerJSDoc(options)
 
 const serveSwaggerSpec = (request, response) => {
-    response.setHeader('Content-Type', 'application/json');
-    response.send(swaggerSpec);
-};
+  response.setHeader('Content-Type', 'application/json')
+  response.send(swaggerSpec)
+}
 
-router.use('/', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+router.use('/', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
 router.route('/')
-  .get(serveSwaggerSpec);
+  .get(serveSwaggerSpec)
 
-module.exports = router;
+module.exports = router

@@ -1,17 +1,7 @@
-const asyncHandler = require('express-async-handler');
+const asyncHandler = require('express-async-handler')
 
-const ItemModel = require('../models/item-model');
-
-const getItemIfExists = asyncHandler(async (request, response, next) => {
-  const itemId = request.params.itemId;
-  const item = response.locals.page.items.find(item => item.id === itemId);
-  if (item) {
-    response.locals.item = item;
-    return next();
-  } else {
-    return response.status(404).send(`Item ${itemId} not found!`);
-  }
-});
+const pagesDbHandler = require('./pages-db-handler')
+const itemsDbHandler = require('./items-db-handler')
 
 /**
  * @swagger
@@ -20,7 +10,7 @@ const getItemIfExists = asyncHandler(async (request, response, next) => {
  *   get:
  *     tags:
  *       - Items
- *     summary: Gets an item
+ *     summary: Gets an item in a page
  *     parameters:
  *       - name: pageId
  *         description: ID of the page
@@ -46,9 +36,21 @@ const getItemIfExists = asyncHandler(async (request, response, next) => {
  *       404:
  *         description: Not Found
  */
-const getItem = asyncHandler(async (request, response) => {
-  response.status(200).json(response.locals.item);
-});
+module.exports.getItemInPage = asyncHandler(async (request, response) => {
+  const pageId = request.params.pageId
+  const page = await pagesDbHandler.getPage(pageId)
+  if (page) {
+    const itemId = request.params.itemId
+    const item = await itemsDbHandler.getItemInPage(page, itemId)
+    if (item) {
+      response.status(200).json(item)
+    } else {
+      response.status(404).send(`Item ${itemId} not found!`)
+    }
+  } else {
+    response.status(404).send(`Page ${pageId} not found!`)
+  }
+})
 
 /**
  * @swagger
@@ -57,7 +59,7 @@ const getItem = asyncHandler(async (request, response) => {
  *   put:
  *     tags:
  *       - Items
- *     summary: Updates an item
+ *     summary: Updates an item in a page
  *     parameters:
  *       - name: pageId
  *         description: ID of the page
@@ -87,13 +89,23 @@ const getItem = asyncHandler(async (request, response) => {
  *       404:
  *         description: Not Found
  */
-const updateItem = asyncHandler(async (request, response) => {
-  const {text, done} = request.body;
-  response.locals.item.text = text;
-  response.locals.item.done = done;
-  const item = await response.locals.item.save();
-  response.status(200).send(item);
-});
+module.exports.updateItemInPage = asyncHandler(async (request, response) => {
+  const pageId = request.params.pageId
+  const page = await pagesDbHandler.getPage(pageId)
+  if (page) {
+    const itemId = request.params.itemId
+    const item = await itemsDbHandler.getItemInPage(page, itemId)
+    if (item) {
+      const data = request.body
+      const updatedItem = await itemsDbHandler.updateItem(item, data)
+      response.status(200).json(updatedItem)
+    } else {
+      response.status(404).send(`Item ${itemId} not found!`)
+    }
+  } else {
+    response.status(404).send(`Page ${pageId} not found!`)
+  }
+})
 
 /**
  * @swagger
@@ -102,7 +114,7 @@ const updateItem = asyncHandler(async (request, response) => {
  *   delete:
  *     tags:
  *       - Items
- *     summary: Deletes an item
+ *     summary: Deletes an item in a page
  *     parameters:
  *       - name: pageId
  *         description: ID of the page
@@ -124,13 +136,22 @@ const updateItem = asyncHandler(async (request, response) => {
  *       404:
  *         description: Not Found
  */
-const deleteItem = asyncHandler(async (request, response) => {
-    const item = await response.locals.item.delete();
-    const itemIndex = response.locals.page.items.indexOf(item);
-    response.locals.page.items.splice(itemIndex, 1);
-    await response.locals.page.save();
-    response.status(200).send(item);
-});
+module.exports.deleteItemInPage = asyncHandler(async (request, response) => {
+  const pageId = request.params.pageId
+  const page = await pagesDbHandler.getPage(pageId)
+  if (page) {
+    const itemId = request.params.itemId
+    const item = await itemsDbHandler.getItemInPage(page, itemId)
+    if (item) {
+      const deletedItem = await itemsDbHandler.deleteItemInPage(page, item)
+      response.status(200).json(deletedItem)
+    } else {
+      response.status(404).send(`Item ${itemId} not found!`)
+    }
+  } else {
+    response.status(404).send(`Page ${pageId} not found!`)
+  }
+})
 
 /**
  * @swagger
@@ -139,7 +160,7 @@ const deleteItem = asyncHandler(async (request, response) => {
  *   get:
  *     tags:
  *       - Items
- *     summary: Gets all items of a page
+ *     summary: Gets all items in a page
  *     parameters:
  *       - name: pageId
  *         description: ID of the page
@@ -159,9 +180,16 @@ const deleteItem = asyncHandler(async (request, response) => {
  *       404:
  *         description: Not Found
  */
-const getItems = asyncHandler(async (request, response) => {
-  response.status(200).send(response.locals.page.items);
-});
+module.exports.getAllItemsInPage = asyncHandler(async (request, response) => {
+  const pageId = request.params.pageId
+  const page = await pagesDbHandler.getPage(pageId)
+  if (page) {
+    const items = await itemsDbHandler.getAllItemsInPage(page)
+    response.status(200).json(items)
+  } else {
+    response.status(404).send(`Page ${pageId} not found!`)
+  }
+})
 
 /**
  * @swagger
@@ -170,7 +198,7 @@ const getItems = asyncHandler(async (request, response) => {
  *   post:
  *     tags:
  *       - Items
- *     summary: Adds an item
+ *     summary: Creates an item in a page
  *     parameters:
  *       - name: pageId
  *         description: ID of the page
@@ -198,22 +226,14 @@ const getItems = asyncHandler(async (request, response) => {
  *       404:
  *         description: Not Found
  */
-const addItem = asyncHandler(async (request, response) => {
-    const {text, done} = request.body;
-    const newItem = new ItemModel({
-      page: response.locals.page._id,
-      text: text,
-      done: done
-    });
-    const item = await newItem.save();
-    await response.locals.page.items.push(item);
-    await response.locals.page.save();
-    response.status(201).json(item);
-});
-
-module.exports.getItemIfExists = getItemIfExists;
-module.exports.getItem = getItem;
-module.exports.updateItem = updateItem;
-module.exports.deleteItem = deleteItem;
-module.exports.getItems = getItems;
-module.exports.addItem = addItem;
+module.exports.createItemInPage = asyncHandler(async (request, response) => {
+  const pageId = request.params.pageId
+  const page = await pagesDbHandler.getPage(pageId)
+  if (page) {
+    const data = request.body
+    const createdItem = await itemsDbHandler.createItemInPage(page, data)
+    response.status(201).json(createdItem)
+  } else {
+    response.status(404).send(`Page ${pageId} not found!`)
+  }
+})
