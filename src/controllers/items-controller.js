@@ -2,10 +2,15 @@ const asyncHandler = require('express-async-handler');
 
 const ItemModel = require('../models/item-model');
 
+const isItemInPage = (page, itemId) => {
+  return page.items.includes(itemId);
+};
+
 const getItemIfExists = asyncHandler(async (request, response, next) => {
+  const page = response.locals.page;
   const itemId = request.params.itemId;
-  const item = response.locals.page.items.find(item => item.id === itemId);
-  if (item) {
+  const item = await ItemModel.findById(itemId);
+  if (isItemInPage(page, itemId) && item) {
     response.locals.item = item;
     return next();
   } else {
@@ -47,7 +52,8 @@ const getItemIfExists = asyncHandler(async (request, response, next) => {
  *         description: Not Found
  */
 const getItem = asyncHandler(async (request, response) => {
-  response.status(200).json(response.locals.item);
+  const item = response.locals.item;
+  response.status(200).json(item);
 });
 
 /**
@@ -88,11 +94,12 @@ const getItem = asyncHandler(async (request, response) => {
  *         description: Not Found
  */
 const updateItem = asyncHandler(async (request, response) => {
+  const item = response.locals.item;
   const {text, done} = request.body;
-  response.locals.item.text = text;
-  response.locals.item.done = done;
-  const item = await response.locals.item.save();
-  response.status(200).send(item);
+  item.text = text;
+  item.done = done;
+  const savedItem = await item.save();
+  response.status(200).send(savedItem);
 });
 
 /**
@@ -125,11 +132,13 @@ const updateItem = asyncHandler(async (request, response) => {
  *         description: Not Found
  */
 const deleteItem = asyncHandler(async (request, response) => {
-    const item = await response.locals.item.delete();
-    const itemIndex = response.locals.page.items.indexOf(item);
-    response.locals.page.items.splice(itemIndex, 1);
-    await response.locals.page.save();
-    response.status(200).send(item);
+  const page = response.locals.page;
+  const item = response.locals.item;
+  const deletedItem = await item.delete();
+  const deletedItemIndex = page.items.indexOf(deletedItem);
+  page.items.splice(deletedItemIndex, 1);
+  await page.save();
+  response.status(200).send(deletedItem);
 });
 
 /**
@@ -160,7 +169,11 @@ const deleteItem = asyncHandler(async (request, response) => {
  *         description: Not Found
  */
 const getItems = asyncHandler(async (request, response) => {
-  response.status(200).send(response.locals.page.items);
+  const page = response.locals.page;
+  const items = await Promise.all(
+    page.items.map(async (itemId) => await ItemModel.findById(itemId))
+  );
+  response.status(200).send(items);
 });
 
 /**
@@ -199,16 +212,17 @@ const getItems = asyncHandler(async (request, response) => {
  *         description: Not Found
  */
 const addItem = asyncHandler(async (request, response) => {
-    const {text, done} = request.body;
-    const newItem = new ItemModel({
-      page: response.locals.page._id,
-      text: text,
-      done: done
-    });
-    const item = await newItem.save();
-    await response.locals.page.items.push(item);
-    await response.locals.page.save();
-    response.status(201).json(item);
+  const page = response.locals.page;
+  const {text, done} = request.body;
+  const newItem = new ItemModel({
+    page: page._id,
+    text: text,
+    done: done
+  });
+  const savedItem = await newItem.save();
+  await page.items.push(savedItem);
+  await page.save();
+  response.status(201).json(savedItem);
 });
 
 module.exports.getItemIfExists = getItemIfExists;

@@ -122,7 +122,7 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items/:itemId`, () => {
           "done": false
         });
       expect(response.statusCode).toBe(400);
-      expect(response.type).toBe('application/json');
+      expect(response.type).toBe('text/plain');
     });
 
     it('should return a 400 response for an item with a "text" field that is not a string', async () => {
@@ -138,7 +138,7 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items/:itemId`, () => {
           "done": false
         });
       expect(response.statusCode).toBe(400);
-      expect(response.type).toBe('application/json');
+      expect(response.type).toBe('text/plain');
     });
 
     it('should return a 400 response for an item with a "text" field that is empty', async () => {
@@ -154,7 +154,7 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items/:itemId`, () => {
           "done": false
         });
       expect(response.statusCode).toBe(400);
-      expect(response.type).toBe('application/json');
+      expect(response.type).toBe('text/plain');
     });
 
     it('should return a 400 response for an item without a "done" field', async () => {
@@ -169,7 +169,7 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items/:itemId`, () => {
           "text": "Buy groceries"
         });
       expect(response.statusCode).toBe(400);
-      expect(response.type).toBe('application/json');
+      expect(response.type).toBe('text/plain');
     });
 
     it('should return a 400 response for an item with a "done" field that is not a boolean', async () => {
@@ -185,7 +185,7 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items/:itemId`, () => {
           "done": "not a boolean"
         });
       expect(response.statusCode).toBe(400);
-      expect(response.type).toBe('application/json');
+      expect(response.type).toBe('text/plain');
     });
 
     it('should return a 404 response for a non-existing page', async () => {
@@ -295,7 +295,7 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items/:itemId`, () => {
 });
 
 describe(`${config.baseUrl}/to-do/pages/:pageId/items tests`, () => {
-  describe('Get all items', () => {
+  describe('Get all items of a page', () => {
     it('should return a 200 response', async () => {
       const page = new PageModel({items: []});
       const item = new ItemModel({page: page._id, text: "Buy groceries", done: false});
@@ -375,7 +375,7 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items tests`, () => {
           "done": false
         });
       expect(response.statusCode).toBe(400);
-      expect(response.type).toBe('application/json');
+      expect(response.type).toBe('text/plain');
     });
 
     it('should return a 400 response for an item with a "text" field that is not a string', async () => {
@@ -388,7 +388,7 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items tests`, () => {
           "done": false
         });
       expect(response.statusCode).toBe(400);
-      expect(response.type).toBe('application/json');
+      expect(response.type).toBe('text/plain');
     });
 
     it('should return a 400 response for an item with a "text" field that is empty', async () => {
@@ -401,7 +401,7 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items tests`, () => {
           "done": false
         });
       expect(response.statusCode).toBe(400);
-      expect(response.type).toBe('application/json');
+      expect(response.type).toBe('text/plain');
     });
 
     it('should return a 400 response for an item without a "done" field', async () => {
@@ -413,7 +413,7 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items tests`, () => {
           "text": "Buy groceries"
         });
       expect(response.statusCode).toBe(400);
-      expect(response.type).toBe('application/json');
+      expect(response.type).toBe('text/plain');
     });
 
     it('should return a 400 response for an item with a "done" field that is not a boolean', async () => {
@@ -426,7 +426,7 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items tests`, () => {
           "done": "not a boolean"
         });
       expect(response.statusCode).toBe(400);
-      expect(response.type).toBe('application/json');
+      expect(response.type).toBe('text/plain');
     });
 
     it('should return a 404 response for a non-existing page', async () => {

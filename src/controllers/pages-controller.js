@@ -4,7 +4,7 @@ const PageModel = require('../models/page-model');
 
 const getPageIfExists = asyncHandler(async (request, response, next) => {
   const pageId = request.params.pageId;
-  const page = await PageModel.findById(pageId).populate('items');
+  const page = await PageModel.findById(pageId);
   if (page) {
     response.locals.page = page;
     return next();
@@ -41,7 +41,8 @@ const getPageIfExists = asyncHandler(async (request, response, next) => {
  *         description: Not Found
  */
 const getPage = asyncHandler(async (request, response) => {
-  response.status(200).send(response.locals.page);
+  const page = response.locals.page;
+  response.status(200).send(page);
 });
 
 /**
@@ -68,8 +69,9 @@ const getPage = asyncHandler(async (request, response) => {
  *         description: Not Found
  */
 const deletePage = asyncHandler(async (request, response) => {
-  const page = await response.locals.page.delete();
-  response.status(200).send(page);
+  const page = response.locals.page;
+  const deletedPage = await page.delete();
+  response.status(200).send(deletedPage);
 });
 
 /**
@@ -89,7 +91,7 @@ const deletePage = asyncHandler(async (request, response) => {
  *               $ref: '#/definitions/Pages'
  */
 const getPages = asyncHandler(async (request, response) => {
-  const pages = await PageModel.find({}).populate('items');
+  const pages = await PageModel.find({});
   response.status(200).json(pages);
 });
 

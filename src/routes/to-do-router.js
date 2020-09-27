@@ -7,15 +7,17 @@ const itemsController = require('../controllers/items-controller');
 const pageValidator = require('../validators/page-validator');
 const pagesController = require('../controllers/pages-controller');
 
-router.use(
-  '/pages/:pageId/items/:itemId',
-  commonValidator.validateMethod(['GET', 'PUT', 'DELETE']),
-  pageValidator.validatePageId,
-  pagesController.getPageIfExists,
-  itemValidator.validateItemId,
-  itemsController.getItemIfExists
-);
-router.route('/pages/:pageId/items/:itemId')
+router
+  .use(
+    '/pages/:pageId/items/:itemId',
+    commonValidator.validateMethod(['GET', 'PUT', 'DELETE']),
+    pageValidator.validatePageId,
+    pagesController.getPageIfExists,
+    itemValidator.validateItemId,
+    itemsController.getItemIfExists
+  );
+router
+  .route('/pages/:pageId/items/:itemId')
   .get(
     itemsController.getItem
   )
@@ -27,13 +29,15 @@ router.route('/pages/:pageId/items/:itemId')
     itemsController.deleteItem
   );
 
-router.use(
-  '/pages/:pageId/items',
-  commonValidator.validateMethod(['GET', 'POST']),
-  pageValidator.validatePageId,
-  pagesController.getPageIfExists
-);
-router.route('/pages/:pageId/items')
+router
+  .use(
+    '/pages/:pageId/items',
+    commonValidator.validateMethod(['GET', 'POST']),
+    pageValidator.validatePageId,
+    pagesController.getPageIfExists
+  );
+router
+  .route('/pages/:pageId/items')
   .get(
     itemsController.getItems
   )
@@ -42,13 +46,15 @@ router.route('/pages/:pageId/items')
     itemsController.addItem
   );
 
-router.use(
-  '/pages/:pageId',
-  commonValidator.validateMethod(['GET', 'DELETE']),
-  pageValidator.validatePageId,
-  pagesController.getPageIfExists
-);
-router.route('/pages/:pageId')
+router
+  .use(
+    '/pages/:pageId',
+    commonValidator.validateMethod(['GET', 'DELETE']),
+    pageValidator.validatePageId,
+    pagesController.getPageIfExists
+  );
+router
+  .route('/pages/:pageId')
   .get(
     pagesController.getPage
   )
@@ -56,11 +62,13 @@ router.route('/pages/:pageId')
     pagesController.deletePage
   );
 
-router.use(
-  '/pages',
-  commonValidator.validateMethod(['GET', 'POST'])
-);
-router.route('/pages')
+router
+  .use(
+    '/pages',
+    commonValidator.validateMethod(['GET', 'POST'])
+  );
+router
+  .route('/pages')
   .get(
     pagesController.getPages
   )
