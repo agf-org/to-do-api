@@ -19,14 +19,14 @@ router
 router
   .route('/pages/:pageId/items/:itemId')
   .get(
-    itemsController.getItem
+    itemsController.getItemInPage
   )
   .put(
     itemValidator.validateItem,
-    itemsController.updateItem
+    itemsController.updateItemInPage
   )
   .delete(
-    itemsController.deleteItem
+    itemsController.deleteItemInPage
   )
 
 router
@@ -39,11 +39,11 @@ router
 router
   .route('/pages/:pageId/items')
   .get(
-    itemsController.getItems
+    itemsController.getItemsInPage
   )
   .post(
     itemValidator.validateItem,
-    itemsController.addItem
+    itemsController.addItemInPage
   )
 
 router
@@ -70,7 +70,7 @@ router
 router
   .route('/pages')
   .get(
-    pagesController.getPages
+    pagesController.getAllPages
   )
   .post(
     pagesController.addPage

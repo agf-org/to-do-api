@@ -51,7 +51,7 @@ const getItemIfExists = asyncHandler(async (request, response, next) => {
  *       404:
  *         description: Not Found
  */
-const getItem = asyncHandler(async (request, response) => {
+const getItemInPage = asyncHandler(async (request, response) => {
   const item = response.locals.item
   response.status(200).json(item)
 })
@@ -93,7 +93,7 @@ const getItem = asyncHandler(async (request, response) => {
  *       404:
  *         description: Not Found
  */
-const updateItem = asyncHandler(async (request, response) => {
+const updateItemInPage = asyncHandler(async (request, response) => {
   const item = response.locals.item
   const {text, done} = request.body
   item.text = text
@@ -131,7 +131,7 @@ const updateItem = asyncHandler(async (request, response) => {
  *       404:
  *         description: Not Found
  */
-const deleteItem = asyncHandler(async (request, response) => {
+const deleteItemInPage = asyncHandler(async (request, response) => {
   const page = response.locals.page
   const item = response.locals.item
   const deletedItem = await item.delete()
@@ -168,7 +168,7 @@ const deleteItem = asyncHandler(async (request, response) => {
  *       404:
  *         description: Not Found
  */
-const getItems = asyncHandler(async (request, response) => {
+const getItemsInPage = asyncHandler(async (request, response) => {
   const page = response.locals.page
   const items = await Promise.all(
     page.items.map(async (itemId) => await ItemModel.findById(itemId))
@@ -211,7 +211,7 @@ const getItems = asyncHandler(async (request, response) => {
  *       404:
  *         description: Not Found
  */
-const addItem = asyncHandler(async (request, response) => {
+const addItemInPage = asyncHandler(async (request, response) => {
   const page = response.locals.page
   const {text, done} = request.body
   const newItem = new ItemModel({
@@ -226,8 +226,8 @@ const addItem = asyncHandler(async (request, response) => {
 })
 
 module.exports.getItemIfExists = getItemIfExists
-module.exports.getItem = getItem
-module.exports.updateItem = updateItem
-module.exports.deleteItem = deleteItem
-module.exports.getItems = getItems
-module.exports.addItem = addItem
+module.exports.getItemInPage = getItemInPage
+module.exports.updateItemInPage = updateItemInPage
+module.exports.deleteItemInPage = deleteItemInPage
+module.exports.getItemsInPage = getItemsInPage
+module.exports.addItemInPage = addItemInPage

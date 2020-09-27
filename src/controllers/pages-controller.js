@@ -90,7 +90,7 @@ const deletePage = asyncHandler(async (request, response) => {
  *             schema:
  *               $ref: '#/definitions/Pages'
  */
-const getPages = asyncHandler(async (request, response) => {
+const getAllPages = asyncHandler(async (request, response) => {
   const pages = await PageModel.find({})
   response.status(200).json(pages)
 })
@@ -122,5 +122,5 @@ const addPage = asyncHandler(async (request, response) => {
 module.exports.getPageIfExists = getPageIfExists
 module.exports.getPage = getPage
 module.exports.deletePage = deletePage
-module.exports.getPages = getPages
+module.exports.getAllPages = getAllPages
 module.exports.addPage = addPage
