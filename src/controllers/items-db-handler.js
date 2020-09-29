@@ -1,35 +1,37 @@
-const pagesDbHandler = require('./pages-db-handler')
 const ItemModel = require('../models/item-model')
+const pagesDbHandler = require('./pages-db-handler')
 
-module.exports.getItemInPage = async (page, itemId) => {
-  const isItemInPage = page.items.includes(itemId)
-  const item = await ItemModel.findById(itemId)
-  return isItemInPage && item
+module.exports.getItem = async (itemId) => {
+  return await ItemModel.findById(itemId)
 }
 
-module.exports.updateItem = async (item, data) => {
+module.exports.getAllItems = async (pageId) => {
+  return await ItemModel.find({page: pageId})
+}
+
+module.exports.createItem = async (data) => {
+  return await ItemModel.create(data)
+}
+
+module.exports.addItem = async (pageId, data) => {
+  data.page = pageId
+  const newItem = await this.createItem(data)
+  await pagesDbHandler.addItemIdToPage(pageId, newItem._id)
+  return newItem
+}
+
+module.exports.updateItem = async (itemId, data) => {
+  const item = await this.getItem(itemId)
   item.text = data.text
   item.done = data.done
   return await item.save()
 }
 
-module.exports.deleteItemInPage = async (page, item) => {
-  await pagesDbHandler.deleteItemRefFromPage(page, item)
-  return await item.delete()
+module.exports.destroyItem = async (itemId) => {
+  return await ItemModel.findByIdAndDelete(itemId)
 }
 
-module.exports.getAllItemsInPage = async (page) => {
-  return await Promise.all(
-    page.items.map(async (itemId) => await ItemModel.findById(itemId))
-  )
-}
-
-module.exports.createItemInPage = async (page, data) => {
-  const newItem = new ItemModel({
-    page: page._id,
-    text: data.text,
-    done: data.done
-  })
-  await pagesDbHandler.addItemRefToPage(page, newItem)
-  return await newItem.save()
+module.exports.deleteItem = async (pageId, itemId) => {
+  await pagesDbHandler.deleteItemIdFromPage(pageId, itemId)
+  return await this.destroyItem(itemId)
 }

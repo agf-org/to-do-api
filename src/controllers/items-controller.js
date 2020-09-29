@@ -10,7 +10,7 @@ const itemsDbHandler = require('./items-db-handler')
  *   get:
  *     tags:
  *       - Items
- *     summary: Gets an item in a page
+ *     summary: Gets an item
  *     parameters:
  *       - name: pageId
  *         description: ID of the page
@@ -36,12 +36,12 @@ const itemsDbHandler = require('./items-db-handler')
  *       404:
  *         description: Not Found
  */
-module.exports.getItemInPage = asyncHandler(async (request, response) => {
+module.exports.getItem = asyncHandler(async (request, response) => {
   const pageId = request.params.pageId
   const page = await pagesDbHandler.getPage(pageId)
   if (page) {
     const itemId = request.params.itemId
-    const item = await itemsDbHandler.getItemInPage(page, itemId)
+    const item = await itemsDbHandler.getItem(itemId)
     if (item) {
       response.status(200).json(item)
     } else {
@@ -59,7 +59,7 @@ module.exports.getItemInPage = asyncHandler(async (request, response) => {
  *   put:
  *     tags:
  *       - Items
- *     summary: Updates an item in a page
+ *     summary: Updates an item
  *     parameters:
  *       - name: pageId
  *         description: ID of the page
@@ -89,15 +89,15 @@ module.exports.getItemInPage = asyncHandler(async (request, response) => {
  *       404:
  *         description: Not Found
  */
-module.exports.updateItemInPage = asyncHandler(async (request, response) => {
+module.exports.updateItem = asyncHandler(async (request, response) => {
   const pageId = request.params.pageId
   const page = await pagesDbHandler.getPage(pageId)
   if (page) {
     const itemId = request.params.itemId
-    const item = await itemsDbHandler.getItemInPage(page, itemId)
+    const item = await itemsDbHandler.getItem(itemId)
     if (item) {
-      const data = request.body
-      const updatedItem = await itemsDbHandler.updateItem(item, data)
+      const updatedInfo = request.body
+      const updatedItem = await itemsDbHandler.updateItem(itemId, updatedInfo)
       response.status(200).json(updatedItem)
     } else {
       response.status(404).send(`Item ${itemId} not found!`)
@@ -114,7 +114,7 @@ module.exports.updateItemInPage = asyncHandler(async (request, response) => {
  *   delete:
  *     tags:
  *       - Items
- *     summary: Deletes an item in a page
+ *     summary: Deletes an item
  *     parameters:
  *       - name: pageId
  *         description: ID of the page
@@ -136,14 +136,14 @@ module.exports.updateItemInPage = asyncHandler(async (request, response) => {
  *       404:
  *         description: Not Found
  */
-module.exports.deleteItemInPage = asyncHandler(async (request, response) => {
+module.exports.deleteItem = asyncHandler(async (request, response) => {
   const pageId = request.params.pageId
   const page = await pagesDbHandler.getPage(pageId)
   if (page) {
     const itemId = request.params.itemId
-    const item = await itemsDbHandler.getItemInPage(page, itemId)
+    const item = await itemsDbHandler.getItem(itemId)
     if (item) {
-      const deletedItem = await itemsDbHandler.deleteItemInPage(page, item)
+      const deletedItem = await itemsDbHandler.deleteItem(pageId, itemId)
       response.status(200).json(deletedItem)
     } else {
       response.status(404).send(`Item ${itemId} not found!`)
@@ -160,7 +160,7 @@ module.exports.deleteItemInPage = asyncHandler(async (request, response) => {
  *   get:
  *     tags:
  *       - Items
- *     summary: Gets all items in a page
+ *     summary: Gets all items
  *     parameters:
  *       - name: pageId
  *         description: ID of the page
@@ -180,11 +180,11 @@ module.exports.deleteItemInPage = asyncHandler(async (request, response) => {
  *       404:
  *         description: Not Found
  */
-module.exports.getAllItemsInPage = asyncHandler(async (request, response) => {
+module.exports.getAllItems = asyncHandler(async (request, response) => {
   const pageId = request.params.pageId
   const page = await pagesDbHandler.getPage(pageId)
   if (page) {
-    const items = await itemsDbHandler.getAllItemsInPage(page)
+    const items = await itemsDbHandler.getAllItems(pageId)
     response.status(200).json(items)
   } else {
     response.status(404).send(`Page ${pageId} not found!`)
@@ -198,7 +198,7 @@ module.exports.getAllItemsInPage = asyncHandler(async (request, response) => {
  *   post:
  *     tags:
  *       - Items
- *     summary: Creates an item in a page
+ *     summary: Creates an item
  *     parameters:
  *       - name: pageId
  *         description: ID of the page
@@ -226,12 +226,12 @@ module.exports.getAllItemsInPage = asyncHandler(async (request, response) => {
  *       404:
  *         description: Not Found
  */
-module.exports.createItemInPage = asyncHandler(async (request, response) => {
+module.exports.createItem = asyncHandler(async (request, response) => {
   const pageId = request.params.pageId
   const page = await pagesDbHandler.getPage(pageId)
   if (page) {
     const data = request.body
-    const createdItem = await itemsDbHandler.createItemInPage(page, data)
+    const createdItem = await itemsDbHandler.addItem(pageId, data)
     response.status(201).json(createdItem)
   } else {
     response.status(404).send(`Page ${pageId} not found!`)

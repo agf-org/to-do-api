@@ -17,14 +17,14 @@ router
 router
   .route('/pages/:pageId/items/:itemId')
   .get(
-    itemsController.getItemInPage
+    itemsController.getItem
   )
   .put(
     itemValidator.validateItem,
-    itemsController.updateItemInPage
+    itemsController.updateItem
   )
   .delete(
-    itemsController.deleteItemInPage
+    itemsController.deleteItem
   )
 
 router
@@ -36,11 +36,11 @@ router
 router
   .route('/pages/:pageId/items')
   .get(
-    itemsController.getAllItemsInPage
+    itemsController.getAllItems
   )
   .post(
     itemValidator.validateItem,
-    itemsController.createItemInPage
+    itemsController.createItem
   )
 
 router
@@ -69,7 +69,7 @@ router
     pagesController.getAllPages
   )
   .post(
-    pagesController.createEmptyPage
+    pagesController.createPage
   )
 
 module.exports = router
