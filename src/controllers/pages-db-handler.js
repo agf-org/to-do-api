@@ -4,28 +4,27 @@ module.exports.getPage = async (pageId) => {
   return await PageModel.findById(pageId)
 }
 
-module.exports.deletePage = async (page) => {
-  return await page.delete()
-}
-
 module.exports.getAllPages = async () => {
   return await PageModel.find({})
 }
 
-module.exports.createEmptyPage = async () => {
-  const newPage = new PageModel({
-    items: []
-  })
-  return await newPage.save()
+module.exports.createPage = async () => {
+  return await PageModel.create({items: []})
 }
 
-module.exports.deleteItemRefFromPage = async (page, item) => {
-  const itemIndex = page.items.indexOf(item)
-  page.items.splice(itemIndex, 1)
+module.exports.destroyPage = async (pageId) => {
+  return await PageModel.findByIdAndDelete(pageId)
+}
+
+module.exports.addItemIdToPage = async (pageId, itemId) => {
+  const page = await this.getPage(pageId)
+  await page.items.push(itemId)
   await page.save()
 }
 
-module.exports.addItemRefToPage = async (page, item) => {
-  await page.items.push(item)
+module.exports.deleteItemIdFromPage = async (pageId, itemId) => {
+  const page = await this.getPage(pageId)
+  const itemIndex = page.items.indexOf(itemId)
+  page.items.splice(itemIndex, 1)
   await page.save()
 }

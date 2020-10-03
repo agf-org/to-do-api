@@ -1,5 +1,4 @@
 module.exports = {
   testEnvironment: "node",
-  maxWorkers: 1,
-  verbose: true
+  maxWorkers: 1
 };
