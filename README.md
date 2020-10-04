@@ -17,4 +17,4 @@ $ npm start
 
 ## Documentation
 
-API specification can be found at http://localhost:3000/api/api-docs/
+API specification can be found at http://127.0.0.1/api/api-docs/
