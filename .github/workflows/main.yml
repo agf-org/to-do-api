@@ -29,6 +29,7 @@ jobs:
           echo "MONGODB_DATABASE=notebook" >> .env
           echo "TO_DO_API_TAG=test" >> .env
           echo "TO_DO_API_PORT=3000" >> .env
+          docker-compose build to-do-api
           docker-compose run \
             --rm \
             to-do-api \
@@ -43,6 +44,7 @@ jobs:
           echo "MONGODB_DATABASE=notebook" >> .env
           echo "TO_DO_API_TAG=test" >> .env
           echo "TO_DO_API_PORT=3000" >> .env
+          docker-compose build to-do-api
           docker-compose run \
             --rm \
             to-do-api \
