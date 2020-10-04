@@ -35,7 +35,6 @@ services:
     environment:
       - MONGODB_HOST=mongo
     image: alvarogarciafer/to-do-api:$TO_DO_API_TAG
-    build: .
     volumes:
       - type: volume
         source: logs

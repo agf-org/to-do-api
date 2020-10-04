@@ -13,7 +13,7 @@ const config = require('./config')
 const app = express()
 app.use(
   helmet({
-    contentSecurityPolicy: false,
+    contentSecurityPolicy: false, // disabled so swagger works in non-local environments
   })
 )
 app.use(compression())
