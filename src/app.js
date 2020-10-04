@@ -11,7 +11,7 @@ const mongoose = require('mongoose')
 const config = require('./config')
 
 const app = express()
-app.use(helmet())
+// app.use(helmet())
 app.use(compression())
 if (process.env.NODE_ENV == 'production') {
   const accessLogStream = rfs.createStream(
