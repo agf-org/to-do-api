@@ -13,7 +13,7 @@ const config = require('./config')
 const app = express()
 app.use(
   helmet({
-    expectCt: false,
+    referrerPolicy: false,
   })
 )
 app.use(compression())
