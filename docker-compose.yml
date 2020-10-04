@@ -17,8 +17,6 @@ services:
       - type: volume
         source: mongodb-config
         target: /data/configdb
-    ports:
-      - $MONGODB_PORT:27017
     container_name: mongo
     restart: unless-stopped
 

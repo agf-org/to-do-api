@@ -3,27 +3,27 @@ const mongoose = require('mongoose')
 
 const config = require('../config')
 const app = require('../app')
-const mongoHandler = require('./mongo-memory-server-handler')
-const pagesDbHandler = require('./pages-db-handler')
-const itemsDbHandler = require('./items-db-handler')
+const mongoMemoryServerHandler = require('./mongo-memory-server-handler')
+const mongoPageModelHandler = require('./mongo-page-model-handler')
+const mongoItemModelHandler = require('./mongo-item-model-handler')
 
 beforeAll(async () => {
-  await mongoHandler.connect()
+  await mongoMemoryServerHandler.connect()
 })
 
 afterEach(async () => {
-  await mongoHandler.clearDatabase()
+  await mongoMemoryServerHandler.clearDatabase()
 })
 
 afterAll(async () => {
-  await mongoHandler.closeDatabase()
+  await mongoMemoryServerHandler.closeDatabase()
 })
 
 describe(`${config.baseUrl}/to-do/pages/:pageId/items/:itemId`, () => {
   describe('Get an item', () => {
     it('should return a 200 response', async () => {
-      const createdPage = await pagesDbHandler.createPage({items: []})
-      const createdItem = await itemsDbHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
+      const createdPage = await mongoPageModelHandler.createPage({items: []})
+      const createdItem = await mongoItemModelHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
       const response = await request(app)
         .get(`${config.baseUrl}/to-do/pages/${createdPage._id}/items/${createdItem._id}`)
       expect(response.statusCode).toBe(200)
@@ -31,8 +31,8 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items/:itemId`, () => {
     })
 
     it('should return an item', async () => {
-      const createdPage = await pagesDbHandler.createPage({items: []})
-      const createdItem = await itemsDbHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
+      const createdPage = await mongoPageModelHandler.createPage({items: []})
+      const createdItem = await mongoItemModelHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
       const response = await request(app)
         .get(`${config.baseUrl}/to-do/pages/${createdPage._id}/items/${createdItem._id}`)
       expect(response.body._id).toBe(createdItem._id.toString())
@@ -41,8 +41,8 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items/:itemId`, () => {
     })
 
     it('should return a 404 response for a non-existing page', async () => {
-      const createdPage = await pagesDbHandler.createPage({items: []})
-      const createdItem = await itemsDbHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
+      const createdPage = await mongoPageModelHandler.createPage({items: []})
+      const createdItem = await mongoItemModelHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
       const nonExistingId = mongoose.Types.ObjectId()
       const response = await request(app)
         .get(`${config.baseUrl}/to-do/pages/${nonExistingId}/items/${createdItem._id}`)
@@ -52,8 +52,8 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items/:itemId`, () => {
     })
 
     it('should return a 404 response for a non-existing item', async () => {
-      const createdPage = await pagesDbHandler.createPage({items: []})
-      await itemsDbHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
+      const createdPage = await mongoPageModelHandler.createPage({items: []})
+      await mongoItemModelHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
       const nonExistingId = mongoose.Types.ObjectId()
       const response = await request(app)
         .get(`${config.baseUrl}/to-do/pages/${createdPage._id}/items/${nonExistingId}`)
@@ -65,8 +65,8 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items/:itemId`, () => {
 
   describe('Update an item', () => {
     it('should return a 200 response', async () => {
-      const createdPage = await pagesDbHandler.createPage({items: []})
-      const createdItem = await itemsDbHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
+      const createdPage = await mongoPageModelHandler.createPage({items: []})
+      const createdItem = await mongoItemModelHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
       const response = await request(app)
         .put(`${config.baseUrl}/to-do/pages/${createdPage._id}/items/${createdItem._id}`)
         .send({text: "Buy groceries", done: true})
@@ -75,8 +75,8 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items/:itemId`, () => {
     })
 
     it('should return an item', async () => {
-      const createdPage = await pagesDbHandler.createPage({items: []})
-      const createdItem = await itemsDbHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
+      const createdPage = await mongoPageModelHandler.createPage({items: []})
+      const createdItem = await mongoItemModelHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
       const itemData = {text: "Buy groceries", done: true}
       const response = await request(app)
         .put(`${config.baseUrl}/to-do/pages/${createdPage._id}/items/${createdItem._id}`)
@@ -87,8 +87,8 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items/:itemId`, () => {
     })
 
     it('should return a 400 response for an item without a text field', async () => {
-      const createdPage = await pagesDbHandler.createPage({items: []})
-      const createdItem = await itemsDbHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
+      const createdPage = await mongoPageModelHandler.createPage({items: []})
+      const createdItem = await mongoItemModelHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
       const response = await request(app)
         .put(`${config.baseUrl}/to-do/pages/${createdPage._id}/items/${createdItem._id}`)
         .send({done: false})
@@ -97,8 +97,8 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items/:itemId`, () => {
     })
 
     it('should return a 400 response for an item with a text field that is not a string', async () => {
-      const createdPage = await pagesDbHandler.createPage({items: []})
-      const createdItem = await itemsDbHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
+      const createdPage = await mongoPageModelHandler.createPage({items: []})
+      const createdItem = await mongoItemModelHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
       const response = await request(app)
         .put(`${config.baseUrl}/to-do/pages/${createdPage._id}/items/${createdItem._id}`)
         .send({text: 0, done: false})
@@ -107,8 +107,8 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items/:itemId`, () => {
     })
 
     it('should return a 400 response for an item with a text field that is empty', async () => {
-      const createdPage = await pagesDbHandler.createPage({items: []})
-      const createdItem = await itemsDbHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
+      const createdPage = await mongoPageModelHandler.createPage({items: []})
+      const createdItem = await mongoItemModelHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
       const response = await request(app)
         .put(`${config.baseUrl}/to-do/pages/${createdPage._id}/items/${createdItem._id}`)
         .send({text: "",  done: false})
@@ -117,8 +117,8 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items/:itemId`, () => {
     })
 
     it('should return a 400 response for an item without a done field', async () => {
-      const createdPage = await pagesDbHandler.createPage({items: []})
-      const createdItem = await itemsDbHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
+      const createdPage = await mongoPageModelHandler.createPage({items: []})
+      const createdItem = await mongoItemModelHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
       const response = await request(app)
         .put(`${config.baseUrl}/to-do/pages/${createdPage._id}/items/${createdItem._id}`)
         .send({text: "Buy groceries"})
@@ -127,8 +127,8 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items/:itemId`, () => {
     })
 
     it('should return a 400 response for an item with a done field that is not a boolean', async () => {
-      const createdPage = await pagesDbHandler.createPage({items: []})
-      const createdItem = await itemsDbHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
+      const createdPage = await mongoPageModelHandler.createPage({items: []})
+      const createdItem = await mongoItemModelHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
       const response = await request(app)
         .put(`${config.baseUrl}/to-do/pages/${createdPage._id}/items/${createdItem._id}`)
         .send({text: "Buy groceries", done: "not a boolean"})
@@ -137,8 +137,8 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items/:itemId`, () => {
     })
 
     it('should return a 404 response for a non-existing page', async () => {
-      const createdPage = await pagesDbHandler.createPage({items: []})
-      const createdItem = await itemsDbHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
+      const createdPage = await mongoPageModelHandler.createPage({items: []})
+      const createdItem = await mongoItemModelHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
       const nonExistingId = mongoose.Types.ObjectId()
       const response = await request(app)
         .put(`${config.baseUrl}/to-do/pages/${nonExistingId}/items/${createdItem._id}`)
@@ -149,8 +149,8 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items/:itemId`, () => {
     })
 
     it('should return a 404 response for a non-existing item', async () => {
-      const createdPage = await pagesDbHandler.createPage({items: []})
-      await itemsDbHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
+      const createdPage = await mongoPageModelHandler.createPage({items: []})
+      await mongoItemModelHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
       const nonExistingId = mongoose.Types.ObjectId()
       const response = await request(app)
         .put(`${config.baseUrl}/to-do/pages/${createdPage._id}/items/${nonExistingId}`)
@@ -163,8 +163,8 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items/:itemId`, () => {
   
   describe('Delete an item', () => {
     it('should return a 200 response', async () => {
-      const createdPage = await pagesDbHandler.createPage({items: []})
-      const createdItem = await itemsDbHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
+      const createdPage = await mongoPageModelHandler.createPage({items: []})
+      const createdItem = await mongoItemModelHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
       const response = await request(app)
         .delete(`${config.baseUrl}/to-do/pages/${createdPage._id}/items/${createdItem._id}`)
       expect(response.statusCode).toBe(200)
@@ -172,8 +172,8 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items/:itemId`, () => {
     })
 
     it('should return an item', async () => {
-      const createdPage = await pagesDbHandler.createPage({items: []})
-      const createdItem = await itemsDbHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
+      const createdPage = await mongoPageModelHandler.createPage({items: []})
+      const createdItem = await mongoItemModelHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
       const response = await request(app)
         .delete(`${config.baseUrl}/to-do/pages/${createdPage._id}/items/${createdItem._id}`)
       expect(response.body._id).toBe(createdItem._id.toString())
@@ -182,17 +182,17 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items/:itemId`, () => {
     })
 
     it('should delete the item id in the page', async () => {
-      const createdPage = await pagesDbHandler.createPage({items: []})
-      const createdItem = await itemsDbHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
+      const createdPage = await mongoPageModelHandler.createPage({items: []})
+      const createdItem = await mongoItemModelHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
       await request(app)
         .delete(`${config.baseUrl}/to-do/pages/${createdPage._id}/items/${createdItem._id}`)
-      const page = await pagesDbHandler.getPage(createdPage._id)
+      const page = await mongoPageModelHandler.getPage(createdPage._id)
       expect(Array.from(page.items)).toEqual([])
     })
 
     it('should return a 404 response for a non-existing page', async () => {
-      const createdPage = await pagesDbHandler.createPage({items: []})
-      const createdItem = await itemsDbHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
+      const createdPage = await mongoPageModelHandler.createPage({items: []})
+      const createdItem = await mongoItemModelHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
       const nonExistingId = mongoose.Types.ObjectId()
       const response = await request(app)
         .delete(`${config.baseUrl}/to-do/pages/${nonExistingId}/items/${createdItem._id}`)
@@ -202,8 +202,8 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items/:itemId`, () => {
     })
 
     it('should return a 404 response for a non-existing item', async () => {
-      const createdPage = await pagesDbHandler.createPage({items: []})
-      await itemsDbHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
+      const createdPage = await mongoPageModelHandler.createPage({items: []})
+      await mongoItemModelHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
       const nonExistingId = mongoose.Types.ObjectId()
       const response = await request(app)
         .delete(`${config.baseUrl}/to-do/pages/${createdPage._id}/items/${nonExistingId}`)
@@ -214,8 +214,8 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items/:itemId`, () => {
   })
   
   it('should return a 405 response for an unsupported request method', async () => {
-    const createdPage = await pagesDbHandler.createPage({items: []})
-    const createdItem = await itemsDbHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
+    const createdPage = await mongoPageModelHandler.createPage({items: []})
+    const createdItem = await mongoItemModelHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
     const response = await request(app)
       .patch(`${config.baseUrl}/to-do/pages/${createdPage._id}/items/${createdItem._id}`)
     expect(response.statusCode).toBe(405)
@@ -227,8 +227,8 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items/:itemId`, () => {
 describe(`${config.baseUrl}/to-do/pages/:pageId/items tests`, () => {
   describe('Get all items', () => {
     it('should return a 200 response', async () => {
-      const createdPage = await pagesDbHandler.createPage({items: []})
-      await itemsDbHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
+      const createdPage = await mongoPageModelHandler.createPage({items: []})
+      await mongoItemModelHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
       const response = await request(app)
         .get(`${config.baseUrl}/to-do/pages/${createdPage._id}/items`)
       expect(response.statusCode).toBe(200)
@@ -236,8 +236,8 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items tests`, () => {
     })
 
     it('should return a list of items', async () => {
-      const createdPage = await pagesDbHandler.createPage({items: []})
-      const createdItem = await itemsDbHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
+      const createdPage = await mongoPageModelHandler.createPage({items: []})
+      const createdItem = await mongoItemModelHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
       const response = await request(app)
         .get(`${config.baseUrl}/to-do/pages/${createdPage._id}/items`)
       expect(response.body.length).toBe(1)
@@ -247,8 +247,8 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items tests`, () => {
     })
 
     it('should return a 404 response for a non-existing page', async () => {
-      const createdPage = await pagesDbHandler.createPage({items: []})
-      await itemsDbHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
+      const createdPage = await mongoPageModelHandler.createPage({items: []})
+      await mongoItemModelHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
       const nonExistingId = mongoose.Types.ObjectId()
       const response = await request(app)
         .get(`${config.baseUrl}/to-do/pages/${nonExistingId}/items`)
@@ -260,7 +260,7 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items tests`, () => {
 
   describe('Create an item', () => {
     it('should return a 201 response', async () => {
-      const createdPage = await pagesDbHandler.createPage({items: []})
+      const createdPage = await mongoPageModelHandler.createPage({items: []})
       const itemData = {text: "Buy groceries", done: true}
       const response = await request(app)
         .post(`${config.baseUrl}/to-do/pages/${createdPage._id}/items`)
@@ -270,7 +270,7 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items tests`, () => {
     })
 
     it('should return an item', async () => {
-      const createdPage = await pagesDbHandler.createPage({items: []})
+      const createdPage = await mongoPageModelHandler.createPage({items: []})
       const itemData = {text: "Buy groceries", done: true}
       const response = await request(app)
         .post(`${config.baseUrl}/to-do/pages/${createdPage._id}/items`)
@@ -281,27 +281,27 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items tests`, () => {
     })
 
     it('should add the page id to the item', async () => {
-      const createdPage = await pagesDbHandler.createPage({items: []})
+      const createdPage = await mongoPageModelHandler.createPage({items: []})
       const itemData = {text: "Buy groceries", done: true}
       const response = await request(app)
         .post(`${config.baseUrl}/to-do/pages/${createdPage._id}/items`)
         .send(itemData)
-      const item = await itemsDbHandler.getItem(response.body._id)
+      const item = await mongoItemModelHandler.getItem(response.body._id)
       expect(item.page).toEqual(createdPage._id)
     })
 
     it('should add the item id to the page', async () => {
-      const createdPage = await pagesDbHandler.createPage({items: []})
+      const createdPage = await mongoPageModelHandler.createPage({items: []})
       const itemData = {text: "Buy groceries", done: true}
       const response = await request(app)
         .post(`${config.baseUrl}/to-do/pages/${createdPage._id}/items`)
         .send(itemData)
-      const page = await pagesDbHandler.getPage(createdPage._id)
+      const page = await mongoPageModelHandler.getPage(createdPage._id)
       expect(page.items.map(item => item._id.toString())).toEqual([response.body._id])
     })
 
     it('should return a 400 response for an item without a text field', async () => {
-      const createdPage = await pagesDbHandler.createPage({items: []})
+      const createdPage = await mongoPageModelHandler.createPage({items: []})
       const response = await request(app)
         .post(`${config.baseUrl}/to-do/pages/${createdPage._id}/items`)
         .send({done: false})
@@ -310,7 +310,7 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items tests`, () => {
     })
 
     it('should return a 400 response for an item with a text field that is not a string', async () => {
-      const createdPage = await pagesDbHandler.createPage({items: []})
+      const createdPage = await mongoPageModelHandler.createPage({items: []})
       const response = await request(app)
         .post(`${config.baseUrl}/to-do/pages/${createdPage._id}/items`)
         .send({text: 0, done: false})
@@ -319,7 +319,7 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items tests`, () => {
     })
 
     it('should return a 400 response for an item with a text field that is empty', async () => {
-      const createdPage = await pagesDbHandler.createPage({items: []})
+      const createdPage = await mongoPageModelHandler.createPage({items: []})
       const response = await request(app)
         .post(`${config.baseUrl}/to-do/pages/${createdPage._id}/items`)
         .send({text: "", done: false})
@@ -328,7 +328,7 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items tests`, () => {
     })
 
     it('should return a 400 response for an item without a done field', async () => {
-      const createdPage = await pagesDbHandler.createPage({items: []})
+      const createdPage = await mongoPageModelHandler.createPage({items: []})
       const response = await request(app)
         .post(`${config.baseUrl}/to-do/pages/${createdPage._id}/items`)
         .send({text: "Buy groceries"})
@@ -337,7 +337,7 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items tests`, () => {
     })
 
     it('should return a 400 response for an item with a done field that is not a boolean', async () => {
-      const createdPage = await pagesDbHandler.createPage({items: []})
+      const createdPage = await mongoPageModelHandler.createPage({items: []})
       const response = await request(app)
         .post(`${config.baseUrl}/to-do/pages/${createdPage._id}/items`)
         .send({ text: "Buy groceries", done: "not a boolean"})
@@ -346,7 +346,7 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items tests`, () => {
     })
 
     it('should return a 404 response for a non-existing page', async () => {
-      await pagesDbHandler.createPage({items: []})
+      await mongoPageModelHandler.createPage({items: []})
       const nonExistingId = mongoose.Types.ObjectId()
       const response = await request(app)
         .post(`${config.baseUrl}/to-do/pages/${nonExistingId}/items`)
@@ -358,7 +358,7 @@ describe(`${config.baseUrl}/to-do/pages/:pageId/items tests`, () => {
   })
   
   it('should return a 405 response for an unsupported request method', async () => {
-    const createdPage = await pagesDbHandler.createPage({items: []})
+    const createdPage = await mongoPageModelHandler.createPage({items: []})
     const response = await request(app)
       .patch(`${config.baseUrl}/to-do/pages/${createdPage._id}/items`)
     expect(response.statusCode).toBe(405)

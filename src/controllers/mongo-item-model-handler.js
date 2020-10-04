@@ -1,5 +1,5 @@
 const ItemModel = require('../models/item-model')
-const pagesDbHandler = require('./pages-db-handler')
+const mongoPageModelHandler = require('./mongo-page-model-handler')
 
 module.exports.getItem = async (itemId) => {
   return await ItemModel.findById(itemId)
@@ -16,7 +16,7 @@ module.exports.createItem = async (data) => {
 module.exports.addItem = async (pageId, data) => {
   data.page = pageId
   const newItem = await this.createItem(data)
-  await pagesDbHandler.addItemIdToPage(pageId, newItem._id)
+  await mongoPageModelHandler.addItemIdToPage(pageId, newItem._id)
   return newItem
 }
 
@@ -32,6 +32,6 @@ module.exports.destroyItem = async (itemId) => {
 }
 
 module.exports.deleteItem = async (pageId, itemId) => {
-  await pagesDbHandler.deleteItemIdFromPage(pageId, itemId)
+  await mongoPageModelHandler.deleteItemIdFromPage(pageId, itemId)
   return await this.destroyItem(itemId)
 }
