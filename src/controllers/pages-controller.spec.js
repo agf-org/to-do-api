@@ -4,7 +4,6 @@ const mongoose = require('mongoose')
 const config = require('../config')
 const app = require('../app')
 const mongoHandler = require('./mongo-memory-server-handler')
-const PageModel = require('../models/page-model')
 const pagesDbHandler = require('./pages-db-handler')
 const itemsDbHandler = require('./items-db-handler')
 

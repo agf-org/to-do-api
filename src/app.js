@@ -1,6 +1,9 @@
 require('dotenv').config()
 const express = require('express')
-const logger = require('morgan')
+const helmet = require("helmet")
+const compression = require('compression')
+const morgan = require('morgan')
+const rfs = require('rotating-file-stream')
 const cookieParser = require('cookie-parser')
 const path = require('path')
 const mongoose = require('mongoose')
@@ -8,8 +11,20 @@ const mongoose = require('mongoose')
 const config = require('./config')
 
 const app = express()
-
-app.use(logger('dev'))
+app.use(helmet())
+app.use(compression())
+if (process.env.NODE_ENV == 'production') {
+  const accessLogStream = rfs.createStream(
+    'access.log', 
+    {
+      interval: '1d',
+      path: path.join('logs')
+    }
+  )
+  app.use(morgan('combined', {stream: accessLogStream}))
+} else {
+  app.use(morgan('dev'))
+}
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())

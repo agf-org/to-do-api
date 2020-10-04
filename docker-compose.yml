@@ -3,6 +3,7 @@ version: "3.7"
 volumes:
   mongodb:
   mongodb-config:
+  logs:
 
 services:
   mongo:
@@ -35,6 +36,10 @@ services:
       - MONGODB_HOST=mongo
     image: alvarogarciafer/to-do-api:$TO_DO_API_TAG
     build: .
+    volumes:
+      - type: volume
+        source: logs
+        target: /to-do-api/logs
     ports:
       - $TO_DO_API_PORT:3000
     container_name: to-do-api
