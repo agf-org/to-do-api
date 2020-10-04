@@ -11,6 +11,14 @@ const config = require('./config')
 const mongoMemoryServerHandler = require('./controllers/mongo-memory-server-handler')
 const mongoServerHandler = require('./controllers/mongo-server-handler')
 
+if (process.env.NODE_ENV != 'test') {
+  if (process.env.NODE_ENV == 'local') {
+    mongoMemoryServerHandler.connect()
+  } else {
+    mongoServerHandler.connect()
+  }
+}
+
 const app = express()
 if (process.env.NODE_ENV == 'production') {
   app.use(helmet())
@@ -31,18 +39,11 @@ app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
-console.log(process.env.NODE_ENV)
-if (process.env.NODE_ENV != 'test') {
-  if (process.env.NODE_ENV == 'local') {
-    mongoMemoryServerHandler.connect()
-  } else {
-    mongoServerHandler.connect()
-  }
+if (process.env.NODE_ENV != 'production') {
+  const apiDocsRouter = require('./routes/api-docs')
+  app.use(`${config.baseUrl}/api-docs`, apiDocsRouter)
 }
-
-const apiDocsRouter = require('./routes/api-docs')
 const toDoRouter = require('./routes/to-do-router')
-app.use(`${config.baseUrl}/api-docs`, apiDocsRouter)
 app.use(`${config.baseUrl}/to-do`, toDoRouter)
 
 app.use((request, response, next) => {

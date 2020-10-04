@@ -61,7 +61,7 @@ jobs:
 
       - name: Build and push latest image
         run: |
-          echo "NODE_ENV=production" >> .env
+          echo "NODE_ENV=development" >> .env
           echo "MONGODB_HOST=mongo" >> .env
           echo "MONGODB_PORT=27017" >> .env
           echo "MONGODB_DATABASE=notebook" >> .env
@@ -82,7 +82,7 @@ jobs:
       - name: Build and push tagged image
         run: |
           if [[ "${{ steps.action-autotag.outputs.tagname }}" != "" ]]; then
-            echo "NODE_ENV=production" >> .env
+            echo "NODE_ENV=development" >> .env
             echo "MONGODB_HOST=mongo" >> .env
             echo "MONGODB_PORT=27017" >> .env
             echo "MONGODB_DATABASE=notebook" >> .env
@@ -100,7 +100,7 @@ jobs:
     steps:
       - name: Deploy containers
         run: |
-          echo "NODE_ENV=production" >> .env
+          echo "NODE_ENV=development" >> .env
           echo "MONGODB_HOST=mongo" >> .env
           echo "MONGODB_PORT=27017" >> .env
           echo "MONGODB_DATABASE=notebook" >> .env

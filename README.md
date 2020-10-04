@@ -16,7 +16,7 @@ DEBUG=to-do-api:*
 
 To start the app use:
 ```
-$ docker-compose up -d
+$ npm start
 ```
 
 ## Documentation
