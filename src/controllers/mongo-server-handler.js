@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 module.exports.connect = async () => {
-  const mongoUri = `mongodb://${process.env.MONGODB_HOST}:${process.env.MONGODB_PORT}/${process.env.MONGODB_DATABASE}`
+  const mongoUri = `mongodb://mongo:27017/notebook`
   const mongooseOpts = {
     useNewUrlParser: true,
     useUnifiedTopology: true

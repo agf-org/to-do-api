@@ -6,11 +6,7 @@ Create a `.env` file inside the project directory with the following environment
 
 ```
 NODE_ENV=local
-MONGODB_HOST=127.0.0.1
-MONGODB_PORT=27017
-MONGODB_DATABASE=notebook
 TO_DO_API_TAG=local
-TO_DO_API_PORT=3000
 DEBUG=to-do-api:*
 ```
 

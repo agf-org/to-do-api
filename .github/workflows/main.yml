@@ -18,11 +18,7 @@ jobs:
       - name: Run linter
         run: |
           echo "NODE_ENV=test" >> .env
-          echo "MONGODB_HOST=mongo" >> .env
-          echo "MONGODB_PORT=27017" >> .env
-          echo "MONGODB_DATABASE=notebook" >> .env
           echo "TO_DO_API_TAG=test" >> .env
-          echo "TO_DO_API_PORT=3000" >> .env
           docker-compose build to-do-api
           docker-compose run \
             --rm \
@@ -33,11 +29,7 @@ jobs:
       - name: Run unit tests
         run: |
           echo "NODE_ENV=test" >> .env
-          echo "MONGODB_HOST=mongo" >> .env
-          echo "MONGODB_PORT=27017" >> .env
-          echo "MONGODB_DATABASE=notebook" >> .env
           echo "TO_DO_API_TAG=test" >> .env
-          echo "TO_DO_API_PORT=3000" >> .env
           docker-compose build to-do-api
           docker-compose run \
             --rm \
@@ -62,11 +54,7 @@ jobs:
       - name: Build and push latest image
         run: |
           echo "NODE_ENV=development" >> .env
-          echo "MONGODB_HOST=mongo" >> .env
-          echo "MONGODB_PORT=27017" >> .env
-          echo "MONGODB_DATABASE=notebook" >> .env
           echo "TO_DO_API_TAG=latest" >> .env
-          echo "TO_DO_API_PORT=3000" >> .env
           docker-compose build to-do-api
           docker-compose push to-do-api
           rm .env
@@ -83,11 +71,7 @@ jobs:
         run: |
           if [[ "${{ steps.action-autotag.outputs.tagname }}" != "" ]]; then
             echo "NODE_ENV=development" >> .env
-            echo "MONGODB_HOST=mongo" >> .env
-            echo "MONGODB_PORT=27017" >> .env
-            echo "MONGODB_DATABASE=notebook" >> .env
             echo "TO_DO_API_TAG=${{ steps.action-autotag.outputs.tagname }}" >> .env
-            echo "TO_DO_API_PORT=3000" >> .env
             docker-compose build to-do-api
             docker-compose push to-do-api
             rm .env
@@ -101,11 +85,7 @@ jobs:
       - name: Deploy containers
         run: |
           echo "NODE_ENV=development" >> .env
-          echo "MONGODB_HOST=mongo" >> .env
-          echo "MONGODB_PORT=27017" >> .env
-          echo "MONGODB_DATABASE=notebook" >> .env
           echo "TO_DO_API_TAG=latest" >> .env
-          echo "TO_DO_API_PORT=3000" >> .env
           docker-compose down
           docker-compose pull to-do-api
           docker-compose up -d

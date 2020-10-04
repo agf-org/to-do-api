@@ -30,8 +30,6 @@ services:
   to-do-api:
     env_file:
       - .env
-    environment:
-      - MONGODB_HOST=mongo
     image: alvarogarciafer/to-do-api:$TO_DO_API_TAG
     build: .
     volumes:
@@ -39,7 +37,7 @@ services:
         source: logs
         target: /to-do-api/logs
     ports:
-      - $TO_DO_API_PORT:3000
+      - 3000:3000
     container_name: to-do-api
     restart: unless-stopped
     command: 
