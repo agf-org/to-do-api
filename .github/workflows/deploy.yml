@@ -1,4 +1,4 @@
-name: stop and remove
+name: deploy
 
 on:
   workflow_dispatch:
@@ -13,12 +13,13 @@ on:
         default: 'latest'
 
 jobs:
-  stop_and_remove:
+  redeploy:
     runs-on: self-hosted
-    steps:
-      - name: Stop and remove containers
+      - name: Deploy containers
         run: |
           echo "NODE_ENV=${{ github.event.inputs.environment }}" >> .env
           echo "TO_DO_API_TAG=${{ github.event.inputs.tag }}" >> .env
           docker-compose down
+          docker-compose pull to-do-api
+          docker-compose up -d
           rm .env
