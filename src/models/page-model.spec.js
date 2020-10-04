@@ -1,16 +1,16 @@
-const mongoHandler = require('../controllers/mongo-memory-server-handler')
+const mongoMemoryServerHandler = require('../controllers/mongo-memory-server-handler')
 const PageModel = require('./page-model')
 
 beforeAll(async () => {
-  await mongoHandler.connect()
+  await mongoMemoryServerHandler.connect()
 })
 
 afterEach(async () => {
-  await mongoHandler.clearDatabase()
+  await mongoMemoryServerHandler.clearDatabase()
 })
 
 afterAll(async () => {
-  await mongoHandler.closeDatabase()
+  await mongoMemoryServerHandler.closeDatabase()
 })
 
 describe('Page model tests', () => {

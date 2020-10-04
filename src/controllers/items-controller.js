@@ -1,7 +1,7 @@
 const asyncHandler = require('express-async-handler')
 
-const pagesDbHandler = require('./pages-db-handler')
-const itemsDbHandler = require('./items-db-handler')
+const mongoPageModelHandler = require('./mongo-page-model-handler')
+const mongoItemModelHandler = require('./mongo-item-model-handler')
 
 /**
  * @swagger
@@ -38,10 +38,10 @@ const itemsDbHandler = require('./items-db-handler')
  */
 module.exports.getItem = asyncHandler(async (request, response) => {
   const pageId = request.params.pageId
-  const page = await pagesDbHandler.getPage(pageId)
+  const page = await mongoPageModelHandler.getPage(pageId)
   if (page) {
     const itemId = request.params.itemId
-    const item = await itemsDbHandler.getItem(itemId)
+    const item = await mongoItemModelHandler.getItem(itemId)
     if (item) {
       response.status(200).json(item)
     } else {
@@ -91,13 +91,13 @@ module.exports.getItem = asyncHandler(async (request, response) => {
  */
 module.exports.updateItem = asyncHandler(async (request, response) => {
   const pageId = request.params.pageId
-  const page = await pagesDbHandler.getPage(pageId)
+  const page = await mongoPageModelHandler.getPage(pageId)
   if (page) {
     const itemId = request.params.itemId
-    const item = await itemsDbHandler.getItem(itemId)
+    const item = await mongoItemModelHandler.getItem(itemId)
     if (item) {
       const updatedInfo = request.body
-      const updatedItem = await itemsDbHandler.updateItem(itemId, updatedInfo)
+      const updatedItem = await mongoItemModelHandler.updateItem(itemId, updatedInfo)
       response.status(200).json(updatedItem)
     } else {
       response.status(404).send(`Item ${itemId} not found!`)
@@ -138,12 +138,12 @@ module.exports.updateItem = asyncHandler(async (request, response) => {
  */
 module.exports.deleteItem = asyncHandler(async (request, response) => {
   const pageId = request.params.pageId
-  const page = await pagesDbHandler.getPage(pageId)
+  const page = await mongoPageModelHandler.getPage(pageId)
   if (page) {
     const itemId = request.params.itemId
-    const item = await itemsDbHandler.getItem(itemId)
+    const item = await mongoItemModelHandler.getItem(itemId)
     if (item) {
-      const deletedItem = await itemsDbHandler.deleteItem(pageId, itemId)
+      const deletedItem = await mongoItemModelHandler.deleteItem(pageId, itemId)
       response.status(200).json(deletedItem)
     } else {
       response.status(404).send(`Item ${itemId} not found!`)
@@ -182,9 +182,9 @@ module.exports.deleteItem = asyncHandler(async (request, response) => {
  */
 module.exports.getAllItems = asyncHandler(async (request, response) => {
   const pageId = request.params.pageId
-  const page = await pagesDbHandler.getPage(pageId)
+  const page = await mongoPageModelHandler.getPage(pageId)
   if (page) {
-    const items = await itemsDbHandler.getAllItems(pageId)
+    const items = await mongoItemModelHandler.getAllItems(pageId)
     response.status(200).json(items)
   } else {
     response.status(404).send(`Page ${pageId} not found!`)
@@ -228,10 +228,10 @@ module.exports.getAllItems = asyncHandler(async (request, response) => {
  */
 module.exports.createItem = asyncHandler(async (request, response) => {
   const pageId = request.params.pageId
-  const page = await pagesDbHandler.getPage(pageId)
+  const page = await mongoPageModelHandler.getPage(pageId)
   if (page) {
     const data = request.body
-    const createdItem = await itemsDbHandler.addItem(pageId, data)
+    const createdItem = await mongoItemModelHandler.addItem(pageId, data)
     response.status(201).json(createdItem)
   } else {
     response.status(404).send(`Page ${pageId} not found!`)

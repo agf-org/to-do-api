@@ -6,18 +6,15 @@ const morgan = require('morgan')
 const rfs = require('rotating-file-stream')
 const cookieParser = require('cookie-parser')
 const path = require('path')
-const mongoose = require('mongoose')
 
 const config = require('./config')
+const mongoMemoryServerHandler = require('./controllers/mongo-memory-server-handler')
+const mongoServerHandler = require('./controllers/mongo-server-handler')
 
 const app = express()
-app.use(
-  helmet({
-    contentSecurityPolicy: false, // disabled so swagger works in non-local environments
-  })
-)
-app.use(compression())
 if (process.env.NODE_ENV == 'production') {
+  app.use(helmet())
+  app.use(compression())
   const accessLogStream = rfs.createStream(
     'access.log', 
     {
@@ -34,13 +31,13 @@ app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
+console.log(process.env.NODE_ENV)
 if (process.env.NODE_ENV != 'test') {
-  const mongoUri = `mongodb://${process.env.MONGODB_HOST}:${process.env.MONGODB_PORT}/${process.env.MONGODB_DATABASE}`
-  const mongooseOpts = {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
+  if (process.env.NODE_ENV == 'local') {
+    mongoMemoryServerHandler.connect()
+  } else {
+    mongoServerHandler.connect()
   }
-  mongoose.connect(mongoUri, mongooseOpts)
 }
 
 const apiDocsRouter = require('./routes/api-docs')

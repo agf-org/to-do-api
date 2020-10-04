@@ -1,7 +1,7 @@
 const asyncHandler = require('express-async-handler')
 
-const pagesDbHandler = require('./pages-db-handler')
-const itemsDbHandler = require('./items-db-handler')
+const mongoPageModelHandler = require('./mongo-page-model-handler')
+const mongoItemModelHandler = require('./mongo-item-model-handler')
 
 /**
  * @swagger
@@ -32,7 +32,7 @@ const itemsDbHandler = require('./items-db-handler')
  */
 module.exports.getPage = asyncHandler(async (request, response) => {
   const pageId = request.params.pageId
-  const page = await pagesDbHandler.getPage(pageId)
+  const page = await mongoPageModelHandler.getPage(pageId)
   if (page) {
     response.status(200).json(page)
   } else {
@@ -65,10 +65,10 @@ module.exports.getPage = asyncHandler(async (request, response) => {
  */
 module.exports.deletePage = asyncHandler(async (request, response) => {
   const pageId = request.params.pageId
-  const page = await pagesDbHandler.destroyPage(pageId)
+  const page = await mongoPageModelHandler.destroyPage(pageId)
   if (page) {
     for (const itemId of page.items) {
-      await itemsDbHandler.destroyItem(itemId)
+      await mongoItemModelHandler.destroyItem(itemId)
     }
     response.status(200).json(page)
   } else {
@@ -93,7 +93,7 @@ module.exports.deletePage = asyncHandler(async (request, response) => {
  *               $ref: '#/definitions/Pages'
  */
 module.exports.getAllPages = asyncHandler(async (request, response) => {
-  const pages = await pagesDbHandler.getAllPages()
+  const pages = await mongoPageModelHandler.getAllPages()
   response.status(200).json(pages)
 })
 
@@ -114,6 +114,6 @@ module.exports.getAllPages = asyncHandler(async (request, response) => {
  *               $ref: '#/definitions/Page'
  */
 module.exports.createPage = asyncHandler(async (request, response) => {
-  const page = await pagesDbHandler.createPage()
+  const page = await mongoPageModelHandler.createPage()
   response.status(201).json(page)
 })

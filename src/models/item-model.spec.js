@@ -1,18 +1,18 @@
 const mongoose = require('mongoose')
 
-const mongoHandler = require('../controllers/mongo-memory-server-handler')
+const mongoMemoryServerHandler = require('../controllers/mongo-memory-server-handler')
 const ItemModel = require('./item-model')
 
 beforeAll(async () => {
-  await mongoHandler.connect()
+  await mongoMemoryServerHandler.connect()
 })
 
 afterEach(async () => {
-  await mongoHandler.clearDatabase()
+  await mongoMemoryServerHandler.clearDatabase()
 })
 
 afterAll(async () => {
-  await mongoHandler.closeDatabase()
+  await mongoMemoryServerHandler.closeDatabase()
 })
 
 describe('Item model tests', () => {
