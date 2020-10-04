@@ -37,7 +37,7 @@ services:
         source: logs
         target: /to-do-api/logs
     ports:
-      - 3000:3000
+      - 80:80
     container_name: to-do-api
     restart: unless-stopped
     command: 
