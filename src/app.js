@@ -1,6 +1,6 @@
 require('dotenv').config()
 const express = require('express')
-// const helmet = require("helmet")
+const helmet = require("helmet")
 const compression = require('compression')
 const morgan = require('morgan')
 const rfs = require('rotating-file-stream')
@@ -11,7 +11,11 @@ const mongoose = require('mongoose')
 const config = require('./config')
 
 const app = express()
-// app.use(helmet())
+app.use(
+  helmet({
+    expectCt: false,
+  })
+)
 app.use(compression())
 if (process.env.NODE_ENV == 'production') {
   const accessLogStream = rfs.createStream(
