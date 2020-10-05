@@ -16,6 +16,9 @@ jobs:
   stop_and_remove:
     runs-on: [self-hosted, "${{ github.event.inputs.environment }}"]
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        
       - name: Stop and remove containers
         run: |
           echo "NODE_ENV=${{ github.event.inputs.environment }}" >> .env

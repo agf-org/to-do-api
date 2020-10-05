@@ -16,6 +16,9 @@ jobs:
   deploy:
     runs-on: [self-hosted, "${{ github.event.inputs.environment }}"]
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        
       - name: Deploy containers
         run: |
           echo "NODE_ENV=${{ github.event.inputs.environment }}" >> .env
