@@ -14,7 +14,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: self-hosted
+    runs-on: [self-hosted, ${{ github.event.inputs.environment }}]
     steps:
       - name: Deploy containers
         run: |

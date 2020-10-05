@@ -14,7 +14,7 @@ on:
 
 jobs:
   stop_and_remove:
-    runs-on: self-hosted
+    runs-on: [self-hosted, ${{ github.event.inputs.environment }}]
     steps:
       - name: Stop and remove containers
         run: |
