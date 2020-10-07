@@ -1,27 +1,25 @@
-name: stop and remove
+name: Deploy production
 
 on:
   workflow_dispatch:
     inputs:
-      environment:
-        description: 'Environment'
-        required: true
-        default: 'development'
       tag:
         description: 'Tag or version'
         required: true
         default: 'latest'
 
 jobs:
-  stop_and_remove:
-    runs-on: [self-hosted, "${{ github.event.inputs.environment }}"]
+  deploy:
+    runs-on: [self-hosted, production]
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
         
-      - name: Stop and remove containers
+      - name: Start containers
         run: |
-          echo "NODE_ENV=${{ github.event.inputs.environment }}" >> .env
+          echo "NODE_ENV=production" >> .env
           echo "TO_DO_API_TAG=${{ github.event.inputs.tag }}" >> .env
           docker-compose down
+          docker-compose pull to-do-api
+          docker-compose up -d
           rm .env

@@ -1,12 +1,8 @@
-name: deploy
+name: Deploy development
 
 on:
   workflow_dispatch:
     inputs:
-      environment:
-        description: 'Environment'
-        required: true
-        default: 'development'
       tag:
         description: 'Tag or version'
         required: true
@@ -14,14 +10,14 @@ on:
 
 jobs:
   deploy:
-    runs-on: [self-hosted, "${{ github.event.inputs.environment }}"]
+    runs-on: [self-hosted, development]
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
         
-      - name: Deploy containers
+      - name: Start containers
         run: |
-          echo "NODE_ENV=${{ github.event.inputs.environment }}" >> .env
+          echo "NODE_ENV=development" >> .env
           echo "TO_DO_API_TAG=${{ github.event.inputs.tag }}" >> .env
           docker-compose down
           docker-compose pull to-do-api

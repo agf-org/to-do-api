@@ -1,4 +1,4 @@
-name: main
+name: development
 
 on:
   pull_request:
@@ -38,7 +38,7 @@ jobs:
           rm .env
 
   build:
-    runs-on: self-hosted
+    runs-on: [self-hosted, development]
     needs: test
     if: ${{ github.event_name == 'push' }}
     steps:
@@ -78,7 +78,7 @@ jobs:
           fi
           
   deploy:
-    runs-on: self-hosted
+    runs-on: [self-hosted, development]
     needs: build
     if: ${{ github.event_name == 'push' }}
     steps:
