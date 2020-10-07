@@ -21,7 +21,9 @@ if (process.env.NODE_ENV != 'test') {
 
 const app = express()
 if (process.env.NODE_ENV == 'production') {
-  app.use(helmet())
+  app.use(helmet({
+    contentSecurityPolicy: false,
+  }))
   app.use(compression())
   const accessLogStream = rfs.createStream(
     'access.log', 
@@ -39,10 +41,8 @@ app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
-if (process.env.NODE_ENV != 'production') {
-  const apiDocsRouter = require('./routes/api-docs')
-  app.use(`${config.baseUrl}/api-docs`, apiDocsRouter)
-}
+const apiDocsRouter = require('./routes/api-docs')
+app.use(`${config.baseUrl}/api-docs`, apiDocsRouter)
 const toDoRouter = require('./routes/to-do-router')
 app.use(`${config.baseUrl}/to-do`, toDoRouter)
 
