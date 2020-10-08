@@ -82,6 +82,9 @@ jobs:
     needs: build
     if: ${{ github.event_name == 'push' }}
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
       - name: Deploy containers
         run: |
           echo "NODE_ENV=development" >> .env

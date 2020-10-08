@@ -15,7 +15,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
         
-      - name: Start containers
+      - name: Deploy containers
         run: |
           echo "NODE_ENV=development" >> .env
           echo "TO_DO_API_TAG=${{ github.event.inputs.tag }}" >> .env
