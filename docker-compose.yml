@@ -5,6 +5,7 @@ volumes:
     
 networks:
   to-do-app:
+    name: to-do-app
 
 services:
   to-do-api:
@@ -16,6 +17,8 @@ services:
       - type: volume
         source: logs
         target: /to-do-api/logs
+    networks:
+      - to-do-app
     ports:
       - 3000:3000
     container_name: to-do-api
