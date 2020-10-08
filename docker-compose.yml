@@ -1,32 +1,9 @@
 version: "3.7"
 
 volumes:
-  mongodb:
-  mongodb-config:
   logs:
 
 services:
-  mongo:
-    env_file:
-      - .env
-    image: mongo:4
-    volumes:
-      - type: volume
-        source: mongodb
-        target: /data/db
-      - type: volume
-        source: mongodb-config
-        target: /data/configdb
-    container_name: mongo
-    restart: unless-stopped
-
-  mongo-express:
-    image: mongo-express:0.54.0
-    ports:
-      - 8081:8081
-    container_name: mongo-express
-    restart: unless-stopped
-
   to-do-api:
     env_file:
       - .env
