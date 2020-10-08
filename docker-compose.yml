@@ -2,6 +2,9 @@ version: "3.7"
 
 volumes:
   logs:
+    
+networks:
+  to-do-app:
 
 services:
   to-do-api:
