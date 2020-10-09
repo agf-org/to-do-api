@@ -19,7 +19,7 @@ jobs:
         run: |
           echo "NODE_ENV=test" >> .env
           echo "TO_DO_API_TAG=test" >> .env
-          docker-compose build to-do-api
+          docker-compose build
           docker-compose run \
             --rm \
             to-do-api \
@@ -30,7 +30,7 @@ jobs:
         run: |
           echo "NODE_ENV=test" >> .env
           echo "TO_DO_API_TAG=test" >> .env
-          docker-compose build to-do-api
+          docker-compose build
           docker-compose run \
             --rm \
             to-do-api \
@@ -55,8 +55,8 @@ jobs:
         run: |
           echo "NODE_ENV=development" >> .env
           echo "TO_DO_API_TAG=latest" >> .env
-          docker-compose build to-do-api
-          docker-compose push to-do-api
+          docker-compose build
+          docker-compose push
           rm .env
 
       - name: Autotag package
@@ -72,8 +72,8 @@ jobs:
           if [[ "${{ steps.action-autotag.outputs.tagname }}" != "" ]]; then
             echo "NODE_ENV=development" >> .env
             echo "TO_DO_API_TAG=${{ steps.action-autotag.outputs.tagname }}" >> .env
-            docker-compose build to-do-api
-            docker-compose push to-do-api
+            docker-compose build
+            docker-compose push
             rm .env
           fi
           
@@ -90,7 +90,7 @@ jobs:
           echo "NODE_ENV=development" >> .env
           echo "TO_DO_API_TAG=latest" >> .env
           docker-compose down
-          docker-compose pull to-do-api
+          docker-compose pull
           docker network create to-do-app || true
           docker-compose up --detach
           rm .env

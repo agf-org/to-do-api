@@ -20,7 +20,7 @@ jobs:
           echo "NODE_ENV=development" >> .env
           echo "TO_DO_API_TAG=${{ github.event.inputs.tag }}" >> .env
           docker-compose down
-          docker-compose pull to-do-api
+          docker-compose pull
           docker network create to-do-app || true
           docker-compose up --detach
           rm .env
