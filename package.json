@@ -1,10 +1,10 @@
 {
   "name": "to-do-api",
-  "version": "3.1.13",
+  "version": "3.1.14",
   "private": true,
   "scripts": {
     "linter": "npx eslint .",
-    "test": "jest --config=jest.config.js",
+    "test": "npx jest",
     "start": "node ./src/bin/www",
     "patch": "npm --no-git-tag-version version patch",
     "minor": "npm --no-git-tag-version version minor",
@@ -30,6 +30,10 @@
     "jest": "^26.4.2",
     "mongodb-memory-server": "^6.8.0",
     "supertest": "^4.0.2"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "maxWorkers": 1
   },
   "config": {
     "mongodbMemoryServer": {
