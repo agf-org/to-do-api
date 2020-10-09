@@ -21,7 +21,7 @@ services:
     networks:
       - to-do-app
     ports:
-      - 3000:3000
+      - $PORT:3000
     container_name: to-do-api
     restart: unless-stopped
     command: 

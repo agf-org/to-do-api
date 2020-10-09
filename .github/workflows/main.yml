@@ -18,6 +18,7 @@ jobs:
       - name: Run linter
         run: |
           echo "NODE_ENV=test" >> .env
+          echo "PORT=3000" >> .env
           echo "TO_DO_API_TAG=test" >> .env
           docker-compose build
           docker-compose run \
@@ -29,6 +30,7 @@ jobs:
       - name: Run unit tests
         run: |
           echo "NODE_ENV=test" >> .env
+          echo "PORT=3000" >> .env
           echo "TO_DO_API_TAG=test" >> .env
           docker-compose build
           docker-compose run \
@@ -54,6 +56,7 @@ jobs:
       - name: Build and push latest image
         run: |
           echo "NODE_ENV=development" >> .env
+          echo "PORT=3000" >> .env
           echo "TO_DO_API_TAG=latest" >> .env
           docker-compose build
           docker-compose push
@@ -71,6 +74,7 @@ jobs:
         run: |
           if [[ "${{ steps.action-autotag.outputs.tagname }}" != "" ]]; then
             echo "NODE_ENV=development" >> .env
+            echo "PORT=3000" >> .env
             echo "TO_DO_API_TAG=${{ steps.action-autotag.outputs.tagname }}" >> .env
             docker-compose build
             docker-compose push
@@ -88,6 +92,7 @@ jobs:
       - name: Deploy containers
         run: |
           echo "NODE_ENV=development" >> .env
+          echo "PORT=3000" >> .env
           echo "TO_DO_API_TAG=latest" >> .env
           docker-compose down
           docker-compose pull

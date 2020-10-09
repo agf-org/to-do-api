@@ -1,4 +1,9 @@
+# ide
 .vscode
-node_modules
-logs
+
+# dependencies
+/node_modules
+
+# misc
+/logs
 .env

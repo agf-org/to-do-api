@@ -13,5 +13,6 @@ jobs:
       - name: Stop and remove containers
         run: |
           echo "NODE_ENV=development" >> .env
+          echo "PORT=3000" >> .env
           docker-compose down
           rm .env
