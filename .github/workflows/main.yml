@@ -55,6 +55,8 @@ jobs:
 
       - name: Build and push latest image
         run: |
+          echo "NODE_ENV=development" >> .env
+          echo "PORT=3000" >> .env
           echo "TO_DO_API_TAG=latest" >> .env
           docker-compose build
           docker-compose push
@@ -71,6 +73,8 @@ jobs:
       - name: Build and push tagged image
         run: |
           if [[ "${{ steps.action-autotag.outputs.tagname }}" != "" ]]; then
+            echo "NODE_ENV=development" >> .env
+            echo "PORT=3000" >> .env
             echo "TO_DO_API_TAG=${{ steps.action-autotag.outputs.tagname }}" >> .env
             docker-compose build
             docker-compose push
