@@ -47,12 +47,11 @@ jobs:
 
       - name: Build and push latest image
         run: |
-          echo "NODE_ENV=development" >> .env
-          echo "PORT=3000" >> .env
-          echo "TO_DO_API_TAG=latest" >> .env
-          docker-compose build
-          docker-compose push
-          rm .env
+          docker build \
+            --tag alvarogarciafer/to-do-api:development \
+            .
+          docker push \
+            alvarogarciafer/to-do-api:development
 
       - name: Autotag package
         uses: butlerlogic/action-autotag@stable
@@ -65,12 +64,11 @@ jobs:
       - name: Build and push tagged image
         run: |
           if [[ "${{ steps.action-autotag.outputs.tagname }}" != "" ]]; then
-            echo "NODE_ENV=development" >> .env
-            echo "PORT=3000" >> .env
-            echo "TO_DO_API_TAG=${{ steps.action-autotag.outputs.tagname }}" >> .env
-            docker-compose build
-            docker-compose push
-            rm .env
+            docker build \
+              --tag alvarogarciafer/to-do-api:${{ steps.action-autotag.outputs.tagname }} \
+              .
+            docker push \
+              alvarogarciafer/to-do-api:development
           fi
           
   deploy:
@@ -83,11 +81,13 @@ jobs:
 
       - name: Deploy containers
         run: |
+          docker network create to-do-app || true
+          docker pull \
+            alvarogarciafer/to-do-api:latest
           echo "NODE_ENV=development" >> .env
           echo "PORT=3000" >> .env
           echo "TO_DO_API_TAG=latest" >> .env
           docker-compose down
-          docker-compose pull
-          docker network create to-do-app || true
-          docker-compose up --detach
+          docker-compose up \
+            --detach
           rm .env
