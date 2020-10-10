@@ -18,11 +18,10 @@ jobs:
       - name: Deploy containers
         run: |
           docker network create to-do-app || true
-          docker pull \
-            alvarogarciafer/to-do-api:${{ github.event.inputs.tag }}
           echo "NODE_ENV=production" >> .env
           echo "PORT=3000" >> .env
           echo "TO_DO_API_TAG=${{ github.event.inputs.tag }}" >> .env
+          docker-compose pull
           docker-compose down
           docker-compose up \
             --detach

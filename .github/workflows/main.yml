@@ -82,11 +82,10 @@ jobs:
       - name: Deploy containers
         run: |
           docker network create to-do-app || true
-          docker pull \
-            alvarogarciafer/to-do-api:latest
           echo "NODE_ENV=development" >> .env
           echo "PORT=3000" >> .env
           echo "TO_DO_API_TAG=latest" >> .env
+          docker-compose pull
           docker-compose down
           docker-compose up \
             --detach
