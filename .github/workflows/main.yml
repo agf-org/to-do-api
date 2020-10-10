@@ -15,29 +15,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
           
-      - name: Run linter
+      - name: Run linter and tests
         run: |
-          echo "NODE_ENV=test" >> .env
-          echo "PORT=3000" >> .env
-          echo "TO_DO_API_TAG=test" >> .env
-          docker-compose build
-          docker-compose run \
+          docker build \
+            --tag alvarogarciafer/to-do-api:test \
+            .
+          docker run \
             --rm \
-            to-do-api \
+            alvarogarciafer/to-do-api:test \
             run lint
-          rm .env
-
-      - name: Run unit tests
-        run: |
-          echo "NODE_ENV=test" >> .env
-          echo "PORT=3000" >> .env
-          echo "TO_DO_API_TAG=test" >> .env
-          docker-compose build
-          docker-compose run \
+          docker run \
             --rm \
-            to-do-api \
+            alvarogarciafer/to-do-api:test \
             test
-          rm .env
+          docker image rm \
+            alvarogarciafer/to-do-api:test
 
   build:
     runs-on: [self-hosted, development]
