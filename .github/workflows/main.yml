@@ -48,10 +48,10 @@ jobs:
       - name: Build and push latest image
         run: |
           docker build \
-            --tag alvarogarciafer/to-do-api:development \
+            --tag alvarogarciafer/to-do-api:latest \
             .
           docker push \
-            alvarogarciafer/to-do-api:development
+            alvarogarciafer/to-do-api:latest
 
       - name: Autotag package
         uses: butlerlogic/action-autotag@stable
@@ -68,7 +68,7 @@ jobs:
               --tag alvarogarciafer/to-do-api:${{ steps.action-autotag.outputs.tagname }} \
               .
             docker push \
-              alvarogarciafer/to-do-api:development
+              alvarogarciafer/to-do-api:${{ steps.action-autotag.outputs.tagname }}
           fi
           
   deploy:
