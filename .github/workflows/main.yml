@@ -24,7 +24,7 @@ jobs:
           docker-compose run \
             --rm \
             to-do-api \
-            run linter
+            run lint
           rm .env
 
       - name: Run unit tests
