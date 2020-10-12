@@ -4,9 +4,11 @@
 
 Create a `.env` file inside the project directory with the following environment variables:
 ```
+TAG=local
 NODE_ENV=local
 PORT=3000
-TO_DO_API_TAG=local
+DB_HOST=mongo
+DB_PORT=27017
 DEBUG=to-do-api:*
 ```
 

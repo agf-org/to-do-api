@@ -12,6 +12,8 @@ services:
   to-do-api:
     environment:
      - NODE_ENV=$NODE_ENV
+     - DB_HOST=$DB_HOST
+     - DB_PORT=$DB_PORT
     image: alvarogarciafer/to-do-api:$TAG
     build: .
     volumes:
