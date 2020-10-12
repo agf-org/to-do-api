@@ -16,7 +16,7 @@ on:
         default: '3000'
       logging-driver:
         description: 'Logging driver'
-        required: false
+        required: true
         default: 'awslogs'
       aws-log-group:
         description: 'AWS log group'

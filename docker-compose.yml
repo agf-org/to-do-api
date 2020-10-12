@@ -17,7 +17,7 @@ services:
       driver: $LOGGING_DRIVER
       options:
         awslogs-group: $AWS_LOG_GROUP
-        awslogs-create-group: "true"
+        awslogs-create-group: true
     networks:
       - to-do-app
     ports:
