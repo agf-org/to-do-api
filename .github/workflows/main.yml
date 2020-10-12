@@ -8,12 +8,9 @@ on:
     branches:
       - main
 
-env:
-  environment: ${{ secrets.DEFAULT_ENV }}
-
 jobs:
   test:
-    runs-on: [self-hosted, "${{ env.environment }}"]
+    runs-on: [self-hosted, development]
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -35,7 +32,7 @@ jobs:
             alvarogarciafer/to-do-api:test
 
   build:
-    runs-on: [self-hosted, "${{ env.environment }}"]
+    runs-on: [self-hosted, development]
     needs: test
     if: ${{ github.event_name == 'push' }}
     steps:
@@ -75,7 +72,7 @@ jobs:
           fi
           
   deploy:
-    runs-on: [self-hosted, "${{ env.environment }}"]
+    runs-on: [self-hosted, development]
     needs: build
     if: ${{ github.event_name == 'push' }}
     steps:
@@ -84,7 +81,7 @@ jobs:
 
       - name: Deploy containers
         env:
-          NODE_ENV: ${{ env.environment }}
+          NODE_ENV: ${{ secrets.DEFAULT_ENV }}
           TAG: ${{ secrets.DEFAULT_TAG }}
           PORT: ${{ secrets.DEFAULT_PORT }}
         run: |
