@@ -12,7 +12,6 @@ Create a `.env` file inside the project directory with the following environment
 TAG=local
 NODE_ENV=local
 PORT=3000
-LOGGING_DRIVER=json-file
 DB_HOST=mongo
 DB_PORT=27017
 DEBUG=to-do-api:*
