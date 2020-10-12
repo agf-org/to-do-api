@@ -3,7 +3,6 @@ const express = require('express')
 const helmet = require("helmet")
 const compression = require('compression')
 const morgan = require('morgan')
-const rfs = require('rotating-file-stream')
 const cookieParser = require('cookie-parser')
 const path = require('path')
 
@@ -25,16 +24,9 @@ if (process.env.NODE_ENV == 'production') {
     contentSecurityPolicy: false,
   }))
   app.use(compression())
-  const accessLogStream = rfs.createStream(
-    'access.log', 
-    {
-      interval: '1d',
-      path: path.join('logs')
-    }
-  )
-  app.use(morgan('combined', {stream: accessLogStream}))
+  app.use(morgan('combined'))
 } else {
-  app.use(morgan('dev'))
+  app.use(morgan('combined'))
 }
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))

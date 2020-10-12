@@ -2,6 +2,11 @@
 
 ## Usage
 
+Install dependencies:
+```
+npm install
+```
+
 Create a `.env` file inside the project directory with the following environment variables:
 ```
 TAG=local

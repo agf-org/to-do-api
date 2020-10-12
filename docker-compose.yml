@@ -16,10 +16,6 @@ services:
      - DB_PORT=$DB_PORT
     image: alvarogarciafer/to-do-api:$TAG
     build: .
-    volumes:
-      - type: volume
-        source: logs
-        target: /to-do-api/logs
     networks:
       - to-do-app
     ports:
