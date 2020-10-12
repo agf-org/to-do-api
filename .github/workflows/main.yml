@@ -10,7 +10,7 @@ on:
 
 jobs:
   test:
-    runs-on: [self-hosted, "${{ secrets.DEFAULT_ENV }}"]
+    runs-on: [self-hosted, ${{ secrets.DEFAULT_ENV }}]
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -32,7 +32,7 @@ jobs:
             alvarogarciafer/to-do-api:test
 
   build:
-    runs-on: [self-hosted, "${{ secrets.DEFAULT_ENV }}"]
+    runs-on: [self-hosted, ${{ secrets.DEFAULT_ENV }}]
     needs: test
     if: ${{ github.event_name == 'push' }}
     steps:
@@ -72,7 +72,7 @@ jobs:
           fi
           
   deploy:
-    runs-on: [self-hosted, "${{ secrets.DEFAULT_ENV }}"]
+    runs-on: [self-hosted, ${{ secrets.DEFAULT_ENV }}]
     needs: build
     if: ${{ github.event_name == 'push' }}
     steps:
