@@ -13,6 +13,11 @@ services:
      - DB_PORT=$DB_PORT
     image: alvarogarciafer/to-do-api:$TAG
     build: .
+    logging:
+      driver: $LOGGING_DRIVER
+      options:
+        awslogs-group: $AWS_LOG_GROUP
+        awslogs-create-group: true
     networks:
       - to-do-app
     ports:

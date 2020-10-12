@@ -84,6 +84,7 @@ jobs:
           NODE_ENV: ${{ secrets.DEFAULT_ENV }}
           TAG: ${{ secrets.DEFAULT_TAG }}
           PORT: ${{ secrets.DEFAULT_PORT }}
+          LOGGING_DRIVER: ${{ secrets.DEFAULT_LOGGING_DRIVER }}
           DB_HOST: ${{ secrets.DEFAULT_DB_HOST }}
           DB_PORT: ${{ secrets.DEFAULT_DB_PORT }}
         run: |

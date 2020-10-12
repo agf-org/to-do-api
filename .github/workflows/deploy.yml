@@ -14,6 +14,14 @@ on:
         description: 'Port'
         required: true
         default: '3000'
+      logging-driver:
+        description: 'Logging driver'
+        required: true
+        default: 'awslogs'
+      aws-log-group:
+        description: 'AWS log group'
+        required: true
+        default: 'to-do-app'
       db-host:
         description: 'Database host'
         required: true
@@ -35,6 +43,8 @@ jobs:
           NODE_ENV: ${{ github.event.inputs.environment }}
           TAG: ${{ github.event.inputs.tag }}
           PORT: ${{ github.event.inputs.port }}
+          LOGGING_DRIVER: ${{ github.event.inputs.logging-driver }}
+          AWS_LOG_GROUP: ${{ github.event.inputs.aws-log-group }}
           DB_HOST: ${{ github.event.inputs.db-host }}
           DB_PORT: ${{ github.event.inputs.db-port }}
         run: |
