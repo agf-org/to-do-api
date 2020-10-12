@@ -1,7 +1,4 @@
 version: "3.7"
-
-volumes:
-  logs:
     
 networks:
   to-do-app:
