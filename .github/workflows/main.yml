@@ -85,7 +85,6 @@ jobs:
           TAG: ${{ secrets.DEFAULT_TAG }}
           PORT: ${{ secrets.DEFAULT_PORT }}
           LOGGING_DRIVER: ${{ secrets.DEFAULT_LOGGING_DRIVER }}
-          AWS_LOG_GROUP: ${{ secrets.DEFAULT_AWS_LOG_GROUP }}
           DB_HOST: ${{ secrets.DEFAULT_DB_HOST }}
           DB_PORT: ${{ secrets.DEFAULT_DB_PORT }}
         run: |
