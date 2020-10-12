@@ -15,6 +15,14 @@ on:
         description: 'Port'
         required: true
         default: '3000'
+      db-host:
+        description: 'Database host'
+        required: true
+        default: 'mongo'
+      db-port:
+        description: 'Database port'
+        required: true
+        default: '27017'
 
 jobs:
   deploy:
@@ -28,6 +36,8 @@ jobs:
           NODE_ENV: ${{ github.event.inputs.environment }}
           TAG: ${{ github.event.inputs.tag }}
           PORT: ${{ github.event.inputs.port }}
+          DB_HOST: ${{ github.event.inputs.db-host }}
+          DB_PORT: ${{ github.event.inputs.db-port }}
         run: |
           docker network create to-do-app || true
           docker-compose pull
