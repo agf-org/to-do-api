@@ -45,5 +45,5 @@ jobs:
           docker-compose up \
             --detach
           docker image prune \
-            --all
+            --all \
             --force
