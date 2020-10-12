@@ -6,7 +6,7 @@ on:
       environment:
         description: 'Environment'
         required: true
-        default: 'development'
+        default: 'production'
 
 jobs:
   stop:
