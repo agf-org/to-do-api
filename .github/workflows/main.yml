@@ -87,8 +87,12 @@ jobs:
           DB_HOST: ${{ secrets.DEFAULT_DB_HOST }}
           DB_PORT: ${{ secrets.DEFAULT_DB_PORT }}
         run: |
-          docker network create to-do-app || true
+          docker network create \
+            to-do-app  \
+            || true
           docker-compose pull
-          docker-compose down
           docker-compose up \
             --detach
+          docker image prune \
+            --all
+            --force
