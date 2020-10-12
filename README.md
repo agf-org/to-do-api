@@ -3,7 +3,6 @@
 ## Usage
 
 Create a `.env` file inside the project directory with the following environment variables:
-
 ```
 NODE_ENV=local
 PORT=3000
