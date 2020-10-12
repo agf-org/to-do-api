@@ -1,28 +1,36 @@
-name: Deploy production
+name: Deploy
 
 on:
   workflow_dispatch:
     inputs:
+      environment:
+        description: 'Environment'
+        required: true
+        default: 'development'
       tag:
         description: 'Tag or version'
         required: true
         default: 'latest'
+      port:
+        description: 'Port'
+        required: true
+        default: '3000'
 
 jobs:
   deploy:
-    runs-on: [self-hosted, production]
+    runs-on: [self-hosted, "${{ github.event.inputs.environment }}"]
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
         
       - name: Deploy containers
+        env:
+          NODE_ENV: ${{ github.event.inputs.environment }}
+          TAG: ${{ github.event.inputs.tag }}
+          PORT: ${{ github.event.inputs.port }}
         run: |
           docker network create to-do-app || true
-          echo "NODE_ENV=production" >> .env
-          echo "PORT=3000" >> .env
-          echo "TO_DO_API_TAG=${{ github.event.inputs.tag }}" >> .env
           docker-compose pull
           docker-compose down
           docker-compose up \
             --detach
-          rm .env

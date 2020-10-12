@@ -10,9 +10,9 @@ networks:
 
 services:
   to-do-api:
-    env_file:
-      - .env
-    image: alvarogarciafer/to-do-api:$TO_DO_API_TAG
+    environment:
+     - NODE_ENV=production
+    image: alvarogarciafer/to-do-api:$TAG
     build: .
     volumes:
       - type: volume
