@@ -11,7 +11,7 @@ networks:
 services:
   to-do-api:
     environment:
-     - NODE_ENV=production
+     - NODE_ENV=$NODE_ENV
     image: alvarogarciafer/to-do-api:$TAG
     build: .
     volumes:
