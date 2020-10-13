@@ -17,19 +17,10 @@ jobs:
           
       - name: Run linter and tests
         run: |
-          docker image build \
-            --tag alvarogarciafer/to-do-api:test \
-            .
-          docker container run \
-            --rm \
-            alvarogarciafer/to-do-api:test \
-            run lint
-          docker container run \
-            --rm \
-            alvarogarciafer/to-do-api:test \
-            test
-          docker image rm \
-            alvarogarciafer/to-do-api:test
+          docker image build --tag alvarogarciafer/to-do-api:test .
+          docker container run --rm alvarogarciafer/to-do-api:test run lint
+          docker container run --rm alvarogarciafer/to-do-api:test test
+          docker image rm alvarogarciafer/to-do-api:test
 
   build:
     runs-on: [self-hosted, development]
@@ -47,11 +38,8 @@ jobs:
 
       - name: Build and push latest image
         run: |
-          docker image build \
-            --tag alvarogarciafer/to-do-api:latest \
-            .
-          docker image push \
-            alvarogarciafer/to-do-api:latest
+          docker image build --tag alvarogarciafer/to-do-api:latest .
+          docker image push alvarogarciafer/to-do-api:latest
 
       - name: Autotag package
         uses: butlerlogic/action-autotag@stable
@@ -64,11 +52,8 @@ jobs:
       - name: Build and push tagged image
         run: |
           if [[ "${{ steps.action-autotag.outputs.tagname }}" != "" ]]; then
-            docker image build \
-              --tag alvarogarciafer/to-do-api:${{ steps.action-autotag.outputs.tagname }} \
-              .
-            docker image push \
-              alvarogarciafer/to-do-api:${{ steps.action-autotag.outputs.tagname }}
+            docker image build --tag alvarogarciafer/to-do-api:${{ steps.action-autotag.outputs.tagname }} .
+            docker image push alvarogarciafer/to-do-api:${{ steps.action-autotag.outputs.tagname }}
           fi
           
   deploy:
@@ -87,15 +72,7 @@ jobs:
           DB_HOST: ${{ secrets.DEFAULT_DB_HOST }}
           DB_PORT: ${{ secrets.DEFAULT_DB_PORT }}
         run: |
-          docker network create \
-            to-do-app \
-            || true
-          docker-compose \
-            pull \
-            --quiet
-          docker-compose \
-            up \
-            --detach
-          docker image prune \
-            --all \
-            --force
+          docker network create to-do-app || true
+          docker-compose pull --quiet
+          docker-compose up --detach
+          docker image prune --all --force

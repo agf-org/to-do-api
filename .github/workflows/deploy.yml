@@ -38,23 +38,11 @@ jobs:
           DB_HOST: ${{ github.event.inputs.db-host }}
           DB_PORT: ${{ github.event.inputs.db-port }}
         run: |
-          docker network create \
-            to-do-app  \
-            || true
-          docker-compose \
-            pull \
-            --quiet
+          docker network create to-do-app || true
+          docker-compose pull --quiet
           if [[ "${{ github.event.inputs.environment }}" = "production" ]]; then
-            docker-compose \
-              --file docker-compose.yml \
-              --file docker-compose.production.yml \
-              up \
-              --detach
+            docker-compose --file docker-compose.yml --file docker-compose.production.yml up --detach
           else
-            docker-compose \
-              up \
-              --detach
+            docker-compose up --detach
           fi
-          docker image prune \
-            --all \
-            --force
+          docker image prune --all --force
