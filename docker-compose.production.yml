@@ -1,0 +1,9 @@
+version: "3.7"
+
+services:
+  to-do-api:
+    logging:
+      driver: awslogs
+      options:
+        awslogs-group: to-do-app
+        awslogs-create-group: "true"
