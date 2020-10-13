@@ -41,14 +41,18 @@ jobs:
           docker network create \
             to-do-app  \
             || true
-          docker-compose pull
+          docker-compose \
+            pull \
+            --quiet
           if [[ "${{ github.event.inputs.environment }}" = "production" ]]; then
-            docker-compose up \
+            docker-compose \
               --file docker-compose.yml \
               --file docker-compose.production.yml \
+              up \
               --detach
           else
-            docker-compose up \
+            docker-compose \
+              up \
               --detach
           fi
           docker image prune \
