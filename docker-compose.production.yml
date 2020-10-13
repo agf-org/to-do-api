@@ -7,3 +7,4 @@ services:
       options:
         awslogs-group: to-do-app
         awslogs-create-group: "true"
+        awslogs-stream: to-do-api
