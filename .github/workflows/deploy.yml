@@ -7,19 +7,19 @@ on:
         description: 'Environment'
         required: true
         default: 'production'
-      tag:
+      to-do-api-tag:
         description: 'Tag or version'
         required: true
-      port:
+      to-do-api-port:
         description: 'Port'
         required: true
         default: '3000'
-      db-host:
-        description: 'Database host'
+      mongo-host:
+        description: 'Mongo database host'
         required: true
         default: 'mongo'
-      db-port:
-        description: 'Database port'
+        mongo-port:
+        description: 'Mongo database port'
         required: true
         default: '27017'
 
@@ -33,10 +33,10 @@ jobs:
       - name: Deploy containers
         env:
           NODE_ENV: ${{ github.event.inputs.environment }}
-          TAG: ${{ github.event.inputs.tag }}
-          PORT: ${{ github.event.inputs.port }}
-          DB_HOST: ${{ github.event.inputs.db-host }}
-          DB_PORT: ${{ github.event.inputs.db-port }}
+          TO_DO_API_TAG: ${{ github.event.inputs.to-do-api-tag }}
+          TO_DO_API_PORT: ${{ github.event.inputs.to-do-api-port }}
+          MONGO_HOST: ${{ github.event.inputs.mongo-host }}
+          MONGO_PORT: ${{ github.event.inputs.mongo-port }}
         run: |
           docker network create to-do-app || true
           docker-compose pull --quiet

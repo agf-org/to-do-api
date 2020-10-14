@@ -9,14 +9,14 @@ services:
   to-do-api:
     environment:
      - NODE_ENV=$NODE_ENV
-     - DB_HOST=$DB_HOST
-     - DB_PORT=$DB_PORT
-    image: alvarogarciafer/to-do-api:$TAG
+     - MONGO_HOST=$MONGO_HOST
+     - MONGO_PORT=$MONGO_PORT
+    image: alvarogarciafer/to-do-api:$TO_DO_API_TAG
     build: .
     networks:
       - to-do-app
     ports:
-      - $PORT:3000
+      - $TO_DO_API_PORT:3000
     container_name: to-do-api
     restart: unless-stopped
     command: 

@@ -67,10 +67,10 @@ jobs:
       - name: Deploy containers
         env:
           NODE_ENV: ${{ secrets.DEFAULT_ENV }}
-          TAG: ${{ secrets.DEFAULT_TAG }}
-          PORT: ${{ secrets.DEFAULT_PORT }}
-          DB_HOST: ${{ secrets.DEFAULT_DB_HOST }}
-          DB_PORT: ${{ secrets.DEFAULT_DB_PORT }}
+          TO_DO_API_TAG: ${{ secrets.DEFAULT_TO_DO_API_TAG }}
+          TO_DO_API_PORT: ${{ secrets.DEFAULT_TO_DO_API_PORT }}
+          MONGO_HOST: ${{ secrets.DEFAULT_MONGO_HOST }}
+          MONGO_PORT: ${{ secrets.DEFAULT_MONGO_PORT }}
         run: |
           docker network create to-do-app || true
           docker-compose pull --quiet
