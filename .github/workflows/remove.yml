@@ -1,4 +1,4 @@
-name: Stop
+name: Remove
 
 on:
   workflow_dispatch:
@@ -9,7 +9,7 @@ on:
         default: 'production'
 
 jobs:
-  stop:
+  remove:
     runs-on: [self-hosted, "${{ github.event.inputs.environment }}"]
     steps:
       - name: Checkout code
