@@ -14,8 +14,8 @@ jobs:
 
       - name: Build and push latest image
         run: |
-          docker login --username ${{ secrets.DOCKER_HUB_USERNAME }} --password ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-          docker image build --tag alvarogarciafer/to-do-api:latest .
+          docker image build --no-cache --tag alvarogarciafer/to-do-api:latest .
+          echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login --username ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
           docker image push alvarogarciafer/to-do-api:latest
 
       - name: Autotag package
@@ -29,8 +29,8 @@ jobs:
       - name: Build and push tagged image
         if: ${{ steps.action-autotag.outputs.tagname != '' }}
         run: |
-          docker login --username ${{ secrets.DOCKER_HUB_USERNAME }} --password ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-          docker image build --tag alvarogarciafer/to-do-api:${{ steps.action-autotag.outputs.tagname }} .
+          docker image build --no-cache --tag alvarogarciafer/to-do-api:${{ steps.action-autotag.outputs.tagname }} .
+          echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login --username ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
           docker image push alvarogarciafer/to-do-api:${{ steps.action-autotag.outputs.tagname }}
           
   deploy:
@@ -49,6 +49,7 @@ jobs:
           MONGO_PORT: ${{ secrets.DEFAULT_MONGO_PORT }}
         run: |
           docker network create to-do-app || true
-          docker-compose pull --quiet
+          echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login --username ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
+          docker-compose pull
           docker-compose up --detach
           docker image prune --all --force

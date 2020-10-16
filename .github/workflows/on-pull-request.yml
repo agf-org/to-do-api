@@ -14,7 +14,7 @@ jobs:
           
       - name: Run linter and tests
         run: |
-          docker image build --tag alvarogarciafer/to-do-api:test .
+          docker image build --no-cache --tag alvarogarciafer/to-do-api:test .
           docker container run --rm alvarogarciafer/to-do-api:test run lint
           docker container run --rm alvarogarciafer/to-do-api:test test
           docker image rm alvarogarciafer/to-do-api:test

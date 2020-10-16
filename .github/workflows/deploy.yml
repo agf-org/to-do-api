@@ -39,7 +39,8 @@ jobs:
           MONGO_PORT: ${{ github.event.inputs.mongo-port }}
         run: |
           docker network create to-do-app || true
-          docker-compose pull --quiet
+          echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login --username ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
+          docker-compose pull
           if [[ "${{ github.event.inputs.environment }}" = "production" ]]; then
             docker-compose --file docker-compose.yml --file docker-compose.production.yml up --detach
           else
