@@ -10,7 +10,7 @@ module.exports.connect = async () => {
   const connectWithRetry = async () => {
     await mongoose.connect(mongoUri, mongooseOpts).then(() => {
       console.log('Connected to MongoDB successfully!')
-    }).catch(error => {
+    }).catch(() => {
       console.log('Connection to MongoDB failed. Retrying after 5 seconds...')
       setTimeout(connectWithRetry, 5000)
     })
