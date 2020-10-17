@@ -6,5 +6,14 @@ module.exports.connect = async () => {
     useNewUrlParser: true,
     useUnifiedTopology: true
   }
-  await mongoose.connect(mongoUri, mongooseOpts)
+  console.log(`Connecting to ${mongoUri}`)
+  const connectWithRetry = async () => {
+    await mongoose.connect(mongoUri, mongooseOpts).then(() => {
+      console.log('Connected to MongoDB successfully!')
+    }).catch(() => {
+      console.log('Connection to MongoDB failed. Retrying after 5 seconds...')
+      setTimeout(connectWithRetry, 5000)
+    })
+  }
+  await connectWithRetry()
 }
