@@ -38,7 +38,7 @@ jobs:
           MONGO_HOST: ${{ github.event.inputs.mongo-host }}
           MONGO_PORT: ${{ github.event.inputs.mongo-port }}
         run: |
-          docker network create to-do-app || true
+          docker network create network-to-do-app || true
           echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login --username ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
           docker-compose pull
           if [[ "${{ github.event.inputs.environment }}" = "production" ]]; then

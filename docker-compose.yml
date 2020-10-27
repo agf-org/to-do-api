@@ -1,9 +1,9 @@
 version: "3.7"
     
 networks:
-  to-do-app:
+  network-to-do-app:
     external: true
-    name: to-do-app
+    name: network-to-do-app
 
 services:
   to-do-api:
@@ -14,7 +14,7 @@ services:
     image: alvarogarciafer/to-do-api:$TO_DO_API_TAG
     build: .
     networks:
-      - to-do-app
+      - network-to-do-app
     ports:
       - $TO_DO_API_PORT:3000
     container_name: to-do-api
