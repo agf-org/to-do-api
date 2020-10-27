@@ -10,6 +10,7 @@ on:
       to-do-api-tag:
         description: 'To-do API tag or version'
         required: true
+        default: latest
       to-do-api-port:
         description: 'To-do API port'
         required: true
