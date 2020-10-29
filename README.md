@@ -9,8 +9,8 @@ npm install
 
 Create a `.env` file inside the project directory with the following environment variables:
 ```
-NODE_ENV=local
-TO_DO_API_TAG=local
+NODE_ENV=development
+TO_DO_API_TAG=development
 TO_DO_API_PORT=3000
 MONGO_HOST=mongo
 MONGO_PORT=27017
