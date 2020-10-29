@@ -7,15 +7,10 @@ const cookieParser = require('cookie-parser')
 const path = require('path')
 
 const config = require('./config')
-const mongoMemoryServerHandler = require('./controllers/mongo-memory-server-handler')
 const mongoServerHandler = require('./controllers/mongo-server-handler')
 
 if (process.env.NODE_ENV != 'test') {
-  if (process.env.NODE_ENV == 'local') {
-    mongoMemoryServerHandler.connect()
-  } else {
-    mongoServerHandler.connect()
-  }
+  mongoServerHandler.connect()
 }
 
 const app = express()

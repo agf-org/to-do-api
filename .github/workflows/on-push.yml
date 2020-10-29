@@ -34,7 +34,7 @@ jobs:
           docker image push alvarogarciafer/to-do-api:${{ steps.action-autotag.outputs.tagname }}
           
   deploy:
-    runs-on: [self-hosted, development]
+    runs-on: [self-hosted, production]
     needs: build
     steps:
       - name: Checkout code
