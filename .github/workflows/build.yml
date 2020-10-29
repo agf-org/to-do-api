@@ -43,5 +43,5 @@ jobs:
             -X POST \
             --header "authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             --header "Accept: application/vnd.github.v3+json" \
-            https://api.github.com/orgs/to-do-app/dispatches \
+            https://api.github.com/orgs/to-do-app/to-do-api/dispatches \
             --data '{"event_type":"deploy"}'
