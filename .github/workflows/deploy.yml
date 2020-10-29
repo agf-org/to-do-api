@@ -25,8 +25,7 @@ jobs:
             --username ${{ secrets.DOCKER_HUB_USERNAME }} \
             --password-stdin
           docker-compose pull
-          docker-compose \
-            up \
+          docker-compose up \
             --detach
           docker image prune \
             --all \

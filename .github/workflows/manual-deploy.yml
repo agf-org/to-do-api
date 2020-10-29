@@ -46,14 +46,11 @@ jobs:
             --password-stdin
           docker-compose pull
           if [[ "${{ github.event.inputs.environment }}" = "production" ]]; then
-            docker-compose \
-              --file docker-compose.yml \
-              --file docker-compose.production.yml \
+            docker-compose --file docker-compose.yml --file docker-compose.production.yml \
               up \
               --detach
           else
-            docker-compose \
-              up \
+            docker-compose up \
               --detach
           fi
           docker image prune \
