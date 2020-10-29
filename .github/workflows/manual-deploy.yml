@@ -1,0 +1,50 @@
+name: Manual deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment'
+        required: true
+        default: 'production'
+      to-do-api-tag:
+        description: 'To-do API tag or version'
+        required: true
+        default: latest
+      to-do-api-port:
+        description: 'To-do API port'
+        required: true
+        default: '3000'
+      mongo-host:
+        description: 'Mongo host'
+        required: true
+        default: 'mongo'
+      mongo-port:
+        description: 'Mongo port'
+        required: true
+        default: '27017'
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, "${{ github.event.inputs.environment }}"]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        
+      - name: Deploy containers
+        env:
+          NODE_ENV: ${{ github.event.inputs.environment }}
+          TO_DO_API_TAG: ${{ github.event.inputs.to-do-api-tag }}
+          TO_DO_API_PORT: ${{ github.event.inputs.to-do-api-port }}
+          MONGO_HOST: ${{ github.event.inputs.mongo-host }}
+          MONGO_PORT: ${{ github.event.inputs.mongo-port }}
+        run: |
+          docker network create network-to-do-app || true
+          echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login --username ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
+          docker-compose pull
+          if [[ "${{ github.event.inputs.environment }}" = "production" ]]; then
+            docker-compose --file docker-compose.yml --file docker-compose.production.yml up --detach
+          else
+            docker-compose up --detach
+          fi
+          docker image prune --all --force

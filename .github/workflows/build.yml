@@ -1,4 +1,4 @@
-name: On push
+name: Build
 
 on:
   push:
@@ -32,24 +32,16 @@ jobs:
           docker image build --no-cache --tag alvarogarciafer/to-do-api:${{ steps.action-autotag.outputs.tagname }} .
           echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login --username ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
           docker image push alvarogarciafer/to-do-api:${{ steps.action-autotag.outputs.tagname }}
-          
-  deploy:
-    runs-on: [self-hosted, production]
-    needs: build
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
 
-      - name: Deploy containers
-        env:
-          NODE_ENV: ${{ secrets.DEFAULT_ENV }}
-          TO_DO_API_TAG: ${{ secrets.DEFAULT_TO_DO_API_TAG }}
-          TO_DO_API_PORT: ${{ secrets.DEFAULT_TO_DO_API_PORT }}
-          MONGO_HOST: ${{ secrets.DEFAULT_MONGO_HOST }}
-          MONGO_PORT: ${{ secrets.DEFAULT_MONGO_PORT }}
-        run: |
-          docker network create network-to-do-app || true
-          echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login --username ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
-          docker-compose pull
-          docker-compose up --detach
-          docker image prune --all --force
+    trigger-deploy:
+      needs: build
+      runs-on: [self-hosted, builder]
+      steps:
+        - name: Trigger repository_dispatch event
+          run: |
+            curl \
+              -X POST \
+              --header "authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+              --header "Accept: application/vnd.github.v3+json" \
+              https://api.github.com/orgs/to-do-app/dispatches \
+              --data '{"event_type":"deploy"}'

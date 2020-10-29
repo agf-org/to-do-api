@@ -1,4 +1,4 @@
-name: Remove
+name: Manual remove
 
 on:
   workflow_dispatch:
