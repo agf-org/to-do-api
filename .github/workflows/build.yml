@@ -14,9 +14,15 @@ jobs:
 
       - name: Build and push latest image
         run: |
-          docker image build --no-cache --tag alvarogarciafer/to-do-api:latest .
-          echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login --username ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
-          docker image push alvarogarciafer/to-do-api:latest
+          docker image build \
+            --no-cache \
+            --tag alvarogarciafer/to-do-api:latest \
+            .
+          echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login \
+            --username ${{ secrets.DOCKER_HUB_USERNAME }} \
+            --password-stdin
+          docker image push \
+            alvarogarciafer/to-do-api:latest
 
       - name: Autotag package
         uses: butlerlogic/action-autotag@stable
@@ -29,9 +35,15 @@ jobs:
       - name: Build and push tagged image
         if: ${{ steps.action-autotag.outputs.tagname != '' }}
         run: |
-          docker image build --no-cache --tag alvarogarciafer/to-do-api:${{ steps.action-autotag.outputs.tagname }} .
-          echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login --username ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
-          docker image push alvarogarciafer/to-do-api:${{ steps.action-autotag.outputs.tagname }}
+          docker image build \
+            --no-cache \
+            --tag alvarogarciafer/to-do-api:${{ steps.action-autotag.outputs.tagname }} \
+            .
+          echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login \
+            --username ${{ secrets.DOCKER_HUB_USERNAME }} \
+            --password-stdin
+          docker image push \
+            alvarogarciafer/to-do-api:${{ steps.action-autotag.outputs.tagname }}
 
   trigger-deploy:
     needs: build

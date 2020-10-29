@@ -19,8 +19,15 @@ jobs:
           MONGO_HOST: ${{ secrets.DEFAULT_MONGO_HOST }}
           MONGO_PORT: ${{ secrets.DEFAULT_MONGO_PORT }}
         run: |
-          docker network create network-to-do-app || true
-          echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login --username ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
+          docker network create \
+            network-to-do-app || true
+          echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login \
+            --username ${{ secrets.DOCKER_HUB_USERNAME }} \
+            --password-stdin
           docker-compose pull
-          docker-compose up --detach
-          docker image prune --all --force
+          docker-compose \
+            up \
+            --detach
+          docker image prune \
+            --all \
+            --force
