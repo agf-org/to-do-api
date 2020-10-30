@@ -11,12 +11,12 @@ services:
      - NODE_ENV=$NODE_ENV
      - MONGO_HOST=$MONGO_HOST
      - MONGO_PORT=$MONGO_PORT
-    image: alvarogarciafer/to-do-api:$TO_DO_API_TAG
+    image: alvarogarciafer/to-do-api:$TAG
     build: .
     networks:
       - network-to-do-app
     ports:
-      - $TO_DO_API_PORT:3000
+      - $PORT:3000
     container_name: to-do-api
     restart: unless-stopped
     command: 

@@ -7,12 +7,12 @@ on:
         description: 'Environment'
         required: true
         default: 'production'
-      to-do-api-tag:
-        description: 'To-do API tag or version'
+      tag:
+        description: 'Tag or version'
         required: true
         default: latest
-      to-do-api-port:
-        description: 'To-do API port'
+      port:
+        description: 'Port'
         required: true
         default: '3000'
       mongo-host:
@@ -34,8 +34,8 @@ jobs:
       - name: Deploy containers
         env:
           NODE_ENV: ${{ github.event.inputs.environment }}
-          TO_DO_API_TAG: ${{ github.event.inputs.to-do-api-tag }}
-          TO_DO_API_PORT: ${{ github.event.inputs.to-do-api-port }}
+          TAG: ${{ github.event.inputs.tag }}
+          PORT: ${{ github.event.inputs.port }}
           MONGO_HOST: ${{ github.event.inputs.mongo-host }}
           MONGO_PORT: ${{ github.event.inputs.mongo-port }}
         run: |
