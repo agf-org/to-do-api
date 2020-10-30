@@ -18,6 +18,6 @@ jobs:
       - name: Stop and remove containers
         run: |
           docker container stop \
-            to-do-api
+            api
           docker container rm \
-            to-do-api
+            api

@@ -14,7 +14,7 @@ TAG=development
 PORT=3000
 MONGO_HOST=mongo
 MONGO_PORT=27017
-DEBUG=to-do-api:*
+DEBUG=api:*
 ```
 
 To start the app use:

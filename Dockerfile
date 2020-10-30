@@ -1,6 +1,6 @@
 FROM node:14
 
-WORKDIR /to-do-api
+WORKDIR /api
 
 COPY package*.json ./
 RUN npm ci

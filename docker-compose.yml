@@ -6,7 +6,7 @@ networks:
     name: network-to-do-app
 
 services:
-  to-do-api:
+  api:
     environment:
      - NODE_ENV=$NODE_ENV
      - MONGO_HOST=$MONGO_HOST
@@ -17,7 +17,7 @@ services:
       - network-to-do-app
     ports:
       - $PORT:3000
-    container_name: to-do-api
+    container_name: api
     restart: unless-stopped
     command: 
       - start
