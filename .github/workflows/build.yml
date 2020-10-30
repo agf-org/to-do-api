@@ -16,13 +16,13 @@ jobs:
         run: |
           docker image build \
             --no-cache \
-            --tag alvarogarciafer/to-do-api:latest \
+            --tag alvarogarciafer/to-do-app/api:latest \
             .
           echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login \
             --username ${{ secrets.DOCKER_HUB_USERNAME }} \
             --password-stdin
           docker image push \
-            alvarogarciafer/to-do-api:latest
+            alvarogarciafer/to-do-app/api:latest
 
       - name: Autotag package
         uses: butlerlogic/action-autotag@stable
@@ -37,13 +37,13 @@ jobs:
         run: |
           docker image build \
             --no-cache \
-            --tag alvarogarciafer/to-do-api:${{ steps.action-autotag.outputs.tagname }} \
+            --tag alvarogarciafer/to-do-app/api:${{ steps.action-autotag.outputs.tagname }} \
             .
           echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login \
             --username ${{ secrets.DOCKER_HUB_USERNAME }} \
             --password-stdin
           docker image push \
-            alvarogarciafer/to-do-api:${{ steps.action-autotag.outputs.tagname }}
+            alvarogarciafer/to-do-app/api:${{ steps.action-autotag.outputs.tagname }}
 
   trigger-deploy:
     needs: build

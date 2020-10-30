@@ -11,7 +11,7 @@ services:
      - NODE_ENV=$NODE_ENV
      - MONGO_HOST=$MONGO_HOST
      - MONGO_PORT=$MONGO_PORT
-    image: alvarogarciafer/to-do-api:$TAG
+    image: alvarogarciafer/to-do-app/api:$TAG
     build: .
     networks:
       - network-to-do-app
