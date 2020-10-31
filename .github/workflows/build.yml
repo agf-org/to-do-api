@@ -20,7 +20,7 @@ jobs:
             .
           echo ${{ secrets.GITHUB_TOKEN }} | docker login \
             docker.pkg.github.com \
-            --username ${{ secrets.DOCKER_HUB_USERNAME }} \
+            --username alvarogarciafer \
             --password-stdin
           docker image push \
             docker.pkg.github.com/to-do-app/to-do-app/api:latest
@@ -41,7 +41,7 @@ jobs:
             docker.pkg.github.com/to-do-app/to-do-app/api:${{ steps.action-autotag.outputs.tagname }}
           echo ${{ secrets.GITHUB_TOKEN }} | docker login \
             docker.pkg.github.com \
-            --username ${{ secrets.DOCKER_HUB_USERNAME }} \
+            --username alvarogarciafer \
             --password-stdin
           docker image push \
             docker.pkg.github.com/to-do-app/to-do-app/api:${{ steps.action-autotag.outputs.tagname }}

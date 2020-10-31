@@ -23,7 +23,7 @@ jobs:
             network-to-do-app || true
           echo ${{ secrets.GITHUB_TOKEN }} | docker login \
             docker.pkg.github.com \
-            --username ${{ secrets.DOCKER_HUB_USERNAME }} \
+            --username alvarogarciafer \
             --password-stdin
           docker-compose pull
           docker-compose up \
