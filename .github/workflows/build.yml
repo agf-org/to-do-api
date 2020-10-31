@@ -24,27 +24,6 @@ jobs:
           docker image push \
             alvarogarciafer/to-do-app_api:latest
 
-      - name: Autotag package
-        uses: butlerlogic/action-autotag@stable
-        id: action-autotag
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          strategy: package
-          tag_prefix: v
-
-      - name: Build and push tagged image
-        if: ${{ steps.action-autotag.outputs.tagname != '' }}
-        run: |
-          docker image build \
-            --no-cache \
-            --tag alvarogarciafer/to-do-app_api:${{ steps.action-autotag.outputs.tagname }} \
-            .
-          echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login \
-            --username ${{ secrets.DOCKER_HUB_USERNAME }} \
-            --password-stdin
-          docker image push \
-            alvarogarciafer/to-do-app_api:${{ steps.action-autotag.outputs.tagname }}
-
   trigger-deploy:
     needs: build
     runs-on: [self-hosted, builder]
