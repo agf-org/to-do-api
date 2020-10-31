@@ -37,12 +37,12 @@ jobs:
         run: |
           docker tag \
             alvarogarciafer/to-do-app_api:latest \
-            alvarogarciafer/to-do-api:${{ steps.action-autotag.outputs.tagname }}
+            alvarogarciafer/to-do-app_api:${{ steps.action-autotag.outputs.tagname }}
           echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login \
             --username ${{ secrets.DOCKER_HUB_USERNAME }} \
             --password-stdin
           docker image push \
-            alvarogarciafer/to-do-api:${{ steps.action-autotag.outputs.tagname }}
+            alvarogarciafer/to-do-app_api:${{ steps.action-autotag.outputs.tagname }}
 
   trigger-deploy:
     needs: build
