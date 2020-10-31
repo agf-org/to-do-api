@@ -16,14 +16,15 @@ jobs:
         run: |
           docker image build \
             --no-cache \
-            --tag alvarogarciafer/to-do-app_api:test \
+            --tag docker.pkg.github.com/to-do-app/api:test \
             .
           docker container run \
             --rm \
-            alvarogarciafer/to-do-app_api:test \
+            docker.pkg.github.com/to-do-app/api:test \
             run lint
           docker container run \
-            --rm alvarogarciafer/to-do-app_api:test \
+            --rm \
+            docker.pkg.github.com/to-do-app/api:test \
             test
           docker image rm \
-            alvarogarciafer/to-do-app_api:test
+            docker.pkg.github.com/to-do-app/api:test

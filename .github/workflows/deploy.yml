@@ -21,7 +21,8 @@ jobs:
         run: |
           docker network create \
             network-to-do-app || true
-          echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login \
+          echo ${{ secrets.GITHUB_TOKEN }} | docker login \
+            docker.pkg.github.com \
             --username ${{ secrets.DOCKER_HUB_USERNAME }} \
             --password-stdin
           docker-compose pull
