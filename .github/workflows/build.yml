@@ -16,14 +16,14 @@ jobs:
         run: |
           docker image build \
             --no-cache \
-            --tag docker.pkg.github.com/to-do-app/api/image-api:latest \
+            --tag ghcr.io/to-do-app/api:latest \
             .
-          echo ${{ secrets.GITHUB_TOKEN }} | docker login \
-            docker.pkg.github.com \
+          echo ${{ secrets.PACKAGES_ACCESS_TOKEN }} | docker login \
+            ghcr.io \
             --username alvarogarciafer \
             --password-stdin
           docker image push \
-            docker.pkg.github.com/to-do-app/api/image-api:latest
+            ghcr.io/to-do-app/api:latest
 
       - name: Autotag package
         uses: butlerlogic/action-autotag@stable
@@ -37,14 +37,14 @@ jobs:
         if: ${{ steps.action-autotag.outputs.tagname != '' }}
         run: |
           docker tag \
-            docker.pkg.github.com/to-do-app/api/image-api:latest \
-            docker.pkg.github.com/to-do-app/api/image-api:${{ steps.action-autotag.outputs.tagname }}
-          echo ${{ secrets.GITHUB_TOKEN }} | docker login \
-            docker.pkg.github.com \
+            ghcr.io/to-do-app/api:latest \
+            ghcr.io/to-do-app/api:${{ steps.action-autotag.outputs.tagname }}
+          echo ${{ secrets.PACKAGES_ACCESS_TOKEN }} | docker login \
+            ghcr.io \
             --username alvarogarciafer \
             --password-stdin
           docker image push \
-            docker.pkg.github.com/to-do-app/api/image-api:${{ steps.action-autotag.outputs.tagname }}
+            ghcr.io/to-do-app/api:${{ steps.action-autotag.outputs.tagname }}
 
   trigger-deploy:
     needs: build

@@ -41,8 +41,8 @@ jobs:
         run: |
           docker network create \
             network-to-do-app || true
-          echo ${{ secrets.GITHUB_TOKEN }} | docker login \
-            docker.pkg.github.com \
+          echo ${{ secrets.PACKAGES_ACCESS_TOKEN }} | docker login \
+            ghcr.io \
             --username alvarogarciafer \
             --password-stdin
           docker-compose pull

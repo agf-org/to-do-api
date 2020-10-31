@@ -16,15 +16,15 @@ jobs:
         run: |
           docker image build \
             --no-cache \
-            --tag docker.pkg.github.com/to-do-app/api/image-api:test \
+            --tag ghcr.io/to-do-app/api:test \
             .
           docker container run \
             --rm \
-            docker.pkg.github.com/to-do-app/api/image-api:test \
+            ghcr.io/to-do-app/api:test \
             run lint
           docker container run \
             --rm \
-            docker.pkg.github.com/to-do-app/api/image-api:test \
+            ghcr.io/to-do-app/api:test \
             test
           docker image rm \
-            docker.pkg.github.com/to-do-app/api/image-api:test
+            ghcr.io/to-do-app/api:test
