@@ -23,7 +23,7 @@ jobs:
             --password-stdin
           docker image push \
             alvarogarciafer/to-do-app_api:latest
-            
+
       - name: Autotag package
         uses: butlerlogic/action-autotag@stable
         id: action-autotag
@@ -32,13 +32,12 @@ jobs:
           strategy: package
           tag_prefix: v
 
-      - name: Build and push tagged image
+      - name: Push tagged image
         if: ${{ steps.action-autotag.outputs.tagname != '' }}
         run: |
-          docker image build \
-            --no-cache \
-            --tag alvarogarciafer/to-do-api:${{ steps.action-autotag.outputs.tagname }} \
-            .
+          docker tag \
+            alvarogarciafer/to-do-app_api:latest \
+            alvarogarciafer/to-do-api:${{ steps.action-autotag.outputs.tagname }}
           echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login \
             --username ${{ secrets.DOCKER_HUB_USERNAME }} \
             --password-stdin
