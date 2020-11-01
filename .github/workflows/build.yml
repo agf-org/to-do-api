@@ -60,6 +60,7 @@ jobs:
             --data '{
               "event_type":"deploy",
               "client_payload": {
-                "environment": "production"
+                "environment": "production",
+                "tag": "latest"
               }
             }'
