@@ -56,9 +56,6 @@ jobs:
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
           event-type: deploy
           client-payload: '{
-            "event_type":"deploy",
-            "client_payload": {
-              "environment": "production",
-              "tag": "latest"
-            }
+            "environment": "production",
+            "tag": "latest"
           }'
