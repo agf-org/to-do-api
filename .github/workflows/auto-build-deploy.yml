@@ -51,16 +51,14 @@ jobs:
     runs-on: [self-hosted, builder]
     steps:
       - name: Trigger repository_dispatch event
-        run: |
-          curl \
-            -X POST \
-            --header "Authorization: token ${{ secrets.REPO_ACCESS_TOKEN }}" \
-            --header "Accept: application/vnd.github.v3+json" \
-            https://api.github.com/repos/to-do-app/api/dispatches \
-            --data '{
-              "event_type":"deploy",
-              "client_payload": {
-                "environment": "production",
-                "tag": "latest"
-              }
-            }'
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          event-type: deploy
+          client-payload: '{
+            "event_type":"deploy",
+            "client_payload": {
+              "environment": "production",
+              "tag": "latest"
+            }
+          }'
