@@ -1,4 +1,4 @@
-name: Triggered deploy
+name: Deploy
 
 on:
   repository_dispatch:
@@ -13,7 +13,7 @@ jobs:
 
       - name: Deploy containers
         env:
-          NODE_ENV: production
+          NODE_ENV: ${{ github.event.client_payload.environment }}
           TAG: ${{ github.event.client_payload.tag }}
           PORT: 3000
           MONGO_HOST: mongo
@@ -26,8 +26,14 @@ jobs:
             --username alvarogarciafer \
             --password-stdin
           docker-compose pull
-          docker-compose up \
-            --detach
+          if [[ "${{ github.event.client_payload.environment }}" = "production" ]]; then
+            docker-compose --file docker-compose.yml --file docker-compose.production.yml \
+              up \
+              --detach
+          else
+            docker-compose up \
+              --detach
+          fi
           docker image prune \
             --all \
             --force

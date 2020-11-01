@@ -13,35 +13,21 @@ on:
         default: latest
 
 jobs:
-  deploy:
-    runs-on: [self-hosted, "${{ github.event.inputs.environment }}"]
+  trigger-deploy:
+    needs: build
+    runs-on: [self-hosted, builder]
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        
-      - name: Deploy containers
-        env:
-          NODE_ENV: ${{ github.event.inputs.environment }}
-          TAG: ${{ github.event.inputs.tag }}
-          PORT: 3000
-          MONGO_HOST: mongo
-          MONGO_PORT: 27017
+      - name: Trigger repository_dispatch event
         run: |
-          docker network create \
-            network-to-do-app || true
-          echo ${{ secrets.PACKAGES_ACCESS_TOKEN }} | docker login \
-            ghcr.io \
-            --username alvarogarciafer \
-            --password-stdin
-          docker-compose pull
-          if [[ "${{ github.event.inputs.environment }}" = "production" ]]; then
-            docker-compose --file docker-compose.yml --file docker-compose.production.yml \
-              up \
-              --detach
-          else
-            docker-compose up \
-              --detach
-          fi
-          docker image prune \
-            --all \
-            --force
+          curl \
+            -X POST \
+            --header "Authorization: token ${{ secrets.REPO_ACCESS_TOKEN }}" \
+            --header "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/to-do-app/api/dispatches \
+            --data '{
+              "event_type":"deploy",
+              "client_payload": {
+                "environment": "${{ github.event.inputs.environment }}",
+                "tag": "${{ github.event.inputs.tag }}"
+              }
+            }'
