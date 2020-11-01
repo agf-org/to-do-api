@@ -1,4 +1,4 @@
-name: Deploy
+name: Triggered deploy
 
 on:
   repository_dispatch:
