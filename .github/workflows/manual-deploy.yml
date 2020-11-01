@@ -14,7 +14,6 @@ on:
 
 jobs:
   trigger-deploy:
-    needs: build
     runs-on: [self-hosted, builder]
     steps:
       - name: Trigger repository_dispatch event
