@@ -6,7 +6,7 @@ on:
 
 jobs:          
   deploy:
-    runs-on: [self-hosted, production]
+    runs-on: [self-hosted, "${{ github.event.client_payload.environment }}"]
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
