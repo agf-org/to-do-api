@@ -9,7 +9,11 @@ module.exports.connect = async () => {
     useNewUrlParser: true,
     useUnifiedTopology: true
   }
-  console.log(`Connecting to ${mongoUri}`)
+  if (process.env.NODE_ENV === 'production') {
+    console.log('Connecting to MongoDB')
+  } else {
+    console.log(`Connecting to ${mongoUri}`)
+  }
   const connectWithRetry = async () => {
     await mongoose.connect(mongoUri, mongooseOpts).then(() => {
       console.log('Connected to MongoDB successfully!')
