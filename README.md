@@ -1,4 +1,4 @@
-# To-do API
+# To-do app API
 
 ## Usage
 
