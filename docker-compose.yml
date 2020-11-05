@@ -10,7 +10,6 @@ services:
     environment:
      - NODE_ENV=$NODE_ENV
      - MONGODB_HOST=$MONGODB_HOST
-     - MONGODB_PORT=$MONGODB_PORT
     image: ghcr.io/to-do-app/api:$TAG
     build: .
     networks:
