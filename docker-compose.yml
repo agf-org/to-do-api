@@ -14,6 +14,10 @@ services:
      - MONGODB_HOST=$MONGODB_HOST
     image: ghcr.io/to-do-app/api:$TAG
     build: .
+    volumes:
+      - type: bind
+        source: /etc/letsencrypt/live/todoapp.duckdns.org
+        target: /certbot-keys
     networks:
       - network-to-do-app
     ports:
