@@ -20,8 +20,6 @@ jobs:
           MONGODB_PASS: ${{ secrets.MONGODB_PASS }}
           MONGODB_HOST: ${{ secrets.MONGODB_HOST }}
         run: |
-          docker network create \
-            network-todoapp || true
           echo ${{ secrets.PACKAGES_ACCESS_TOKEN }} | docker login \
             ghcr.io \
             --username alvarogarciafer \
