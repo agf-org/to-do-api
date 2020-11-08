@@ -48,13 +48,21 @@ app.use((error, request, response) => {
 })
 
 if (process.env.NODE_ENV == 'production') {
-  const httpsServer = https.createServer({
-    key: fs.readFileSync('certbot-keys/privkey.pem'),
-    cert: fs.readFileSync('certbot-keys/fullchain.pem'),
-  }, app)
-  httpsServer.listen(3000, () => {
-      console.log('HTTPS Server running on port 3000')
-  })
+  try {
+    const httpsServer = https.createServer({
+      key: fs.readFileSync('certbot-keys/privkey.pem'),
+      cert: fs.readFileSync('certbot-keys/fullchain.pem'),
+    }, app)
+    httpsServer.listen(3000, () => {
+        console.log('HTTPS Server running on port 3000')
+    })
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      console.log('Certbot keys not found!')
+    } else {
+      throw error
+    }
+  }
 }
 
 module.exports = app
