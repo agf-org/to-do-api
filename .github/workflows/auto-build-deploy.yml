@@ -50,7 +50,7 @@ jobs:
     needs: build
     runs-on: [self-hosted, builder]
     steps:
-      - name: Trigger repository_dispatch event
+      - name: Trigger API deployment
         run: |
           curl \
             -X POST \
