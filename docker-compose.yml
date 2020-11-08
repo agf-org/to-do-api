@@ -14,10 +14,6 @@ services:
      - MONGODB_HOST=$MONGODB_HOST
     image: ghcr.io/to-do-app/api:$TAG
     build: .
-    volumes:
-      - type: bind
-        source: /etc/letsencrypt
-        target: /etc/letsencrypt
     networks:
       - network-to-do-app
     ports:
