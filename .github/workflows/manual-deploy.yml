@@ -8,7 +8,7 @@ on:
         required: true
         default: 'production'
       tag:
-        description: 'Tag or version'
+        description: 'Tag'
         required: true
         default: latest
 

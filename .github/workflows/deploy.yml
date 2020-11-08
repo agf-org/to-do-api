@@ -21,7 +21,7 @@ jobs:
           MONGODB_HOST: ${{ secrets.MONGODB_HOST }}
         run: |
           docker network create \
-            network-to-do-app || true
+            network-todoapp || true
           echo ${{ secrets.PACKAGES_ACCESS_TOKEN }} | docker login \
             ghcr.io \
             --username alvarogarciafer \

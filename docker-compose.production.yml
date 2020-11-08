@@ -5,6 +5,6 @@ services:
     logging:
       driver: awslogs
       options:
-        awslogs-group: log-group-to-do-app
+        awslogs-group: log-group-todoapp
         awslogs-create-group: "true"
         awslogs-stream: log-stream-api

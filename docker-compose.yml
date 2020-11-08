@@ -1,9 +1,9 @@
 version: "3.7"
     
 networks:
-  network-to-do-app:
+  network-todoapp:
     external: true
-    name: network-to-do-app
+    name: network-todoapp
 
 services:
   api:
@@ -19,7 +19,7 @@ services:
         source: /etc/letsencrypt/live/todoapp.duckdns.org
         target: /certbot-keys
     networks:
-      - network-to-do-app
+      - network-todoapp
     ports:
       - $PORT:3000
     container_name: api
