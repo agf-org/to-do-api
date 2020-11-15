@@ -22,6 +22,7 @@ app.set('port', port)
  */
 
 let server;
+console.log(__dirname)
 const privkeyPath = 'certbot-keys/privkey.pem'
 const fullchainPath = 'certbot-keys/fullchain.pem'
 if (
