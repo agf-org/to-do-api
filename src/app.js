@@ -5,8 +5,6 @@ const compression = require('compression')
 const morgan = require('morgan')
 const cookieParser = require('cookie-parser')
 const path = require('path')
-const https = require('https')
-const fs = require('fs')
 
 const config = require('./config')
 const mongoServerHandler = require('./controllers/mongo-server-handler')
@@ -46,23 +44,5 @@ app.use((error, request, response) => {
   response.status(error.status || 500)
   response.json({error:{message:error.message}})
 })
-
-if (process.env.NODE_ENV == 'production') {
-  try {
-    const httpsServer = https.createServer({
-      key: fs.readFileSync('/api/certbot-keys/privkey.pem'),
-      cert: fs.readFileSync('/api/certbot-keys/fullchain.pem'),
-    }, app)
-    httpsServer.listen(3000, () => {
-        console.log('HTTPS Server running on port 3000')
-    })
-  } catch (error) {
-    if (error.code === 'ENOENT') {
-      console.log('Certbot keys not found!')
-    } else {
-      throw error
-    }
-  }
-}
 
 module.exports = app
