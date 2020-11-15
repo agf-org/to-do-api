@@ -50,8 +50,8 @@ app.use((error, request, response) => {
 if (process.env.NODE_ENV == 'production') {
   try {
     const httpsServer = https.createServer({
-      key: fs.readFileSync('certbot-keys/privkey.pem'),
-      cert: fs.readFileSync('certbot-keys/fullchain.pem'),
+      key: fs.readFileSync('./certbot-keys/privkey.pem'),
+      cert: fs.readFileSync('./certbot-keys/fullchain.pem'),
     }, app)
     httpsServer.listen(3000, () => {
         console.log('HTTPS Server running on port 3000')
