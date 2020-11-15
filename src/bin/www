@@ -8,6 +8,7 @@ const app = require('../app')
 const debug = require('debug')('api:server')
 const http = require('http')
 const https = require('https')
+const path = require('path')
 const fs = require('fs')
 
 /**
@@ -22,13 +23,13 @@ app.set('port', port)
  */
 
 let server;
-console.log(__dirname)
 const privkeyPath = '../../certbot-keys/privkey.pem'
 const fullchainPath = '../../certbot-keys/fullchain.pem'
+console.log(path.resolve(__dirname, privkeyPath))
 if (
   process.env.NODE_ENV == 'production' &&
-  fs.existsSync(privkeyPath) &&
-  fs.existsSync(fullchainPath)
+  fs.existsSync(path.resolve(__dirname, privkeyPath)) &&
+  fs.existsSync(path.resolve(__dirname, fullchainPath))
 ) {
   console.log('Certbot keys found!')
   server = https.createServer({
