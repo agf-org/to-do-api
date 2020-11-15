@@ -23,8 +23,8 @@ app.set('port', port)
  */
 
 let server;
-const privkeyPath = '../../certbot-keys/privkey1.pem'
-const fullchainPath = '../../certbot-keys/fullchain1.pem'
+const privkeyPath = 'certbot-keys/privkey1.pem'
+const fullchainPath = 'certbot-keys/fullchain1.pem'
 console.log(process.env.NODE_ENV)
 console.log(path.resolve())
 console.log(fs.existsSync(privkeyPath))
