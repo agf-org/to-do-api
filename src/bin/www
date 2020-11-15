@@ -35,6 +35,7 @@ if (
     cert: fs.readFileSync(fullchainPath),
   }, app)
 } else {
+  console.log('Environment is not production or certbot keys were not found!')
   server = http.createServer(app)
 }
 
