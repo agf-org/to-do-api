@@ -22,25 +22,19 @@ app.set('port', port)
  * Create server.
  */
 
-let server;
 const privkeyPath = 'certbot-keys/privkey1.pem'
 const fullchainPath = 'certbot-keys/fullchain1.pem'
-console.log(process.env.NODE_ENV)
-console.log(path.resolve())
-console.log(fs.existsSync(privkeyPath))
-console.log(fs.existsSync(fullchainPath))
+let server;
 if (
   process.env.NODE_ENV == 'production' &&
   fs.existsSync(privkeyPath) &&
   fs.existsSync(fullchainPath)
 ) {
-  console.log('Certbot keys found!')
   server = https.createServer({
     key: fs.readFileSync(privkeyPath),
     cert: fs.readFileSync(fullchainPath),
   }, app)
 } else {
-  console.log('Environment is not production or certbot keys were not found!')
   server = http.createServer(app)
 }
 
