@@ -17,7 +17,7 @@ services:
     volumes:
       - type: bind
         source: /etc/letsencrypt/live/todoapp.duckdns.org
-        target: /certbot-keys
+        target: /api/certbot-keys
     networks:
       - network-todoapp
     ports:
