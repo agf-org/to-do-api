@@ -26,8 +26,7 @@ jobs:
             --password-stdin
           docker-compose pull
           if [[ "${{ github.event.client_payload.environment }}" = "production" ]]; then
-            docker-compose --file docker-compose.yml --file docker-compose.production.yml \
-              up \
+            docker-compose --file docker-compose.yml --file docker-compose.production.yml up \
               --detach
           else
             docker-compose up \
