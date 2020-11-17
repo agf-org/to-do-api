@@ -19,12 +19,12 @@ afterAll(async () => {
   await mongoMemoryServerHandler.closeDatabase()
 })
 
-describe(`${config.baseUrl}/to-do/pages/:pageId`, () => {
+describe(`${config.baseUrl}/pages/:pageId`, () => {
   describe('Get a page', () => {
     it('should return a 200 response', async () => {
       const createdPage = await mongoPageModelHandler.createPage({items: []})
       const response = await request(app)
-        .get(`${config.baseUrl}/to-do/pages/${createdPage._id}`)
+        .get(`${config.baseUrl}/pages/${createdPage._id}`)
       expect(response.statusCode).toBe(200)
       expect(response.type).toBe('application/json')
     })
@@ -32,7 +32,7 @@ describe(`${config.baseUrl}/to-do/pages/:pageId`, () => {
     it('should return a page', async () => {
       const createdPage = await mongoPageModelHandler.createPage({items: []})
       const response = await request(app)
-        .get(`${config.baseUrl}/to-do/pages/${createdPage._id}`)
+        .get(`${config.baseUrl}/pages/${createdPage._id}`)
       expect(response.body._id).toBe(createdPage._id.toString())
       expect(response.body.items).toEqual(Array.from(createdPage.items))
     })
@@ -40,7 +40,7 @@ describe(`${config.baseUrl}/to-do/pages/:pageId`, () => {
     it('should return a 404 response for a non-existing page', async () => {
       const nonExistingId = mongoose.Types.ObjectId()
       const response = await request(app)
-        .get(`${config.baseUrl}/to-do/pages/${nonExistingId}`)
+        .get(`${config.baseUrl}/pages/${nonExistingId}`)
       expect(response.statusCode).toBe(404)
       expect(response.type).toBe('text/html')
       expect(response.text).toBe(`Page ${nonExistingId} not found!`)
@@ -51,7 +51,7 @@ describe(`${config.baseUrl}/to-do/pages/:pageId`, () => {
     it('should return a 200 response', async () => {
       const createdPage = await mongoPageModelHandler.createPage({items: []})
       const response = await request(app)
-        .delete(`${config.baseUrl}/to-do/pages/${createdPage._id}`)
+        .delete(`${config.baseUrl}/pages/${createdPage._id}`)
       expect(response.statusCode).toBe(200)
       expect(response.type).toBe('application/json')
     })
@@ -59,7 +59,7 @@ describe(`${config.baseUrl}/to-do/pages/:pageId`, () => {
     it('should return a page', async () => {
       const createdPage = await mongoPageModelHandler.createPage({items: []})
       const response = await request(app)
-        .delete(`${config.baseUrl}/to-do/pages/${createdPage._id}`)
+        .delete(`${config.baseUrl}/pages/${createdPage._id}`)
       expect(response.body._id).toBe(createdPage._id.toString())
       expect(response.body.items).toEqual(Array.from(createdPage.items))
     })
@@ -68,7 +68,7 @@ describe(`${config.baseUrl}/to-do/pages/:pageId`, () => {
       const createdPage = await mongoPageModelHandler.createPage({items: []})
       const createdItem = await mongoItemModelHandler.addItem(createdPage._id, {text: "Buy groceries", done: false})
       await request(app)
-        .delete(`${config.baseUrl}/to-do/pages/${createdPage._id}`)
+        .delete(`${config.baseUrl}/pages/${createdPage._id}`)
       const item = await mongoItemModelHandler.getItem(createdItem._id)
       expect(item).toBeFalsy()
     })
@@ -76,7 +76,7 @@ describe(`${config.baseUrl}/to-do/pages/:pageId`, () => {
     it('should return a 404 response for a non-existing page', async () => {
       const nonExistingId = mongoose.Types.ObjectId()
       const response = await request(app)
-        .delete(`${config.baseUrl}/to-do/pages/${nonExistingId}`)
+        .delete(`${config.baseUrl}/pages/${nonExistingId}`)
       expect(response.statusCode).toBe(404)
       expect(response.type).toBe('text/html')
       expect(response.text).toBe(`Page ${nonExistingId} not found!`)
@@ -86,19 +86,19 @@ describe(`${config.baseUrl}/to-do/pages/:pageId`, () => {
   it('should return a 405 response for an unsupported request method', async () => {
     const createdPage = await mongoPageModelHandler.createPage({items: []})
     const response = await request(app)
-      .patch(`${config.baseUrl}/to-do/pages/${createdPage._id}`)
+      .patch(`${config.baseUrl}/pages/${createdPage._id}`)
     expect(response.statusCode).toBe(405)
     expect(response.type).toBe('text/plain')
     expect(response.text).toBe('Method Not Allowed')
   })
 })
 
-describe(`${config.baseUrl}/to-do/pages`, () => {
+describe(`${config.baseUrl}/pages`, () => {
   describe('Get all pages', () => {
     it('should return a 200 response', async () => {
       await mongoPageModelHandler.createPage({items: []})
       const response = await request(app)
-        .get(`${config.baseUrl}/to-do/pages`)
+        .get(`${config.baseUrl}/pages`)
       expect(response.statusCode).toBe(200)
       expect(response.type).toBe('application/json')
     })
@@ -106,7 +106,7 @@ describe(`${config.baseUrl}/to-do/pages`, () => {
     it('should return a list of pages', async () => {
       const createdPage = await mongoPageModelHandler.createPage({items: []})
       const response = await request(app)
-        .get(`${config.baseUrl}/to-do/pages`)
+        .get(`${config.baseUrl}/pages`)
       expect(response.body.length).toBe(1)
       expect(response.body[0]._id).toBe(createdPage._id.toString())
       expect(response.body[0].items).toEqual(Array.from(createdPage.items))
@@ -116,14 +116,14 @@ describe(`${config.baseUrl}/to-do/pages`, () => {
   describe('Create a page', () => {
     it('should return a 201 response', async () => {
       const response = await request(app)
-        .post(`${config.baseUrl}/to-do/pages`)
+        .post(`${config.baseUrl}/pages`)
       expect(response.statusCode).toBe(201)
       expect(response.type).toBe('application/json')
     })
 
     it('should return a page', async () => {
       const response = await request(app)
-        .post(`${config.baseUrl}/to-do/pages`)
+        .post(`${config.baseUrl}/pages`)
       expect(typeof response.body._id).toBe('string')
       expect(response.body.items).toEqual([])
     })
@@ -132,7 +132,7 @@ describe(`${config.baseUrl}/to-do/pages`, () => {
   it('should return a 405 response for an unsupported request method', async () => {
     await mongoPageModelHandler.createPage({items: []})
     const response = await request(app)
-      .patch(`${config.baseUrl}/to-do/pages`)
+      .patch(`${config.baseUrl}/pages`)
     expect(response.statusCode).toBe(405)
     expect(response.type).toBe('text/plain')
     expect(response.text).toBe('Method Not Allowed')

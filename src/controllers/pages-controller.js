@@ -6,7 +6,7 @@ const mongoItemModelHandler = require('./mongo-item-model-handler')
 /**
  * @swagger
  * 
- * /to-do/pages/{pageId}:
+ * /pages/{pageId}:
  *   get:
  *     tags:
  *       - Pages
@@ -43,7 +43,7 @@ module.exports.getPage = asyncHandler(async (request, response) => {
 /**
  * @swagger
  * 
- * /to-do/pages/{pageId}:
+ * /pages/{pageId}:
  *   delete:
  *     tags:
  *       - Pages
@@ -79,7 +79,7 @@ module.exports.deletePage = asyncHandler(async (request, response) => {
 /**
  * @swagger
  * 
- * /to-do/pages:
+ * /pages:
  *   get:
  *     tags:
  *       - Pages
@@ -100,7 +100,7 @@ module.exports.getAllPages = asyncHandler(async (request, response) => {
 /**
  * @swagger
  * 
- * /to-do/pages:
+ * /pages:
  *   post:
  *     tags:
  *       - Pages

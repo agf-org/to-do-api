@@ -31,7 +31,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 const apiDocsRouter = require('./routes/api-docs')
 app.use(`${config.baseUrl}/api-docs`, apiDocsRouter)
 const toDoRouter = require('./routes/to-do-router')
-app.use(`${config.baseUrl}/to-do`, toDoRouter)
+app.use(config.baseUrl, toDoRouter)
 
 app.use((request, response, next) => {
   const error = new Error(`${request.method} ${request.url} Not Found`)
