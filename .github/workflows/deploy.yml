@@ -15,7 +15,6 @@ jobs:
         env:
           NODE_ENV: ${{ github.event.client_payload.environment }}
           TAG: ${{ github.event.client_payload.tag }}
-          HOST: api
           PORT: 3000
           MONGODB_USER: ${{ secrets.MONGODB_USER }}
           MONGODB_PASS: ${{ secrets.MONGODB_PASS }}

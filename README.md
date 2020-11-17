@@ -11,7 +11,6 @@ Create a `.env` file inside the project directory with the following environment
 ```
 NODE_ENV=development
 TAG=development
-HOST=api
 PORT=3000
 MONGODB_HOST=
 MONGODB_USER=
