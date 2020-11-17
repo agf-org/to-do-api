@@ -39,7 +39,7 @@ let server;
 //   })
 // } else {
   server = http.createServer(app)
-  server.listen(port, () => {
+  server.listen(port, process.env.HOST, () => {
     console.log('HTTP server running on port 3000')
   })
 // }
