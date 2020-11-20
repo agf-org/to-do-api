@@ -7,9 +7,6 @@
 const app = require('../app')
 const debug = require('debug')('api:server')
 const http = require('http')
-// const https = require('https')
-// const path = require('path')
-// const fs = require('fs')
 
 /**
  * Get port from environment and store in Express.
@@ -19,30 +16,16 @@ const port = normalizePort(process.env.PORT || '3000')
 app.set('port', port)
 
 /**
- * Create server and listen on provided port, on all network interfaces.
+ * Create HTTP server.
  */
 
-// const privkeyPath = 'certbot-keys/privkey1.pem'
-// const fullchainPath = 'certbot-keys/fullchain1.pem'
-let server;
-// if (
-//   process.env.NODE_ENV == 'production' &&
-//   fs.existsSync(privkeyPath) &&
-//   fs.existsSync(fullchainPath)
-// ) {
-//   server = https.createServer({
-//     key: fs.readFileSync(privkeyPath),
-//     cert: fs.readFileSync(fullchainPath),
-//   }, app)
-//   server.listen(port, () => {
-//     console.log('HTTPS server running on port 3000')
-//   })
-// } else {
-  server = http.createServer(app)
-  server.listen(port, () => {
-    console.log(`HTTP server running on port ${port}`)
-  })
-// }
+const server = http.createServer(app)
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+server.listen(port)
 server.on('error', onError)
 server.on('listening', onListening)
 
