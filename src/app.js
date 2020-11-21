@@ -28,9 +28,9 @@ app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
-const apiDocsRouter = require('./routes/api-docs')
+const apiDocsRouter = require('./routes/api-docs-router')
 app.use(`${config.baseUrl}/api-docs`, apiDocsRouter)
-const toDoRouter = require('./routes/to-do-router')
+const toDoRouter = require('./routes/api-router')
 app.use(config.baseUrl, toDoRouter)
 
 app.use((request, response, next) => {

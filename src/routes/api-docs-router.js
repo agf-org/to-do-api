@@ -8,9 +8,8 @@ const options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'To-do API',
-      version: version,
-      description: 'Welcome to my To-do API!'
+      title: 'To-do app API',
+      version: version
     },
     servers: [
         {

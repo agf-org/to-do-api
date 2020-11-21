@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 
 const commonValidator = require('../validators/common-validator')
+const rootController = require('../controllers/root-controller')
 const itemValidator = require('../validators/item-validator')
 const itemsController = require('../controllers/items-controller')
 const pageValidator = require('../validators/page-validator')
@@ -70,6 +71,17 @@ router
   )
   .post(
     pagesController.createPage
+  )
+
+router
+  .use(
+    '/',
+    commonValidator.validateMethod(['GET'])
+  )
+router
+  .route('/')
+  .get(
+    rootController.getStatus
   )
 
 module.exports = router
